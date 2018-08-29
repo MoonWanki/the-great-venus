@@ -1,5 +1,5 @@
 import { createAction, handleActions } from 'redux-actions';
-import abi from '../../../build/contracts/TGV.json'
+import abi from '../../../build/contracts/TGV.json';
 
 const contract = require('truffle-contract');
 
@@ -8,17 +8,24 @@ const initialState = {
     userData: null,
 };
 
-const INITIALIZE_WEB3 = 'INITIALIZE_WEB3';
-const LOGIN = 'LOGIN';
+const INITIALIZE_WEB3 = 'web3/INITIALIZE_WEB3';
+const SET_USER_DATA = 'web3/SET_USER_DATA';
+const SIGN_UP = 'web3/SIGN_UP';
 
 export const initializeWeb3 = createAction(INITIALIZE_WEB3);
-export const login = createAction(LOGIN);
+export const setUserData = createAction(SET_USER_DATA);
+export const signUp = createAction(SIGN_UP);
 
 export default handleActions({
     [INITIALIZE_WEB3]: (state, { payload }) => {
-        return { ...state, web3: payload };
+        console.log("we3 initialized!");
+        return {...state, web3: payload };
     },
-    [LOGIN]: (state, { payload }) => {
+    [SET_USER_DATA]: (state, { payload }) => {
+        console.log("user data updated!");
+        return {...state, userData: payload };
+    },
+    [SIGN_UP]: (state, { payload }) => {
         let web3 = state.web3;
         let nextState = null;
         if(typeof web3 !== 'undefined') {
@@ -29,12 +36,12 @@ export default handleActions({
                 TGV.deployed().then((instance) => {
                     TGVInstance = instance;
                     console.log("TGV is instantiated");
-                    return TGVInstance.createUser("test1", {from: accounts[0]});
+                    return TGVInstance.createUser("Jack", {from: accounts[0]});
                 }).then((result) => {
-                    console.log("Signed up");
+                    console.log("CreateUser: " + result);
                     return TGVInstance.getMyInfo();
                 }).then((result) => {
-                    console.log("My nickname is " + result.name);
+                    console.log("GetMyInfo: " + result.name);
                     nextState = {...state, result};
                 }).catch((err) => console.log(err));
             });
