@@ -5,6 +5,8 @@ import { connect } from 'react-redux';
 import { bindActionCreators } from 'redux';
 import * as Web3Actions from './store/modules/web3Module';
 import abi from '../build/contracts/TGV.json';
+import { Link, BrowserRouter, Route } from 'react-router-dom';
+import './App.scss';
 
 class App extends Component {
 
@@ -12,6 +14,7 @@ class App extends Component {
     getWeb3
     .then(res => {
       this.props.web3Actions.initializeWeb3(res.web3Instance);
+      res.web3Instance.currentProvider.publicConfigStore.on('update', this.onPublicConfigStore);
       setInterval(this.updateUserData, 3000);
     })
     .catch(() => {
@@ -20,13 +23,19 @@ class App extends Component {
 
   }
 
+  // 메타마스크에서 계정이나 네트워크 변경됐을 때
+  onPublicConfigStore = (selectedAddress, networkVersion) => {
+    alert("Network configuration has changed. You will be logged out.");
+    window.location.href = '/';
+  }
+
   updateUserData = () => {
-    const { web3, userData, web3Actions } = this.props;
-    if(typeof web3 !== 'undefined') {
+    const { web3Instance, userData, web3Actions } = this.props;
+    if(typeof web3Instance !== 'undefined') {
       const TGV = require('truffle-contract')(abi);
-      TGV.setProvider(web3.currentProvider);
+      TGV.setProvider(web3Instance.currentProvider);
       var TGVInstance;
-      web3.eth.getAccounts((error, accounts) => {
+      web3Instance.eth.getAccounts((error, accounts) => {
           TGV.deployed().then((instance) => {
               TGVInstance = instance;
               return TGVInstance.getMyInfo();
@@ -45,12 +54,12 @@ class App extends Component {
 
     console.log("App rendered");
 
-    const { web3, userData } = this.props;
-    console.log(web3);
+    const { web3Instance, userData } = this.props;
+    console.log(web3Instance);
     
     return (
       <div>
-        <h1>메타마스크{web3 ? "OK" : "NO"}</h1>
+        <h1>The Great Venus</h1>
         <h1>{userData?"환영합니다":"로그인해주세요"}</h1>
         {JSON.stringify(userData)}
       </div>
@@ -60,7 +69,7 @@ class App extends Component {
 
 export default connect(
   (state) => ({
-    web3: state.web3Module.web3,
+    web3Instance: state.web3Module.web3Instance,
     userData: state.web3Module.userData
   }),
   (dispatch) => ({ web3Actions: bindActionCreators(Web3Actions, dispatch) })

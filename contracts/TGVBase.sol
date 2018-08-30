@@ -10,26 +10,55 @@ contract TGVBase is Ownable {
 
     uint public balance;       // 금고. 사용자 결제금을 모아서 정기적으로 티어별 차등 분배
 
-    uint numUsers;
-    mapping (address => User) public users;                // 유저 DB
 
-    uint numStageInfo;
-    mapping (uint => StageInfo) stageInfoList;      // 스테이지 DB
-
-    uint numStatueInfo;
-    mapping (uint => UnitInfo) public statueInfoList;      // 석고상 ID - 석고상 정보
-
-    uint numMobInfo;
-    mapping (uint => UnitInfo) public mobInfoList;         // 몬스터 ID - 몬스터 정보
-
-    uint numRequiredExp;
-    mapping (uint => uint) public requiredExp;             // 레벨 당 요구 경험치
+    // 유저 DB
+    uint numUsers; // 총 유저 수
+    mapping (address => User) public users;
 
 
-    // 아이템 관련 코드 필요
+    // 스테이지 DB
+    uint numStageInfo; // 구현된 스테이지 개수
+    mapping (uint => StageInfo) stageInfoList;
+
+
+    // 석상 DB
+    uint numStatueInfo; // 구현된 석상 수
+    mapping (uint => UnitInfo) public statueInfoList;
+
+
+    // 몬스터 DB
+    uint numMobInfo; // 구현된 몬스터 수
+    mapping (uint => UnitInfo) public mobInfoList;
+
+
+    // 레벨 당 요구 경험치
+    uint numRequiredExp; // 최대 레벨
+    mapping (uint => uint) public requiredExp;
+
+
+    // 구현된 스테이지인지
+    modifier onlyValidStageNo(uint _no) {
+        require(_no > 0 && _no <= numStageInfo, "out of stage range");
+        _;
+    }
+
+
+    // 구현된 석상인지
+    modifier onlyValidStatueNo(uint _no) {
+        require(_no > 0 && _no <= numStatueInfo, "out of statue range");
+        _;
+    }
+
+
+    // 구현된 몬스터인지
+    modifier onlyValidMobNo(uint _no) {
+        require(_no > 0 && _no <= numMobInfo, "out of mob range");
+        _;
+    }
 
     uint numCrtEquipType;   // 크리티컬 장비 종류 개수
     uint numAvdEquipType;   // 회피율 장비 종류 개수
+
 
     // 유저 정보
     struct User {
@@ -40,19 +69,20 @@ contract TGVBase is Ownable {
         uint32 level;
         uint32 lastStage;
         uint32 numStatues;
-        mapping (uint => Statue) statues;
+        mapping (uint => Equip) equips;
     }
 
-    struct Statue {
+    struct Equip {
         uint32 hpEquipType;     // HP 장비 종류
+        uint32 hpEquipLevel;    // HP 장비 레벨
         uint32 atkEquipType;    // 공격력 장비 종류
+        uint32 atkEquipLevel;   // 공격력 장비 레벨
         uint32 defEquipType;    // 방어력 장비 종류
+        uint32 defEquipLevel;   // 방어력 장비 레벨
         uint32 crtEquipType;    // 크리티컬 장비 종류
         uint32 avdEquipType;    // 회피율 장비 종류
-        uint32 hpEquipLevel;    // HP 장비 레벨
-        uint32 atkEquipLevel;   // 공격력 장비 레벨
-        uint32 defEquipLevel;   // 방어력 장비 레벨
     }
+
 
     // 유닛
     struct UnitInfo {
@@ -67,21 +97,6 @@ contract TGVBase is Ownable {
         uint[5] round1;
         uint[5] round2;
         uint[5] round3;
-    }
-
-    modifier onlyValidStageNo(uint _no) {
-        require(_no > 0 && _no <= numStageInfo, "out of stage range");
-        _;
-    }
-
-    modifier onlyValidStatueNo(uint _no) {
-        require(_no > 0 && _no <= numStatueInfo, "out of statue range");
-        _;
-    }
-
-    modifier onlyValidMobNo(uint _no) {
-        require(_no > 0 && _no <= numMobInfo, "out of mob range");
-        _;
     }
 
     function getMyInfo() external view returns (
@@ -109,6 +124,11 @@ contract TGVBase is Ownable {
         users[msg.sender] = User(_name, 0, 0, 0, 1, 0, 1);
         numUsers.add(1);
         return (users[msg.sender].name);
+    }
+
+    function isAdmin() external view returns (bool) {
+        if(msg.sender == owner) return true;
+        else return false;
     }
     
 }

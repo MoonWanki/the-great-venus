@@ -4,7 +4,7 @@ import abi from '../../../build/contracts/TGV.json';
 const contract = require('truffle-contract');
 
 const initialState = {
-    web3: null,
+    web3Instance: null,
     userData: null,
 };
 
@@ -19,20 +19,20 @@ export const signUp = createAction(SIGN_UP);
 export default handleActions({
     [INITIALIZE_WEB3]: (state, { payload }) => {
         console.log("we3 initialized!");
-        return {...state, web3: payload };
+        return {...state, web3Instance: payload };
     },
     [SET_USER_DATA]: (state, { payload }) => {
         console.log("user data updated!");
         return {...state, userData: payload };
     },
     [SIGN_UP]: (state, { payload }) => {
-        let web3 = state.web3;
+        let web3Instance = state.web3Instance;
         let nextState = null;
-        if(typeof web3 !== 'undefined') {
+        if(typeof web3Instance !== 'undefined') {
             const TGV = contract(abi);
-            TGV.setProvider(web3.currentProvider);
+            TGV.setProvider(web3Instance.currentProvider);
             var TGVInstance;
-            web3.eth.getAccounts((error, accounts) => {
+            web3Instance.eth.getAccounts((error, accounts) => {
                 TGV.deployed().then((instance) => {
                     TGVInstance = instance;
                     console.log("TGV is instantiated");
