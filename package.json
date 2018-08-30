@@ -49,6 +49,7 @@
     "whatwg-fetch": "1.0.0"
   },
   "dependencies": {
+    "cross-env": "^5.2.0",
     "dotenv": "^2.0.0",
     "node-sass": "^4.9.3",
     "react": "^15.4.2",
@@ -58,13 +59,14 @@
     "react-router-dom": "^4.3.1",
     "redux": "^4.0.0",
     "redux-actions": "^2.6.1",
+    "redux-thunk": "^2.3.0",
     "sass-loader": "^7.1.0",
     "scrypt": "^6.0.3",
     "truffle-hdwallet-provider": "0.0.6"
   },
   "scripts": {
-    "start": "node scripts/start.js",
-    "build": "node scripts/build.js",
+    "start": "cross-env NODE_PATH=src node scripts/start.js",
+    "build": "cross-env NODE_PATH=src node scripts/build.js",
     "test": "node scripts/test.js --env=jsdom"
   },
   "jest": {

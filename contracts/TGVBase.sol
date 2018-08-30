@@ -108,6 +108,7 @@ contract TGVBase is Ownable {
         uint lastStage,
         uint numStatues
     ) {
+        uint 
         return (
             users[msg.sender].name,
             users[msg.sender].rank,

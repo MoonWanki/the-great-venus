@@ -1,68 +1,67 @@
-import React, { Component } from 'react'
+import React, { Component } from 'react';
 
 import getWeb3 from './utils/getWeb3';
 import { connect } from 'react-redux';
 import { bindActionCreators } from 'redux';
-import * as Web3Actions from './store/modules/web3Module';
+import * as web3Actions from './store/modules/web3Module';
 import abi from '../build/contracts/TGV.json';
-import { Link, BrowserRouter, Route } from 'react-router-dom';
+import { BrowserRouter, Route, Switch } from 'react-router-dom';
+import { Home, AdminPage } from 'Components';
 import './App.scss';
 
 class App extends Component {
 
   componentWillMount() {
     getWeb3
-    .then(res => {
-      this.props.web3Actions.initializeWeb3(res.web3Instance);
-      res.web3Instance.currentProvider.publicConfigStore.on('update', this.onPublicConfigStore);
-      setInterval(this.updateUserData, 3000);
+    .then(({ web3Instance }) => {
+      this.props.Web3Actions.initializeWeb3(web3Instance); // save web3 instance in store
+      this.props.Web3Actions.loadUserData(web3Instance); // load user data when initializing web3
+      web3Instance.currentProvider.publicConfigStore.on('update', (selectedAddress, networkVersion) => {
+        if(web3Instance.currentProvider.publicConfigStore._state.selectedAddress === selectedAddress && web3Instance.currentProvider.publicConfigStore._state.networkVersion === networkVersion) return;
+        alert("Network configuration has changed. You will be logged out.");
+        window.location.href = '/';
+      });
     })
     .catch(() => {
       console.error('Error finding web3.')
     });
-
   }
 
-  // 메타마스크에서 계정이나 네트워크 변경됐을 때
-  onPublicConfigStore = (selectedAddress, networkVersion) => {
-    alert("Network configuration has changed. You will be logged out.");
-    window.location.href = '/';
-  }
-
-  updateUserData = () => {
-    const { web3Instance, userData, web3Actions } = this.props;
-    if(typeof web3Instance !== 'undefined') {
-      const TGV = require('truffle-contract')(abi);
-      TGV.setProvider(web3Instance.currentProvider);
-      var TGVInstance;
-      web3Instance.eth.getAccounts((error, accounts) => {
-          TGV.deployed().then((instance) => {
-              TGVInstance = instance;
-              return TGVInstance.getMyInfo();
-          }).then((result) => {
-            if(JSON.stringify(userData)!==JSON.stringify(result)) {
-              web3Actions.setUserData(result);
-            }
-          }).catch((err) => console.log(err));
-      });
-    } else {
-      console.error('Cannot update user data: Web3 is not initialized');
-    }
-  }
+  // updateUserData = () => {
+  //   const { web3Instance, userData, Web3Actions } = this.props;
+  //   if(typeof web3Instance !== 'undefined') {
+  //     const TGV = require('truffle-contract')(abi);
+  //     TGV.setProvider(web3Instance.currentProvider);
+  //     var TGVInstance;
+  //     web3Instance.eth.getAccounts((error, accounts) => {
+  //       TGV.deployed().then((instance) => {
+  //         TGVInstance = instance;
+  //         return TGVInstance.getMyInfo();
+  //       }).then((result) => {
+  //         if(JSON.stringify(userData)!==JSON.stringify(result)) {
+  //           Web3Actions.setUserData(result);
+  //         }
+  //       }).catch((err) => console.log(err));
+  //     });
+  //   } else {
+  //     console.error('Cannot update user data: Web3 is not initialized');
+  //   }
+  // }
 
   render() {
 
     console.log("App rendered");
 
-    const { web3Instance, userData } = this.props;
+    const { web3Instance } = this.props;
     console.log(web3Instance);
     
     return (
-      <div>
-        <h1>The Great Venus</h1>
-        <h1>{userData?"환영합니다":"로그인해주세요"}</h1>
-        {JSON.stringify(userData)}
-      </div>
+      <BrowserRouter>
+        <Switch>
+          <Route path="/" component={Home} />
+          <Route path="/test" component={AdminPage} />
+        </Switch>
+      </BrowserRouter>
     );
   }
 }
@@ -72,5 +71,5 @@ export default connect(
     web3Instance: state.web3Module.web3Instance,
     userData: state.web3Module.userData
   }),
-  (dispatch) => ({ web3Actions: bindActionCreators(Web3Actions, dispatch) })
+  (dispatch) => ({ Web3Actions: bindActionCreators(web3Actions, dispatch) })
 )(App);
