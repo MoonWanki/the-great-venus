@@ -20,10 +20,11 @@ contract TGVConfig is TGVBase {
         statueInfoList[6] = UnitInfo(20, 11, 10, 10, 5);    // Wepping Angle   60
         statueInfoList[7] = UnitInfo(20, 11, 10, 10, 5);    // The Thinker     75
         statueInfoList[8] = UnitInfo(20, 11, 10, 10, 5);    // Liberty Queen   90
-        statueInfoList[9] = UnitInfo(20, 11, 10, 10, 5);    // Uprin
+        statueInfoList[9] = UnitInfo(20, 11, 10, 10, 5);    // Master Yee     105            
         statueInfoList[10] = UnitInfo(20, 11, 10, 10, 5);   // Venus          120
         numStatueInfo = 10;
 
+        // 레벨별 몬스터 능력치
         mobInfoList[1] = UnitInfo(20, 6, 5, 4, 4);
         mobInfoList[2] = UnitInfo(26, 8, 6, 4, 4);
         mobInfoList[3] = UnitInfo(32, 10, 7, 4, 4);
@@ -36,6 +37,7 @@ contract TGVConfig is TGVBase {
         mobInfoList[10] = UnitInfo(74, 24, 14, 7, 7);
         numMobInfo = 10;
 
+        // 스테이지 마다 출현 몬스터 정보
         stageInfoList[1] = StageInfo([uint(1), 1, 0, 0, 0], [uint(1), 2, 0, 0, 0], [uint(1), 1, 2, 0, 0]);
         stageInfoList[2] = StageInfo([uint(2), 2, 0, 0, 0], [uint(2), 2, 2, 0, 0], [uint(2), 2, 3, 0, 0]);
         stageInfoList[3] = StageInfo([uint(2), 3, 0, 0, 0], [uint(2), 3, 3, 0, 0], [uint(2), 3, 3, 3, 0]);
@@ -43,6 +45,7 @@ contract TGVConfig is TGVBase {
         stageInfoList[5] = StageInfo([uint(3), 4, 4, 0, 0], [uint(3), 4, 4, 4, 0], [uint(3), 3, 4, 4, 4]);
         numStageInfo = 5;
 
+        // 레벨 업 마다 필요한 경험치 정보
         requiredExp[1] = 0;
         requiredExp[2] = 1000;
         requiredExp[3] = 3000;
@@ -59,10 +62,6 @@ contract TGVConfig is TGVBase {
         requiredExp[14] = 85000;
         requiredExp[15] = 100000;
         numRequiredExp = 15;
-
-
-
-
 
         emit TGVConfigUpdated();
     }

@@ -1,5 +1,5 @@
 pragma solidity ^0.4.22;
-
+pragma experimental ABIEncoderV2;
 import "./zeppelin/ownership/Ownable.sol";
 import "./zeppelin/math/SafeMath.sol";
 
@@ -10,26 +10,25 @@ contract TGVBase is Ownable {
 
     uint public balance;       // 금고. 사용자 결제금을 모아서 정기적으로 티어별 차등 분배
 
-
     // 유저 DB
     uint numUsers; // 총 유저 수
     mapping (address => User) public users;
-
 
     // 스테이지 DB
     uint numStageInfo; // 구현된 스테이지 개수
     mapping (uint => StageInfo) stageInfoList;
 
-
     // 석상 DB
     uint numStatueInfo; // 구현된 석상 수
     mapping (uint => UnitInfo) public statueInfoList;
-
 
     // 몬스터 DB
     uint numMobInfo; // 구현된 몬스터 수
     mapping (uint => UnitInfo) public mobInfoList;
 
+    // 장비 DB
+    uint numEquipInfo; // 구현된 장비 수
+    mapping (uint => Equip) public EquipInfoList;
 
     // 레벨 당 요구 경험치
     uint numRequiredExp; // 최대 레벨
@@ -56,9 +55,8 @@ contract TGVBase is Ownable {
         _;
     }
 
-    uint numCrtEquipType;   // 크리티컬 장비 종류 개수
+    uint numCrtEquipType;   // 크리티컬 장비 종류 개수 
     uint numAvdEquipType;   // 회피율 장비 종류 개수
-
 
     // 유저 정보
     struct User {
@@ -106,8 +104,16 @@ contract TGVBase is Ownable {
         uint exp,
         uint level,
         uint lastStage,
-        uint numStatues
+        uint numStatues,
+        Equip[] equips
     ) {
+
+        Equip[] memory equipss = new Equip[]( users[msg.sender].numStatues);
+        for(uint i = 0; i<numStatues; i++)
+        {
+            equipss[i] = equips[i]; 
+        }
+
         return (
             users[msg.sender].name,
             users[msg.sender].rank,
@@ -115,7 +121,8 @@ contract TGVBase is Ownable {
             users[msg.sender].exp,
             users[msg.sender].level,
             users[msg.sender].lastStage,
-            users[msg.sender].numStatues
+            users[msg.sender].numStatues,
+            equipss
         );
     }
 
@@ -123,7 +130,9 @@ contract TGVBase is Ownable {
     function createUser(string _name) external returns (string) {
         users[msg.sender] = User(_name, 0, 0, 0, 1, 0, 1);
         numUsers.add(1);
-        return (users[msg.sender].name);
+        return (
+            users[msg.sender].name
+        );
     }
 
     function isAdmin() external view returns (bool) {
