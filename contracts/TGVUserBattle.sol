@@ -4,5 +4,7 @@ import "./TGVStageClear.sol";
 
 contract TGVUserBattle is TGVStageClear 
 {
+
+
     
 }

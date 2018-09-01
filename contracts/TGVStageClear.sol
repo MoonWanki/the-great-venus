@@ -2,7 +2,67 @@ pragma solidity ^0.4.22;
 pragma experimental ABIEncoderV2;
 import "./TGVItemShop.sol";
 
-contract TGVStageClear is TGVItemShop {
+contract TGVStageClear is TGVItemShop 
+{
+
+    function setStageMain(uint stagenum,uint roundnum) public view
+    {
+        //석상들 등장.
+        UnitInfo[] memory Units = new UnitInfo[](users[msg.sender].numStatues);
+        for(uint i = 0; i < users[msg.sender].numStatues; i++)
+        {
+            Units[i] = setUnitData()[i]; //장비 장착한 내 석상들..
+        }
+
+        //몬스터들 등장.
+        uint numOfMob = 0; 
+        UnitInfo[] memory Mobs;
+        (Mobs,numOfMob) = setRound(stagenum,roundnum);
+
+        //공격 주체 - 공격 상대 설정
+
+        //데미지 구하기
+        uint damage = getDamage(Units[1],Mobs[1]);
+        //데미지 적용
+        applyDamage(Units[1],Mobs[1],damage);           //회피하면 false반환 ,회피안하면 데미지 적용 true반환
+
+    }
+
+    function roundEnd(UnitInfo[] Units, UnitInfo Mobs) internal returns (string) //round 누가 이겼니?
+    {
+
+    }
+
+
+    function applyDamage(UnitInfo from, UnitInfo to, uint damage) internal returns (bool)
+    {
+        uint randNance = 0;
+        uint randomforAvoid = uint(keccak256(now, msg.sender, randNance))%100;    //회피율 적용위한 랜덤값
+        if(randomforAvoid<to.avd)   //회피 적용!
+            return false;
+        else
+        {
+            if(damage>=to.hp) to.hp.sub(damage);
+            else
+                to.hp = 0;
+            return true;
+        }
+
+    }
+
+    function getDamage(UnitInfo from, UnitInfo to) internal returns (uint)
+    {
+        uint randNance = 0;
+        uint random = uint(keccak256(now, msg.sender,randNance))%40;                //데미지 구간 설정 위한 랜덤값
+        randNance++;
+        uint randomforCritical = uint(keccak256(now, msg.sender,randNance))%100;    //강타율 적용위한 랜덤값
+        uint crk = 100;
+        if(randomforCritical<from.crt)  //강타 적용!
+            crk = 150;
+        return ((from.hp*2) / to.def + 2 ) * (random+80)/100 * crk/100;
+        //데미지 = (나의공격력 * 2  / 상대방어력  + 2 ) * (0.8~1.2 랜덤수) * (1.5강타일때)
+
+    } 
 
     //장비 정보 가져오기
     function setEquip() public view returns (Equip[])       
@@ -26,45 +86,59 @@ contract TGVStageClear is TGVItemShop {
         return myUnits;
     }
 
-    //스테이지 정보 가져오기
-    function setStage(uint stagenum) public view returns(StageInfo)
-    {
-        StageInfo memory myStage = stageInfoList[stagenum];
-        return myStage;
-    }
 
-    //몬스터 능력치 셋팅
-    function setMobData(uint stagenum) public view
+    //Round 셋팅
+    function setRound(uint stagenum,uint roundnum) public view returns(UnitInfo[] Mobs , uint32 numofmob)
     {
-        StageInfo memory Stage = setStage(stagenum);
-        UnitInfo[] memory round1 = new UnitInfo[](5);
-        UnitInfo[] memory round2 = new UnitInfo[](5);
-        UnitInfo[] memory round3 = new UnitInfo[](5);
-        for(uint i = 0; i<5; i++)
+        uint[5] memory round;
+        if(roundnum == 1)
         {
-            round1[i].hp = uint32(Stage.round1[0]);
-            round1[i].atk = uint32(Stage.round1[1]);
-            round1[i].def = uint32(Stage.round1[2]);
-            round1[i].crt = uint32(Stage.round1[3]);
-            round1[i].avd = uint32(Stage.round1[4]);
-
-            round2[i].hp = uint32(Stage.round2[0]);
-            round2[i].atk = uint32(Stage.round2[1]);
-            round2[i].def = uint32(Stage.round2[2]);
-            round2[i].crt = uint32(Stage.round2[3]);
-            round2[i].avd = uint32(Stage.round2[4]);
-
-            round3[i].hp = uint32(Stage.round3[0]);
-            round3[i].atk = uint32(Stage.round3[1]);
-            round3[i].def = uint32(Stage.round3[2]);
-            round3[i].crt = uint32(Stage.round3[3]);
-            round3[i].avd = uint32(Stage.round3[4]);
+            round[0] = stageInfoList[stagenum].round1[0];
+            round[1] = stageInfoList[stagenum].round1[1];
+            round[2] = stageInfoList[stagenum].round1[2];
+            round[3] = stageInfoList[stagenum].round1[3];
+            round[4] = stageInfoList[stagenum].round1[4];
+        }
+        if(roundnum == 2)
+        {
+            round[0] = stageInfoList[stagenum].round2[0];
+            round[1] = stageInfoList[stagenum].round2[1];
+            round[2] = stageInfoList[stagenum].round2[2];
+            round[3] = stageInfoList[stagenum].round2[3];
+            round[4] = stageInfoList[stagenum].round2[4];
+        }
+        if(roundnum == 3)
+        {
+            round[0] = stageInfoList[stagenum].round3[0];
+            round[1] = stageInfoList[stagenum].round3[1];
+            round[2] = stageInfoList[stagenum].round3[2];
+            round[3] = stageInfoList[stagenum].round3[3];
+            round[4] = stageInfoList[stagenum].round3[4];
         }
 
+        //해당 라운드에 필요한 몬스터 수 구하기
+        uint32 NumOfMob = 0;
+        for(uint j = 0 ; j<5 ; j++)
+        {
+            if(round[j]!=0)
+                NumOfMob.add(1);
+        }
+
+        UnitInfo[] memory roundMob = new UnitInfo[](NumOfMob);
+        for(uint i = 0; i<NumOfMob; i++)
+        {
+            roundMob[i].hp = mobInfoList[round[i]].hp;
+            roundMob[i].atk = mobInfoList[round[i]].atk;
+            roundMob[i].def = mobInfoList[round[i]].def;
+            roundMob[i].crt = mobInfoList[round[i]].crt;
+            roundMob[i].avd = mobInfoList[round[i]].avd;
+        }
+        return (roundMob,NumOfMob);
     }
 
+
     //석상 능력치 계산
-    function setUnitData() public view
+    function setUnitData() public view  returns(UnitInfo[])
     {
         UnitInfo[] memory Units = setUnit();
         Equip[] memory Equips = setEquip();
@@ -84,6 +158,7 @@ contract TGVStageClear is TGVItemShop {
             Units[m].def.add(uint32(mylevel*k));                      // 레벨 업 추가 방어력
             Units[m].def.add(getELevel(Equips[m].defEquipLevel,k));   // 장비 업 추가 방어력
         }
+        return Units;
     }
 
     //장비 레벨 당 추가되는 능력치 계산
