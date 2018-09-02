@@ -28,29 +28,31 @@ contract TGVStageClear is TGVItemShop
 
     }
 
-    function roundEnd(UnitInfo[] Units, UnitInfo Mobs) internal returns (string) //round 누가 이겼니?
-    {
+    // 전투 승리 유무 판정함수
+    // function roundEnd(UnitInfo[] Units, UnitInfo Mobs) internal pure returns (bool) 
+    // {
 
-    }
+    // }
 
-
-    function applyDamage(UnitInfo from, UnitInfo to, uint damage) internal returns (bool)
+    //데미지 적용 함수
+    function applyDamage(UnitInfo from, UnitInfo to, uint damage)internal view returns (bool)
     {
         uint randNance = 0;
         uint randomforAvoid = uint(keccak256(now, msg.sender, randNance))%100;    //회피율 적용위한 랜덤값
         if(randomforAvoid<to.avd)   //회피 적용!
-            return false;
+            return false;           //데미지 미적용
         else
         {
-            if(damage>=to.hp) to.hp.sub(damage);
+            if(uint32(damage)>=to.hp) to.hp.sub(uint32(damage));
             else
-                to.hp = 0;
-            return true;
+                to.hp = 0;          //데미지 적용
+            return true;            
         }
 
     }
 
-    function getDamage(UnitInfo from, UnitInfo to) internal returns (uint)
+    //데미지 계산
+    function getDamage(UnitInfo from, UnitInfo to)internal view returns (uint)
     {
         uint randNance = 0;
         uint random = uint(keccak256(now, msg.sender,randNance))%40;                //데미지 구간 설정 위한 랜덤값
