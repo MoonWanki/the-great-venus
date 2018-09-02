@@ -24,7 +24,7 @@ contract TGVStageClear is TGVItemShop
         //데미지 구하기
         uint damage = getDamage(Units[1],Mobs[1]);
         //데미지 적용
-        applyDamage(Units[1],Mobs[1],damage);           //회피하면 false반환 ,회피안하면 데미지 적용 true반환
+        applyDamage(Mobs[1],damage);           //회피하면 false반환 ,회피안하면 데미지 적용 true반환
 
     }
 
@@ -35,10 +35,10 @@ contract TGVStageClear is TGVItemShop
     // }
 
     //데미지 적용 함수
-    function applyDamage(UnitInfo from, UnitInfo to, uint damage)internal view returns (bool)
+    function applyDamage(UnitInfo to, uint damage)internal view returns (bool)
     {
         uint randNance = 0;
-        uint randomforAvoid = uint(keccak256(now, msg.sender, randNance))%100;    //회피율 적용위한 랜덤값
+        uint randomforAvoid = uint(keccak256(abi.encodePacked(now, msg.sender, randNance)))%100;    //회피율 적용위한 랜덤값
         if(randomforAvoid<to.avd)   //회피 적용!
             return false;           //데미지 미적용
         else
@@ -55,9 +55,9 @@ contract TGVStageClear is TGVItemShop
     function getDamage(UnitInfo from, UnitInfo to)internal view returns (uint)
     {
         uint randNance = 0;
-        uint random = uint(keccak256(now, msg.sender,randNance))%40;                //데미지 구간 설정 위한 랜덤값
+        uint random = uint(keccak256(abi.encodePacked(now, msg.sender,randNance)))%40;                //데미지 구간 설정 위한 랜덤값
         randNance++;
-        uint randomforCritical = uint(keccak256(now, msg.sender,randNance))%100;    //강타율 적용위한 랜덤값
+        uint randomforCritical = uint(keccak256(abi.encodePacked(now, msg.sender,randNance)))%100;    //강타율 적용위한 랜덤값
         uint crk = 100;
         if(randomforCritical<from.crt)  //강타 적용!
             crk = 150;
