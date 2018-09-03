@@ -62,6 +62,8 @@
     "redux-thunk": "^2.3.0",
     "sass-loader": "^7.1.0",
     "scrypt": "^6.0.3",
+    "semantic-ui-css": "^2.3.3",
+    "semantic-ui-react": "^0.82.3",
     "truffle-hdwallet-provider": "0.0.6"
   },
   "scripts": {

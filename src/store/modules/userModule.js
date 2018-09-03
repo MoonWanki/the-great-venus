@@ -19,13 +19,13 @@ const initialState = {
 const SET_USER_DATA = 'user/SET_USER_DATA';
 
 export const loadUserData = web3Instance => dispatch => {
-
     const TGV = contract(abi);
     TGV.setProvider(web3Instance.currentProvider);
     web3Instance.eth.getCoinbase((err, coinbase) => {
         if (!err) {
             TGV.deployed()
             .then(instance => {
+                console.log("start");
                 return instance.getMyInfo(coinbase);
             }).then(data => {
                 dispatch({
@@ -78,6 +78,7 @@ export default handleActions({
             numStatue: payload[6],
             // equips: payload[7],
         }
+        console.log(payload);
        return {
            ...state,
            userData: data
