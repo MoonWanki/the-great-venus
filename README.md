@@ -11,30 +11,35 @@ Name | Position | Roles
 ---|---|---
 Moon Wanki | PM / Main developer / Sound director | Creator of this game. Front-end & Back-end development. Composing BGMs for the game.
 Jamlee Kim | Developer / QA | Back-end development. Design algorithms for game logics.
-Han Jisoo | Graphic designer | Creator of image resources by 2D Graphic design.
+Han Jisoo | Graphic designer | Image resource creator by 2D graphic Illustration.
 
 
 ## Synopsys
 
-The *Guiliano*'s wish is to see the *Venus*, who has *ULTIMATE Necklace*, greatest equipment in the world.  
-Do you know? They can get much power by acquiring more special neckless!  
-Every statues wanna be strong, and your Giuliano does so!  
+The *Guiliano*'s wish is to see the *Venus*, who has *ULTIMATE Necklace*, the greatest equipment in the world.  
+Do you know? They can get more power by acquiring more special necklace!  
+Everyone's hope is to be strong, and your *Guiliano* does so!  
 
 
 ## Turn-based RPG game
 
 > ***Clear stages** to grow your Guiliano and his army!*  
 
-By clearing stages, you can get golds and experience, and increase your level.  
-The higher your level is, the more powerful your characters become.
+Clear given stages and you'll get stronger.  
+In the stage, each battle is based on turn.  
+If your armies are stronger than the enemy, your will win the battle. Then you can get golds and experience.  
+As you experience increases, your level will rise.  
+The higher your level is, the more powerful your characters become!   
 
 
 ## PvP battle system
 > ***Raise your rank** to earn more **ETHEREUM**!*  
 
 That is also one reason why you must be stronger.  
-You can get much stronger via investing your Ethereum to this game.  
-But don't worry! If you become the ranker in leaderboard, you can get your Ethereum back!  
+Optionally, you can get much stronger via investing your Ethereum to this game.  
+Do you think this is the act of losing money?  
+***Never!***  
+If you become the ranker in leaderboard, you can get your Ethereum back!  
 If you are in luck, it can be more than you invested - means that **you can earn ethereum by this game!**
 
 
@@ -42,7 +47,7 @@ If you are in luck, it can be more than you invested - means that **you can earn
 
 We don't need any server for running TGV! <del>We have no server in fact.</del>  
 TGV is a DApp, based on **blackchain** technology.  
-so, your armies, items, and battle records will be flowing in the public blockchain network whenever and *forever*.
+Thus, all of your data, which includes armies, items, golds and battle records, will be in the public blockchain network whenever and *forever*.
 
 
 ## Project specification
@@ -64,13 +69,16 @@ For front-end development, we use the most popular javascript library, React.js.
 ### Third-party libraries
 
 - **Redux** | https://redux.js.org/  
-This is for state management in react.
+For state management in react.
 
 - **Materialize CSS** | https://materializecss.com/  
-provides a lot of well-designed components.
+Provides a lot of well-designed components.
 
 - **Semantic UI React** | https://react.semantic-ui.com/  
 Semantic UI for React production.
 
 - **Redux-Thunk** | https://github.com/reduxjs/redux-thunk  
-A middleware that makes redux actions run asynchronous
+Middleware that makes redux actions asynchronous.  
+
+- **Sass Loader** | https://github.com/webpack-contrib/sass-loader  
+Enables compile [SASS(Syntactically Awesome Style Sheets)](https://sass-lang.com/) language.
