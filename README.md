@@ -18,8 +18,8 @@ Han Jisoo | Graphic designer | Image resource creator by 2D graphic Illustration
 
 The *Guiliano*'s wish is to see the *Venus*, who has *ULTIMATE Necklace*, the greatest equipment in the world.  
 Do you know? They can get more power by acquiring more special necklace!  
-Everyone's hope is to be strong, and your *Guiliano* does so!  
-
+Everyone's hope is to be strong, and so is *Guiliano*.  
+That's why Julian finally decided to go on an adventure.
 
 ## Turn-based RPG game
 
