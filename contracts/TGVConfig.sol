@@ -61,11 +61,23 @@ contract TGVConfig is TGVBase {
         requiredExp[13] = 75000;
         requiredExp[14] = 85000;
         requiredExp[15] = 100000;
-        numRequiredExp = 15;
+        numRequiredExp = 15; 
 
         emit TGVConfigUpdated();
     }
 
+    // function getHpequipvalue(uint level, ) view
+    // {
+
+    // }
+    // function getHpequipvalue(uint level, ) view
+    // {
+
+    // }
+    // function getHpequipvalue(uint level, ) view
+    // {
+
+    // }
 
     function addStageInfo() external onlyOwner returns(uint) {
 

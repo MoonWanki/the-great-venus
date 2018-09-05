@@ -72,7 +72,7 @@ contract TGVStageClear is TGVItemShop
         Equip[] memory myEquips = new Equip[](users[msg.sender].numStatues);
         for(uint i = 0; i<users[msg.sender].numStatues; i++)
         {
-            myEquips[i] = users[msg.sender].equips[i];
+            myEquips[i] = users[msg.sender].equipList[i];
         }
         return myEquips;
     }

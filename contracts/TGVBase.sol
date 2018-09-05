@@ -22,13 +22,23 @@ contract TGVBase is Ownable {
     uint numStatueInfo; // 구현된 석상 수
     mapping (uint => UnitInfo) public statueInfoList;
 
+
+
+    // 유저의 장비 리스트.
+    uint numhpEquip; //구현된 체력 장비 레벨 개수
+    mapping (uint => uint32) hpEquipList;
+
+    uint numatkEquip; //구현된 공격력 장비 레벨 개수
+    mapping (uint => uint32) atkEquipList;
+
+    uint numdefEquip; //구현된 방어력 장비 레벨 개수
+    mapping (uint => uint32) defEquipList;
+
+
+
     // 몬스터 DB
     uint numMobInfo; // 구현된 몬스터 수
     mapping (uint => UnitInfo) public mobInfoList;
-
-    // 장비 DB
-    uint numEquipInfo; // 구현된 장비 수
-    mapping (uint => Equip) public EquipInfoList;
 
     // 레벨 당 요구 경험치
     uint numRequiredExp; // 최대 레벨
@@ -67,7 +77,7 @@ contract TGVBase is Ownable {
         uint32 level;
         uint32 lastStage;
         uint32 numStatues;
-        mapping (uint => Equip) equips;
+        mapping (uint => Equip) equipList;
     }
 
     struct Equip {
@@ -80,7 +90,6 @@ contract TGVBase is Ownable {
         uint32 crtEquipType;    // 크리티컬 장비 종류
         uint32 avdEquipType;    // 회피율 장비 종류
     }
-
 
     // 유닛
     struct UnitInfo {
@@ -105,15 +114,21 @@ contract TGVBase is Ownable {
         uint level,
         uint lastStage,
         uint numStatues,
-        Equip[] equips
-    ) {
-
-        Equip[] memory equipss = new Equip[]( users[msg.sender].numStatues);
-        for(uint i = 0; i<numStatues; i++)
+        uint[] Localequiplist
+    ) 
+    {
+        uint[] memory localequiplist;
+        for(uint i = 0;i<numStatues;i++)
         {
-            equipss[i] = equips[i]; 
+            localequiplist[i*10] = users[msg.sender].equipList[i+1].hpEquipType;
+            localequiplist[i*10+1] = users[msg.sender].equipList[i+1].hpEquipLevel;
+            localequiplist[i*10+2] = users[msg.sender].equipList[i+1].atkEquipType;
+            localequiplist[i*10+3] = users[msg.sender].equipList[i+1].atkEquipLevel;
+            localequiplist[i*10+4] = users[msg.sender].equipList[i+1].defEquipType;
+            localequiplist[i*10+5] = users[msg.sender].equipList[i+1].defEquipLevel;
+            localequiplist[i*10+6] = users[msg.sender].equipList[i+1].crtEquipType;
+            localequiplist[i*10+7] = users[msg.sender].equipList[i+1].avdEquipType;
         }
-
         return (
             users[msg.sender].name,
             users[msg.sender].rank,
@@ -122,7 +137,7 @@ contract TGVBase is Ownable {
             users[msg.sender].level,
             users[msg.sender].lastStage,
             users[msg.sender].numStatues,
-            equipss
+            localequiplist
         );
     }
 
