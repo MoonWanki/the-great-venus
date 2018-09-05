@@ -42,7 +42,7 @@ export const loadUserData = web3Instance => dispatch => {
     });
 }
 
-export const signUp = (web3Instance, name) => dispatch => {
+export const createUser = (web3Instance, name) => dispatch => {
 
     const TGV = contract(abi);
     TGV.setProvider(web3Instance.currentProvider);
@@ -50,8 +50,9 @@ export const signUp = (web3Instance, name) => dispatch => {
         if (!err) {
             TGV.deployed()
             .then(instance => {
-                return instance.createUser({ from: coinbase });
+                return instance.createUser(name, { from: coinbase });
             }).then(data => {
+                console.log(data);
                 dispatch({
                     type: SET_USER_DATA,
                     payload: data

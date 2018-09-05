@@ -9,9 +9,9 @@ Our members and roles are like below.
 
 Name | Position | Roles
 ---|---|---
-Moon Wanki | PM / Main developer / Sound director | Creator of this game. Front-end & Back-end development. Composing BGMs for the game.
-Jamlee Kim | Developer / QA | Back-end development. Design algorithms for game logics.
-Han Jisoo | Graphic designer | Image resource creator by 2D graphic Illustration.
+:alien: Moon Wanki | PM / Main developer / Sound director | Creator of this game. Front-end & Back-end development. Composing BGMs for the game.
+:boy: Jamlee Kim | Developer / QA | Back-end development. Design algorithms for game logics.
+:woman: Han Jisoo | Graphic designer | Image resource creator by 2D graphic Illustration.
 
 
 ## Synopsys
@@ -19,7 +19,7 @@ Han Jisoo | Graphic designer | Image resource creator by 2D graphic Illustration
 The *Guiliano*'s wish is to see the *Venus*, who has *ULTIMATE Necklace*, the greatest equipment in the world.  
 Do you know? They can get more power by acquiring more special necklace!  
 Everyone's hope is to be strong, and so is *Guiliano*.  
-That's why Julian finally decided to go on an adventure.
+That's why *Guiliano* finally decided to go on an adventure.
 
 ## Turn-based RPG game
 
@@ -46,25 +46,25 @@ If you are in luck, it can be more than you invested - means that **you can earn
 ## All systems are decentralized
 
 We don't need any server for running TGV! <del>We have no server in fact.</del>  
-TGV is a DApp, based on **blackchain** technology.  
+TGV is a **DApp**(Decentralized Application) based on **BLOCKCHAIN** technology.  
 Thus, all of your data, which includes armies, items, golds and battle records, will be in the public blockchain network whenever and *forever*.
 
 
-## Project specification
+## References
 
 ### Main framework and boilerplate
 
 - **TRUFFLE SUITE** | https://truffleframework.com/  
-supports nice environments for smart contract development.  
+Supports nice environments for smart contract development.  
 
 - **Truffle-box / React-box** | https://truffle-box.github.io/  
-We could find an awesome boilerplate for the Truffle framework.  
+Boilerplate for React development on Truffle framework.  
 
 
 ### Main libraries
 
-- **React.js** | https://reactjs.org/  
-For front-end development, we use the most popular javascript library, React.js.  
+- **ReactJS** | https://reactjs.org/  
+No.1 Front-end library in 2018, ReactJS.  
 
 ### Third-party libraries
 
@@ -74,8 +74,8 @@ For state management in react.
 - **Materialize CSS** | https://materializecss.com/  
 Provides a lot of well-designed components.
 
-- **Semantic UI React** | https://react.semantic-ui.com/  
-Semantic UI for React production.
+- **Semantic UI** | https://react.semantic-ui.com/  
+Partially used for some javascript UI components.
 
 - **Redux-Thunk** | https://github.com/reduxjs/redux-thunk  
 Middleware that makes redux actions asynchronous.  

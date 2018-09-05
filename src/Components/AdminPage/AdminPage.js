@@ -3,6 +3,7 @@ import React, { Component } from 'react';
 import { connect } from 'react-redux';
 import { bindActionCreators } from 'redux';
 import * as adminActions from 'store/modules/adminModule';
+import * as userActions from 'store/modules/userModule';
 import { Table, Navbar, NavItem, Icon, Input, Row, Button } from 'react-materialize';
 import './AdminPage.scss';
 
@@ -17,13 +18,13 @@ class AdminPage extends Component {
 
     render() {
         let key1 = 0, key2 = 0, key3 = 0;
-        const { web3Instance, AdminActions, statueInfoList, mobInfoList, requiredExpList, userData, isLoaded } = this.props;
+        const { web3Instance, AdminActions, UserActions, statueInfoList, mobInfoList, requiredExpList, userData, isLoaded } = this.props;
         
         return (
             <div>
-                <Navbar brand='TGV Configuration' right className='blue-grey darken-3'>
+                <Navbar brand='Test page' right className='blue-grey darken-3'>
                     <NavItem onClick={() => AdminActions.setConfigToDefault(web3Instance)}>Set to default</NavItem>
-                    <NavItem onClick={()=>AdminActions.loadConfig(web3Instance)}><Icon>refresh</Icon></NavItem>
+                    <NavItem onClick={() => AdminActions.loadConfig(web3Instance)}><Icon>refresh</Icon></NavItem>
                 </Navbar>
                 <div className='admin-simulation'>
                     <div className='admin-simulation-myinfo'>
@@ -31,6 +32,7 @@ class AdminPage extends Component {
                         <thead>
                             <tr>
                                 <th>내 정보</th>
+                                <th><Button className='red' waves='light' onClick={() => UserActions.createUser(web3Instance, 'Administator')}>초기화</Button></th>
                             </tr>
                         </thead>
                         <tbody>
@@ -40,19 +42,19 @@ class AdminPage extends Component {
                             </tr>
                             <tr>
                                 <td>레벨</td>
-                                <td>{userData.level ? userData.level : '정보를 불러올 수 없습니다'}</td>
+                                <td>{userData.level ? userData.level.c : '정보를 불러올 수 없습니다'}</td>
                             </tr>
                             <tr>
                                 <td>경험치</td>
-                                <td>{userData.exp ? userData.exp : '정보를 불러올 수 없습니다'}</td>
+                                <td>{userData.exp ? userData.exp.c : '정보를 불러올 수 없습니다'}</td>
                             </tr>
                             <tr>
                                 <td>골드</td>
-                                <td>{userData.gold ? userData.gold : '정보를 불러올 수 없습니다'}</td>
+                                <td>{userData.gold ? userData.gold.c : '정보를 불러올 수 없습니다'}</td>
                             </tr>
                             <tr>
                                 <td>완료 스테이지</td>
-                                <td>{userData.lastStage ? userData.lastStage : '정보를 불러올 수 없습니다'}</td>
+                                <td>{userData.lastStage ? userData.lastStage.c : '정보를 불러올 수 없습니다'}</td>
                             </tr>
                         </tbody>
                         </Table>
@@ -74,7 +76,8 @@ class AdminPage extends Component {
                             번 석상을
                             <Button floating flat className='amber' waves='light' icon='edit' />
                             or
-                            <Button floating flat className='light-green' waves='light' icon='add' />                       </Row>
+                            <Button floating flat className='light-green' waves='light' icon='add' />
+                        </Row>
                         <Table striped bordered>
                             <thead>
                                 <tr>
@@ -155,6 +158,7 @@ export default connect(
         userData: state.userModule.userData,
     }),
     (dispatch) => ({
-        AdminActions: bindActionCreators(adminActions, dispatch)
+        AdminActions: bindActionCreators(adminActions, dispatch),
+        UserActions: bindActionCreators(userActions, dispatch)
     })
 )(AdminPage);
