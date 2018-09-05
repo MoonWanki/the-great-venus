@@ -18,8 +18,9 @@ contract TGVStageClear is TGVItemShop
         uint numOfMob = 0; 
         UnitInfo[] memory Mobs;
         (Mobs,numOfMob) = setRound(stagenum,roundnum);
-
         //공격 주체 - 공격 상대 설정
+        
+
 
         //데미지 구하기
         uint damage = getDamage(Units[1],Mobs[1]);

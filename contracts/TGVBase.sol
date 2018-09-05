@@ -22,20 +22,6 @@ contract TGVBase is Ownable {
     uint numStatueInfo; // 구현된 석상 수
     mapping (uint => UnitInfo) public statueInfoList;
 
-
-
-    // 유저의 장비 리스트.
-    uint numhpEquip; //구현된 체력 장비 레벨 개수
-    mapping (uint => uint32) hpEquipList;
-
-    uint numatkEquip; //구현된 공격력 장비 레벨 개수
-    mapping (uint => uint32) atkEquipList;
-
-    uint numdefEquip; //구현된 방어력 장비 레벨 개수
-    mapping (uint => uint32) defEquipList;
-
-
-
     // 몬스터 DB
     uint numMobInfo; // 구현된 몬스터 수
     mapping (uint => UnitInfo) public mobInfoList;
@@ -144,7 +130,10 @@ contract TGVBase is Ownable {
     // 신규 유저 생성.
     function createUser(string _name) external returns (string) {
         users[msg.sender] = User(_name, 0, 0, 0, 1, 0, 1);
-        numUsers.add(1);
+        if(users[msg.sender].level == 0)
+        {   
+            numUsers.add(1);
+        }
         return (
             users[msg.sender].name
         );
