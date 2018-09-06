@@ -5,22 +5,24 @@ import { connect } from 'react-redux';
 import { bindActionCreators } from 'redux';
 import * as web3Actions from './store/modules/web3Module';
 import * as userActions from './store/modules/userModule';
-import { BrowserRouter, Route, Switch } from 'react-router-dom';
+import { BrowserRouter, Route, Switch, Redirect } from 'react-router-dom';
 import { Home, AdminPage } from 'Components';
 
 class App extends Component {
 
-  componentWillMount() {
+  componentDidMount() {
+
+    const { Web3Actions, UserActions, selectedAddress, networkVersion } = this.props;
+
     getWeb3
     .then(({ web3Instance }) => {
       console.log('finding web3.');
-      this.props.Web3Actions.initializeWeb3(web3Instance); // save web3 instance in store
-      this.props.UserActions.loadUserData(web3Instance); // load user data when initializing web3
-      web3Instance.currentProvider.publicConfigStore.on('update', ({ selectedAddress, networkVersion }) => {
-        if(this.props.selectedAddress !== selectedAddress || this.props.networkVersion !== networkVersion) {
-          console.log(this.props.networkVersion + " -> " + networkVersion);
-          alert("Your account or network has changed.");
-          window.location.href = '/';
+      Web3Actions.initializeWeb3(web3Instance); // save web3 instance in store
+      UserActions.loadUserData(web3Instance); // load user data when initializing web3
+      web3Instance.currentProvider.publicConfigStore.on('update', ({ newSelectedAddress, newNetworkVersion }) => {
+        if(selectedAddress !== newSelectedAddress || networkVersion !== newNetworkVersion) {
+          window.Materialize.toast('Your account or network has changed!', 1500);
+          Web3Actions.setSelectedAddress(newSelectedAddress);
         }
       });
     })

@@ -7,8 +7,10 @@ const initialState = {
 };
 
 const INITIALIZE_WEB3 = 'web3/INITIALIZE_WEB3';
+const SET_SELECTED_ADDRESS = 'web3/SET_SELECTED_ADDRESS';
 
 export const initializeWeb3 = createAction(INITIALIZE_WEB3);
+export const setSelectedAddress = createAction(SET_SELECTED_ADDRESS);
 
 export default handleActions({
     [INITIALIZE_WEB3]: (state, { payload }) => {
@@ -19,5 +21,11 @@ export default handleActions({
             selectedAddress: payload.currentProvider.publicConfigStore._state.selectedAddress,
             networkVersion: payload.currentProvider.publicConfigStore._state.networkVersion,
         };
-    }
+    },
+    [SET_SELECTED_ADDRESS]: (state, { payload }) => {
+        return {
+            ...state,
+            selectedAddress: payload
+        };
+    },
 }, initialState);

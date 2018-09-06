@@ -24,7 +24,10 @@ class AdminPage extends Component {
             <div>
                 <Navbar brand='Test page' right className='blue-grey darken-3'>
                     <NavItem onClick={() => AdminActions.setConfigToDefault(web3Instance)}>Set to default</NavItem>
-                    <NavItem onClick={() => AdminActions.loadConfig(web3Instance)}><Icon>refresh</Icon></NavItem>
+                    <NavItem onClick={() => {
+                        AdminActions.loadConfig(web3Instance);
+                        UserActions.loadUserData(web3Instance);
+                    }}><Icon>refresh</Icon></NavItem>
                 </Navbar>
                 <div className='admin-simulation'>
                     <div className='admin-simulation-myinfo'>
@@ -32,7 +35,9 @@ class AdminPage extends Component {
                         <thead>
                             <tr>
                                 <th>내 정보</th>
-                                <th><Button className='red' waves='light' onClick={() => UserActions.createUser(web3Instance, 'Administator')}>초기화</Button></th>
+                                <th>
+                                    <Button className='red darken-4' waves='light' onClick={() => UserActions.createUser(web3Instance, 'Administator')}>초기화</Button>
+                                </th>
                             </tr>
                         </thead>
                         <tbody>
