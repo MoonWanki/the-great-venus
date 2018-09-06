@@ -25,14 +25,12 @@ export const loadUserData = web3Instance => dispatch => {
         if (!err) {
             TGV.deployed()
             .then(instance => {
-                console.log("start");
                 return instance.getMyInfo(coinbase);
             }).then(data => {
                 dispatch({
                     type: SET_USER_DATA,
                     payload: data
                 });
-                console.log(data);
             }).catch(err => {
                 console.error(err);
             })

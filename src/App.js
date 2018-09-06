@@ -5,7 +5,7 @@ import { connect } from 'react-redux';
 import { bindActionCreators } from 'redux';
 import * as web3Actions from './store/modules/web3Module';
 import * as userActions from './store/modules/userModule';
-import { BrowserRouter, Route, Switch, Redirect } from 'react-router-dom';
+import { BrowserRouter, Route, Switch } from 'react-router-dom';
 import { Home, AdminPage } from 'Components';
 
 class App extends Component {
@@ -26,15 +26,10 @@ class App extends Component {
         }
       });
     })
-    .catch(() => {
-      console.error('Error finding web3.')
-    });
   }
 
   render() {
-
     console.log("App rendered");
-    
     return (
       <BrowserRouter>
         <Switch>
