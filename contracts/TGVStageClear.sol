@@ -7,33 +7,66 @@ contract TGVStageClear is TGVItemShop
 
     function setStageMain(uint stagenum,uint roundnum) public view
     {
+        uint sumOfUnithp = 0;   //석상 총 체력
+        uint sumOfMobhp = 0;    //몬스터 총 체력
+
         //석상들 등장.
         UnitInfo[] memory Units = new UnitInfo[](users[msg.sender].numStatues);
         for(uint i = 0; i < users[msg.sender].numStatues; i++)
         {
             Units[i] = setUnitData()[i]; //장비 장착한 내 석상들..
+            sumOfUnithp = Units[i].hp;
         }
 
         //몬스터들 등장.
         uint numOfMob = 0; 
         UnitInfo[] memory Mobs;
         (Mobs,numOfMob) = setRound(stagenum,roundnum);
-        //공격 주체 - 공격 상대 설정
-        
+        for(uint j = 0; j < numOfMob ; j++ )
+        {
+            sumOfMobhp = Mobs[j].hp;
+        }
 
+        (UnitInfo[] memory roundOnUnits,uint serialnum) = Serialization(Units, Mobs, numOfMob);
 
         //데미지 구하기
         uint damage = getDamage(Units[1],Mobs[1]);
         //데미지 적용
         applyDamage(Mobs[1],damage);           //회피하면 false반환 ,회피안하면 데미지 적용 true반환
 
+
+
     }
 
-    // 전투 승리 유무 판정함수
-    // function roundEnd(UnitInfo[] Units, UnitInfo Mobs) internal pure returns (bool) 
-    // {
+    //석상과 몬스터들 일렬화
+    function Serialization(UnitInfo[] Units,UnitInfo[] Mobs,uint numOfMob ) internal view returns(UnitInfo[] , uint)
+    {
+        uint serialnum = 0;
+        if(users[msg.sender].numStatues>=numOfMob)
+            serialnum = users[msg.sender].numStatues*2;
+        if(users[msg.sender].numStatues<numOfMob)
+            serialnum = numOfMob*2;
+        UnitInfo[] memory roundOnUnits = new UnitInfo[](serialnum);
+        for(uint k = 0; k < users[msg.sender].numStatues+numOfMob ; k++ )
+        {
+            if(k%2 == 0)    //짝수 인덱스에는 석상들 배치
+                roundOnUnits[k] = Units[(k%2)+1];
+            if(k%2 == 1)    //홀수 인덱스에는 몬스터들 배치
+                roundOnUnits[k] = Mobs[k%2];
+        }
+        return (roundOnUnits,serialnum);
+    }
 
-    // }
+    //전투 종료 판정 함수
+    function Endofbattle(uint sumOfUnithp, uint sumOfMobhp)internal view returns (bool endofbattle, uint winner)
+    {
+        if(sumOfUnithp == 0 )
+            return (true, 1);   // winner 가 1인 경우 유저 승리
+        if(sumOfMobhp == 0)
+            return (true, 2);  // winner 가 2인 경우 몬스터 승리
+        if(sumOfUnithp != 0 && sumOfMobhp != 0)
+            return (false, 0);  // 전투 지속
+    }
 
     //데미지 적용 함수
     function applyDamage(UnitInfo to, uint damage)internal view returns (bool)
