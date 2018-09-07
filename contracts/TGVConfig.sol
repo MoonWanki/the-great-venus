@@ -7,8 +7,6 @@ contract TGVConfig is TGVBase {
 
     using SafeMath for uint256;
 
-    event TGVConfigUpdated();
-
     function setToDefault() public onlyOwner {
 
         // 석상                                             // 이름            얻는 스테이지
@@ -62,8 +60,6 @@ contract TGVConfig is TGVBase {
         requiredExp[14] = 85000;
         requiredExp[15] = 100000;
         numRequiredExp = 15; 
-
-        emit TGVConfigUpdated();
     }
 
     // function getHpequipvalue(uint level, ) view
@@ -81,10 +77,8 @@ contract TGVConfig is TGVBase {
 
     function addStageInfo() external onlyOwner returns(uint) {
 
-        numStageInfo.add(1);
+        numStageInfo = numStageInfo.add(1);
         stageInfoList[numStageInfo] = StageInfo([uint(0), 0, 0, 0, 0], [uint(0), 0, 0, 0, 0], [uint(0), 0, 0, 0, 0]);
-        emit TGVConfigUpdated();
-
         return numStageInfo;
     }
 
@@ -97,15 +91,13 @@ contract TGVConfig is TGVBase {
         uint32 _avd
     ) external onlyOwner returns(uint) {
 
-        numStatueInfo.add(1);
+        numStatueInfo = numStatueInfo.add(1);
         statueInfoList[numStatueInfo] = UnitInfo(_hp, _atk, _def, _crt, _avd);
-        emit TGVConfigUpdated();
-
         return numStatueInfo;
     }
     
 
-    function addMonsterInfo(
+    function addMobInfo(
         uint32 _hp,
         uint32 _atk,
         uint32 _def,
@@ -113,10 +105,8 @@ contract TGVConfig is TGVBase {
         uint32 _avd
     ) external onlyOwner returns(uint) {
 
-        numMobInfo.add(1);
+        numMobInfo = numMobInfo.add(1);
         mobInfoList[numMobInfo] = UnitInfo(_hp, _atk, _def, _crt, _avd);
-        emit TGVConfigUpdated();
-
         return numMobInfo;
     }
 
@@ -137,8 +127,6 @@ contract TGVConfig is TGVBase {
         statueInfoList[_no].def = _def;
         statueInfoList[_no].crt = _crt;
         statueInfoList[_no].avd = _avd;
-        emit TGVConfigUpdated();
-
         return _no;
     }
     
@@ -157,8 +145,6 @@ contract TGVConfig is TGVBase {
         mobInfoList[_no].def = _def;
         mobInfoList[_no].crt = _crt;
         mobInfoList[_no].avd = _avd;
-        emit TGVConfigUpdated();
-
         return _no;
     }
 

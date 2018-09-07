@@ -4,7 +4,6 @@ import abi from '../../../build/contracts/TGV.json';
 const contract = require('truffle-contract');
 
 const initialState = {
-    isLoading: false,
     isLoaded: false,
     statueInfoList: null,
     mobInfoList: null,
@@ -12,7 +11,6 @@ const initialState = {
     requiredExpList: null,
 };
 
-const SET_LOADING = 'admin/SET_LOADING';
 const SET_LOADED = 'admin/SET_LOADED';
 const SET_STATUE = 'admin/SET_STATUE';
 const SET_MOB = 'admin/SET_MOB';
@@ -24,8 +22,6 @@ export const setConfigToDefault = web3Instance => dispatch => {
 
     const TGV = contract(abi);
     TGV.setProvider(web3Instance.currentProvider);
-    dispatch({ type: SET_LOADING, payload: true });
-
     web3Instance.eth.getCoinbase((err, coinbase) => {
         if (!err) {
             TGV.deployed()
@@ -33,13 +29,10 @@ export const setConfigToDefault = web3Instance => dispatch => {
                 return instance.setToDefault({ from: coinbase });
             }).then(() => {
                 console.log("기본값으로 설정됨");
-                dispatch({ type: SET_LOADING, payload: false });
             }).catch(err => {
-                dispatch({ type: SET_LOADING, payload: false });
                 console.error(err);
             })
         } else {
-            dispatch({ type: SET_LOADING, payload: false });
             console.error("error in getCoinbase()");
         }
     });
@@ -49,53 +42,103 @@ export const loadConfig = web3Instance => dispatch => {
 
     const TGV = contract(abi);
     TGV.setProvider(web3Instance.currentProvider);
-    dispatch({ type: SET_LOADING, payload: true });
     let TGVInstance, promises;
-
     web3Instance.eth.getCoinbase((err, coinbase) => {
-        if (!err) {
+        if(!err) {
             TGV.deployed()
             .then(instance => {
                 TGVInstance = instance;
-                dispatch({ type: SET_LOADING, payload: false });
                 promises = [];
-                for(var i=1 ; i<=10 ; i++) {
+                for(var i=1 ; i<=20 ; i++) {
                     promises.push(TGVInstance.statueInfoList(i));
                 }
                 return Promise.all(promises);
             }).then(statueInfoList => {
                 dispatch({ type: SET_STATUE, payload: statueInfoList });
                 promises = [];
-                for(var i=1 ; i<=10 ; i++) {
+                for(var i=1 ; i<=20 ; i++) {
                     promises.push(TGVInstance.mobInfoList(i));
                 }
                 return Promise.all(promises);
             }).then(mobInfoList => {
                 dispatch({ type: SET_MOB, payload: mobInfoList });
                 promises = [];
-                for(var i=1 ; i<=15 ; i++) {
+                for(var i=1 ; i<=20 ; i++) {
                     promises.push(TGVInstance.requiredExp(i));
                 }
                 return Promise.all(promises);
             }).then(requiredExpList => {
                 dispatch({ type: SET_REQUIRED_EXP, payload: requiredExpList });
-                dispatch({ type: SET_LOADING, payload: false });
                 dispatch({ type: SET_LOADED, payload: true });
             }).catch(err => {
-                dispatch({ type: SET_LOADING, payload: false });
+                dispatch({ type: SET_LOADED, payload: false });
+                console.error(err);
+            });
+        } else {
+            console.error("error in getCoinbase()");
+        }
+    });
+}
+
+export const addConfig = (web3Instance, category, data) => dispatch => {
+
+    const TGV = contract(abi);
+    TGV.setProvider(web3Instance.currentProvider);
+    web3Instance.eth.getCoinbase((err, coinbase) => {
+        if (!err) {
+            TGV.deployed()
+            .then(instance => {
+                switch(category) {
+                    case 'statue':
+                        return instance.addStatueInfo(data.hp, data.atk, data.def, data.crt, data.avd, { from: coinbase });
+                    case 'mob':
+                        return instance.addMobInfo(data.hp, data.atk, data.def, data.crt, data.avd, { from: coinbase });
+                    case 'stage':
+                        return instance.addStageInfo({ from: coinbase });
+                    default:
+                        throw Error("invalid category for running addConfig()");
+                }
+            }).then(() => {
+                loadConfig();
+            }).catch(err => {
                 console.error(err);
             })
         } else {
-            dispatch({ type: SET_LOADING, payload: false });
+            console.error("error in getCoinbase()");
+        }
+    });
+}
+
+export const editConfig = (web3Instance, category, data) => dispatch => {
+
+    const TGV = contract(abi);
+    TGV.setProvider(web3Instance.currentProvider);
+    web3Instance.eth.getCoinbase((err, coinbase) => {
+        if (!err) {
+            TGV.deployed()
+            .then(instance => {
+                switch(category) {
+                    case 'statue':
+                        return instance.editStatueInfo(data.whatNo, data.hp, data.atk, data.def, data.crt, data.avd, { from: coinbase });
+                    case 'mob':
+                        return instance.editMobInfo(data.whatNo, data.hp, data.atk, data.def, data.crt, data.avd, { from: coinbase });
+                    // case 'stage':
+                    //     return instance.editStageInfo({ from: coinbase });
+                    default:
+                        throw Error("invalid category for running addConfig()");
+                }
+            }).then(() => {
+                loadConfig();
+            }).catch(err => {
+                console.error(err);
+            })
+        } else {
             console.error("error in getCoinbase()");
         }
     });
 }
 
 export default handleActions({
-    [SET_LOADING]: (state, { payload }) => {
-        return { ...state, isLoading: payload };
-    },
     [SET_LOADED]: (state, { payload }) => {
         return { ...state, isLoaded: payload };
     },

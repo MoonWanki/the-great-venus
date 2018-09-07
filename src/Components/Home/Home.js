@@ -43,8 +43,16 @@ class Home extends Component {
                         <p>
                             크롬이나 파폭을 까세요. 어서 이 게임을 즐겨야 하지 않겠어요?
                         </p>
-                        <a href='https://www.google.com/chrome/' target="_blank"><button className="btn btn-action">get Chrome</button></a>
-                        <a href='https://www.mozilla.org' target="_blank"><button className="btn btn-action">get Firefox</button></a>
+                        <a href='https://www.google.com/chrome/' target="_blank">
+                            <button className="btn btn-action" onClick={() => this.setState({ openNoBrowserModal: false })}>
+                                get Chrome
+                            </button>
+                        </a>
+                        <a href='https://www.mozilla.org' target="_blank">
+                            <button className="btn btn-action" onClick={() => this.setState({ openNoBrowserModal: false })}>
+                                get Firefox
+                            </button>
+                        </a>
                 </Modal>
 
                 <Modal open={openNoMetamaskModal} onClose={() => this.setState({ openNoMetamaskModal: false })} center>
@@ -52,7 +60,11 @@ class Home extends Component {
                         <p>
                             이더리움 게임을 하려면 메타마스크는 필수입니다. 지금 당장 설치하세요. 1분도 안 걸립니다.
                         </p>
-                        <button className="btn btn-action">GET METAMASK</button>
+                        <a href='https://metamask.io/' target="_black">
+                            <button className="btn btn-action" onClick={() => this.setState({ openNoMetamaskModal: false })}>
+                                GET METAMASK
+                            </button>
+                        </a>
                 </Modal>
 
                 <Modal open={openPlzLoginModal} onClose={() => this.setState({ openPlzLoginModal: false })} center>

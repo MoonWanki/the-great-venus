@@ -9,16 +9,44 @@ import './AdminPage.scss';
 
 class AdminPage extends Component {
 
-    componentDidMount() {
-        const { web3Instance, AdminActions } = this.props;
-        if(web3Instance) {
-            AdminActions.loadConfig(web3Instance);
+    constructor(props) {
+        super(props);
+        this.state = {
+            statueInfoForm: {
+                hp: '',
+                atk: '',
+                def: '',
+                crt: '',
+                avd: '',
+                whatNo: '',
+            },
+            mobInfoForm: {
+                hp: '',
+                atk: '',
+                def: '',
+                crt: '',
+                avd: '',
+                whatNo: '',
+            },
+            requiredExpForm: {
+                exp: '',
+                whatLevel: '',
+            },
         }
+    }
+
+    componentDidMount() {
+        setInterval(()=>{
+            if(this.props.web3Instance) {
+                this.props.AdminActions.loadConfig(this.props.web3Instance);
+            }
+        }, 1000);
     }
 
     render() {
         let key1 = 0, key2 = 0, key3 = 0;
         const { web3Instance, AdminActions, UserActions, statueInfoList, mobInfoList, requiredExpList, userData, isLoaded } = this.props;
+        const { statueInfoForm, mobInfoForm } = this.state;
         
         return (
             <div>
@@ -70,18 +98,28 @@ class AdminPage extends Component {
                     <div className="admin-segment">
                         <p className="admin-segment-title">~ 석상 ~</p>
                         <Row>
-                            <Input s={2} label="HP" />
-                            <Input s={3} label="ATK" />
-                            <Input s={3} label="DEF" />
-                            <Input s={2} label="CRT" />
-                            <Input s={2} label="AVD" />
+                            <Input s={4} label="HP" onChange={(e, v)=>this.setState({ statueInfoForm: {...statueInfoForm, hp: v}})} />
+                            <Input s={2} label="ATK" onChange={(e, v)=>this.setState({ statueInfoForm: {...statueInfoForm, atk: v}})} />
+                            <Input s={2} label="DEF" onChange={(e, v)=>this.setState({ statueInfoForm: {...statueInfoForm, def: v}})} />
+                            <Input s={2} label="CRT" onChange={(e, v)=>this.setState({ statueInfoForm: {...statueInfoForm, crt: v}})} />
+                            <Input s={2} label="AVD" onChange={(e, v)=>this.setState({ statueInfoForm: {...statueInfoForm, avd: v}})} />
                         </Row>
                         <Row>
-                            <Input s={2} placeholder="몇" />
+                            <Input s={2} placeholder="몇" onChange={(e, v)=>this.setState({ statueInfoForm: {...statueInfoForm, whatNo: v}})} />
                             번 석상을
-                            <Button floating flat className='amber' waves='light' icon='edit' />
-                            or
-                            <Button floating flat className='light-green' waves='light' icon='add' />
+                            <Button floating flat className='amber' waves='light' icon='edit' onClick={()=>{
+                                if(statueInfoForm.whatNo && statueInfoForm.hp && statueInfoForm.atk && statueInfoForm.def && statueInfoForm.crt && statueInfoForm.avd)
+                                    AdminActions.editConfig(web3Instance, 'statue', statueInfoForm);
+                                else
+                                    window.Materialize.toast('항목을 전부 입력해주세요!', 1500);
+                            }} />
+                            또는 신규 석상을
+                            <Button floating flat className='light-green' waves='light' icon='add' onClick={()=>{
+                                if(statueInfoForm.hp && statueInfoForm.atk && statueInfoForm.def && statueInfoForm.crt && statueInfoForm.avd)
+                                    AdminActions.addConfig(web3Instance, 'statue', statueInfoForm)
+                                else
+                                    window.Materialize.toast('항목을 전부 입력해주세요!', 1500);  
+                            }} />
                         </Row>
                         <Table striped bordered>
                             <thead>
@@ -97,18 +135,28 @@ class AdminPage extends Component {
                     <div className="admin-segment">
                         <p className="admin-segment-title">~ 몬스터 ~</p>
                         <Row>
-                            <Input s={2} label="HP" />
-                            <Input s={3} label="ATK" />
-                            <Input s={3} label="DEF" />
-                            <Input s={2} label="CRT" />
-                            <Input s={2} label="AVD" />
+                            <Input s={4} label="HP" onChange={(e, v)=>this.setState({ mobInfoForm: {...mobInfoForm, hp: v}})} />
+                            <Input s={2} label="ATK" onChange={(e, v)=>this.setState({ mobInfoForm: {...mobInfoForm, atk: v}})} />
+                            <Input s={2} label="DEF" onChange={(e, v)=>this.setState({ mobInfoForm: {...mobInfoForm, def: v}})} />
+                            <Input s={2} label="CRT" onChange={(e, v)=>this.setState({ mobInfoForm: {...mobInfoForm, crt: v}})} />
+                            <Input s={2} label="AVD" onChange={(e, v)=>this.setState({ mobInfoForm: {...mobInfoForm, avd: v}})} />
                         </Row>
                         <Row>
-                            <Input s={2} placeholder="몇" />
+                            <Input s={2} placeholder="몇" onChange={(e, v)=>this.setState({ mobInfoForm: {...mobInfoForm, whatNo: v}})} />
                             번 몬스터를
-                            <Button floating flat className='amber' waves='light' icon='edit' />
-                            or
-                            <Button floating flat className='light-green' waves='light' icon='add' />
+                            <Button floating flat className='amber' waves='light' icon='edit' onClick={()=>{
+                                if(mobInfoForm.whatNo && mobInfoForm.hp && mobInfoForm.atk && mobInfoForm.def && mobInfoForm.crt && mobInfoForm.avd)
+                                    AdminActions.editConfig(web3Instance, 'mob', mobInfoForm);
+                                else
+                                    window.Materialize.toast('항목을 전부 입력해주세요!', 1500);
+                            }} />
+                            또는 신규 몬스터를
+                            <Button floating flat className='light-green' waves='light' icon='add' onClick={()=>{
+                                if(mobInfoForm.hp && mobInfoForm.atk && mobInfoForm.def && mobInfoForm.crt && mobInfoForm.avd)
+                                    AdminActions.addConfig(web3Instance, 'mob', mobInfoForm)
+                                else
+                                    window.Materialize.toast('항목을 전부 입력해주세요!', 1500);  
+                            }} />
                         </Row>
                         <Table striped bordered>
                             <thead>
@@ -121,7 +169,7 @@ class AdminPage extends Component {
                             </tbody>
                         </Table>
                     </div>
-                    <div className="admin-segment" style={{width: '200px'}}>
+                    <div className="admin-segment" style={{width: '220px'}}>
                         <p className="admin-segment-title">~ 요구 경험치 ~</p>
                         <Row>
                             <Input s={12} label="EXP" />
