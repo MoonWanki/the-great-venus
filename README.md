@@ -1,5 +1,5 @@
 # The Great Venus (2018)
-[![React](https://img.shields.io/badge/React-v15.4.2-blue.svg)](https://reactjs.org/)
+[![React](https://img.shields.io/badge/React-v16.4.0-blue.svg)](https://reactjs.org/)
 [![Redux](https://img.shields.io/badge/Redux-v4.0-9348ce.svg)](https://redux.js.org/)
 [![Solidity](https://img.shields.io/badge/Solidity-v0.4.22-6f7f8e.svg)](https://solidity.readthedocs.io)  
 

@@ -11,42 +11,57 @@ class Home extends Component {
     constructor(props) {
         super(props);
         this.state = {
-            openInvalidBrowserModal: false,
-            openMetamaskUninstalledModal: false,
+            openNoBrowserModal: false,
+            openNoMetamaskModal: false,
+            openPlzLoginModal: false,
         }
     }
 
     onStartButtonClick = () => {
         if(!this.props.web3Instance) {
-            if(typeof InstallTrigger !== 'undefined' || (!!window.chrome && !!window.chrome.webstore)) { // if neither chrome or firefox
-                this.setState({ openMetamaskUninstalledModal: true });
-            } else {
-                this.setState({ openInvalidBrowserModal: true });
+            if(typeof InstallTrigger !== 'undefined' || (!!window.chrome && !!window.chrome.webstore)) { // if cannot find metamask
+                this.setState({ openNoMetamaskModal: true });
+            } else { // if neither chrome or firefox
+                this.setState({ openNoBrowserModal: true });
             }
-        } else {
-            this.props.history.push('/game');
+        } else { // if metamask OK
+            if(!this.props.selectedAddress) {
+                this.setState({ openPlzLoginModal: true });
+            } else {
+                this.props.history.push('/game');
+            }
         }
     }
 
     render() {
-        const { openInvalidBrowserModal, openMetamaskUninstalledModal } = this.state
+        const { openNoBrowserModal, openNoMetamaskModal, openPlzLoginModal } = this.state;
         return (
             <Fragment>
-                <Modal open={openInvalidBrowserModal} onClose={() => this.setState({ openInvalidBrowserModal: false })} center>
-                        <h2>엥? 크롬이 아니신데요?</h2>
+
+                <Modal open={openNoBrowserModal} onClose={() => this.setState({ openNoBrowserModal: false })} center>
+                        <h5>엥? 크롬이 아니신데요?</h5>
                         <p>
                             크롬이나 파폭을 까세요. 어서 이 게임을 즐겨야 하지 않겠어요?
                         </p>
-                        <button className="btn btn-action">크롬 설치</button>
-                        <button className="btn btn-action">파폭 설치</button>
+                        <a href='https://www.google.com/chrome/' target="_blank"><button className="btn btn-action">get Chrome</button></a>
+                        <a href='https://www.mozilla.org' target="_blank"><button className="btn btn-action">get Firefox</button></a>
                 </Modal>
-                <Modal open={openMetamaskUninstalledModal} onClose={() => this.setState({ openMetamaskUninstalledModal: false })} center>
-                        <h2>메타마스크를 까셔야죠!</h2>
+
+                <Modal open={openNoMetamaskModal} onClose={() => this.setState({ openNoMetamaskModal: false })} center>
+                        <h5>메타마스크를 까셔야죠!</h5>
                         <p>
                             이더리움 게임을 하려면 메타마스크는 필수입니다. 지금 당장 설치하세요. 1분도 안 걸립니다.
                         </p>
-                        <button className="btn btn-action">메타마스크 설치</button>
+                        <button className="btn btn-action">GET METAMASK</button>
                 </Modal>
+
+                <Modal open={openPlzLoginModal} onClose={() => this.setState({ openPlzLoginModal: false })} center>
+                        <h5>메타마스크에 로그인 해주세요!</h5>
+                        <p>
+                            오른쪽 위의 여우 얼굴을 눌러주세요! 여우가 당신을 기다리고 있습니다.
+                        </p>
+                </Modal>
+
                 <div>
                     <div className="home-banner">
                         <div className="home-banner-title">
@@ -65,6 +80,7 @@ class Home extends Component {
                         What are you waiting for?
                     </div>
                 </div>
+
             </Fragment>
         );
     }
@@ -73,5 +89,6 @@ class Home extends Component {
 export default connect(
     (state) => ({
       web3Instance: state.web3Module.web3Instance,
+      selectedAddress: state.web3Module.selectedAddress,
     })
 )(Home);

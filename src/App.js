@@ -12,17 +12,17 @@ class App extends Component {
 
   componentDidMount() {
 
-    const { Web3Actions, UserActions, selectedAddress, networkVersion } = this.props;
+    const { Web3Actions, UserActions } = this.props;
 
     getWeb3
     .then(({ web3Instance }) => {
       console.log('finding web3.');
       Web3Actions.initializeWeb3(web3Instance); // save web3 instance in store
       UserActions.loadUserData(web3Instance); // load user data when initializing web3
-      web3Instance.currentProvider.publicConfigStore.on('update', ({ newSelectedAddress, newNetworkVersion }) => {
-        if(selectedAddress !== newSelectedAddress || networkVersion !== newNetworkVersion) {
+      web3Instance.currentProvider.publicConfigStore.on('update', ({ selectedAddress, networkVersion }) => {
+        if(this.props.selectedAddress !== selectedAddress || this.props.networkVersion !== networkVersion) {
           window.Materialize.toast('Your account or network has changed!', 1500);
-          Web3Actions.setSelectedAddress(newSelectedAddress);
+          Web3Actions.setSelectedAddress(selectedAddress);
         }
       });
     })
