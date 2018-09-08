@@ -50,7 +50,6 @@ export const createUser = (web3Instance, name) => dispatch => {
             .then(instance => {
                 return instance.createUser(name, { from: coinbase });
             }).then(data => {
-                console.log(data);
                 dispatch({
                     type: SET_USER_DATA,
                     payload: data
@@ -77,7 +76,6 @@ export default handleActions({
             numStatue: payload[6],
             // equips: payload[7],
         }
-        console.log(payload);
        return {
            ...state,
            userData: data

@@ -4,7 +4,10 @@ import { Link } from 'react-router-dom';
 import Fade from 'react-reveal/Fade';
 import Modal from 'react-responsive-modal';
 import { connect } from 'react-redux';
+import $ from 'jquery';
 import './Home.scss';
+import { Icon, Footer } from 'react-materialize';
+import { Parallax } from 'react-parallax';
 
 class Home extends Component {
 
@@ -15,6 +18,13 @@ class Home extends Component {
             openNoMetamaskModal: false,
             openPlzLoginModal: false,
         }
+    }
+
+    componentDidMount() {
+        $(window).scroll(()=>{
+            var scrolled = $(window).scrollTop();
+            $('.home-banner').css('top', scrolled*0.5 + 'px');
+        })
     }
 
     onStartButtonClick = () => {
@@ -74,24 +84,100 @@ class Home extends Component {
                         </p>
                 </Modal>
 
-                <div>
-                    <div className="home-banner">
-                        <div className="home-banner-title">
-                            <Fade left duration={800} distance='100px'>
-                                <p className="home-banner-title-text">The Great Venus</p>
-                            </Fade>
-                            <div className='home-banner-start' onClick={this.onStartButtonClick}>
-                                START
-                            </div>
+                <div className="home-banner">
+                    <div className="home-banner-title">
+                        <Fade left duration={800}>
+                            <p className="home-banner-title-text">The Great Venus</p>
+                        </Fade>
+                        <div className='home-banner-start' onClick={this.onStartButtonClick}>
+                            START
                         </div>
-                        <div className="home-banner-venus" />
-                    </div>
-                    <Link to='/test'><div style={{ position: "absolute", top: '0', width: '120px', background: 'goldenrod', color: 'black' }}>관리자페이지</div></Link>
-                    <div className="home-section">
-                        <p><span style={{fontWeight: '700'}}>Decentralized</span> RPG in the Ethereum network.</p>
-                        What are you waiting for?
                     </div>
                 </div>
+
+                <Link to='/test'>
+                    <div style={{ position: "absolute", top: '5px', left: '5px', color: 'lightgrey' }}>
+                        <Icon>settings</Icon>
+                    </div>
+                </Link>
+
+                <div className="home-section-1">
+                    <Fade bottom duration={500} fraction={1}>
+                        <p className='home-section-title'>
+                            Who is <span style={{fontWeight: '800'}}>The Great Venus?</span>
+                        </p>
+                    </Fade>
+                    <Fade bottom duration={500} fraction={0.5}>
+                        <p className='home-section-text'>
+                            The Guiliano's wish is to see the Venus, who has ULTIMATE Necklace, the greatest equipment in the world.<br />
+                            Do you know? They can get more power by acquiring more special necklace!<br />
+                            Everyone's hope is to be strong, and so is Guiliano.<br />
+                            That's why Guiliano finally decided to go on an adventure.
+                        </p>
+                    </Fade>
+                </div>
+
+                <Parallax bgImage={require('../../images/network.jpg')} strength={500}>
+                    <div className="home-section-2">
+                        <Fade bottom duration={500} fraction={1}>
+                            <p className='home-section-title'>
+                                <span style={{fontWeight: '800'}}>Turn-based RPG</span> on <span style={{fontWeight: '800'}}>Ethereum network</span>
+                            </p>
+                        </Fade>
+                        <Fade bottom duration={500} fraction={0.5}>
+                            <p className='home-section-text'>
+                                Decentralized. Safe by blockchain.<br />
+                                You can grow your friends every on 24/7.<br />
+                                All of data communication will be in the safe, transparent, public blockchain network whenever and forever.
+                            </p>
+                        </Fade>
+                    </div>
+                </Parallax>
+                
+                <div className="home-section-3">
+                    <Fade bottom duration={500} fraction={1}>
+                        <p className='home-section-title'>
+                            Be <span style={{fontWeight: '800'}}>Ranker</span> and Be <span style={{fontWeight: '800'}}>Rich!</span>
+                        </p>
+                    </Fade>
+                    <Fade bottom duration={500} fraction={0.5}>
+                        <p className='home-section-text'>
+                            There is a big deal, Colosseum.<br />
+                            Make your rank higher! Then your daily rewards gotta be nice!
+                        </p>
+                    </Fade>
+                </div>
+
+                <div className="home-section-4">
+                    <Fade bottom duration={500} fraction={1}>
+                        <p className='home-section-title'>
+                            Our Team
+                        </p>
+                    </Fade>
+                    <Fade bottom duration={500} fraction={0.5}>
+                    <p className='home-section-text'>
+                        Moon Wanki<br />
+                        Jamlee<br />
+                        Jisoo Han<br />
+                    </p>
+                    </Fade>
+                </div>
+
+                <Footer copyrights="ⓒ 2018 The Great Venus Team. All rights reserved."
+                moreLinks={
+                    <a className="grey-text text-lighten-4 right" href="#!">More Links</a>
+                }
+                links={
+                    <ul>
+                    <li><a className="grey-text text-lighten-3" href="https://github.com/MoonWanki/the-great-venus">GitHub</a></li>
+                    <li><a className="grey-text text-lighten-3" href="https://www.octopusfantasy.com">Octopus Fantasy</a></li>
+                    </ul>
+                }
+                className='grey darken-2'
+                >
+                    <h5 className="white-text">The Great Venus</h5>
+                    <p className="grey-text text-lighten-4">This project is for <span style={{fontWeight: '700', color: 'gold'}}>2018-2 Media Project</span> of the <a href='http://media.ajou.ac.kr'><span style={{fontWeight: '500'}}>Dept. of Digital Media</span></a> at <a href='http://www.ajou.ac.kr'><span style={{fontWeight: '500'}}>Ajou Univ.</span></a></p>
+                </Footer>
 
             </Fragment>
         );

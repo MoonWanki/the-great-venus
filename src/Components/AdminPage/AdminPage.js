@@ -38,6 +38,7 @@ class AdminPage extends Component {
     componentDidMount() {
         setInterval(()=>{
             if(this.props.web3Instance) {
+                this.props.UserActions.loadUserData(this.props.web3Instance);
                 this.props.AdminActions.loadConfig(this.props.web3Instance);
             }
         }, 1000);
@@ -193,7 +194,7 @@ class AdminPage extends Component {
                         </Table>
                     </div>
                 </div>
-                :"정보를 불러오지 못했습니다. 우측 상단의 새로고침을 눌러주세요."}
+                :null}
             </div>
         );
     }

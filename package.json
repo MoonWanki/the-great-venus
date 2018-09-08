@@ -55,6 +55,7 @@
     "react": "^16.4.0",
     "react-dom": "^16.4.0",
     "react-materialize": "^2.4.5",
+    "react-parallax": "^1.8.0",
     "react-redux": "^5.0.7",
     "react-responsive-modal": "^3.3.0",
     "react-reveal": "^1.2.2",

@@ -28,7 +28,7 @@ export const setConfigToDefault = web3Instance => dispatch => {
             .then(instance => {
                 return instance.setToDefault({ from: coinbase });
             }).then(() => {
-                console.log("기본값으로 설정됨");
+                window.Materialize.toast('사전 설정이 완료되었습니다.', 2500);  
             }).catch(err => {
                 console.error(err);
             })
