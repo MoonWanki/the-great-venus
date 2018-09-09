@@ -6,7 +6,7 @@ import { bindActionCreators } from 'redux';
 import * as web3Actions from './store/modules/web3Module';
 import * as userActions from './store/modules/userModule';
 import { BrowserRouter, Route, Switch } from 'react-router-dom';
-import { Home, AdminPage } from 'Components';
+import { Home, AdminPage, Main } from 'Components';
 
 class App extends Component {
 
@@ -35,6 +35,7 @@ class App extends Component {
         <Switch>
           <Route exact path="/" component={Home} />
           <Route path="/test" component={AdminPage} />
+          <Route path="/client" component={Main} />
         </Switch>
       </BrowserRouter>
     );
