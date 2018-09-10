@@ -8,9 +8,10 @@ import Modal from 'react-responsive-modal';
 import { connect } from 'react-redux';
 import $ from 'jquery';
 import './Home.scss';
-import { Icon, Footer } from 'react-materialize';
+import { Icon, Footer, Dropdown, Button, NavItem } from 'react-materialize';
 import { Parallax } from 'react-parallax';
 import avatar1 from 'images/avatar_moonwanki.jpg';
+import avatar2 from 'images/avatar_jamlee.jpg';
 
 class Home extends Component {
 
@@ -20,6 +21,29 @@ class Home extends Component {
             openNoBrowserModal: false,
             openNoMetamaskModal: false,
             openPlzLoginModal: false,
+            text: {
+                noBrowserModal: {
+                    title: {
+                        'en': 'Not supported browser!',
+                        'ko': '엥? 크롬이 아니신데요?',
+                    },
+                    content: {
+                        'en': 'You should use Chrome or Firefox to enjoy this game.',
+                        'ko': '크롬이나 파폭을 까세요. 어서 이 게임을 즐겨야 하지 않겠어요?',
+                    },
+                    getChromeBtn: {
+                        'en': 'GET CHROME',
+                        'ko': '크롬 설치하기',
+                    },
+                    getFirefoxBtn: {
+                        'en': 'GET FIREFOX',
+                        'ko': '파이어폭스 설치하기',
+                    }
+                },
+                noMetamaskModal: {
+
+                }
+            }
         }
     }
 
@@ -47,23 +71,22 @@ class Home extends Component {
     }
 
     render() {
-        const { openNoBrowserModal, openNoMetamaskModal, openPlzLoginModal } = this.state;
+        const { openNoBrowserModal, openNoMetamaskModal, openPlzLoginModal, text } = this.state;
+        const { language } = this.props;
         return (
             <Fragment>
 
                 <Modal open={openNoBrowserModal} onClose={() => this.setState({ openNoBrowserModal: false })} center>
-                        <h5>엥? 크롬이 아니신데요?</h5>
-                        <p>
-                            크롬이나 파폭을 까세요. 어서 이 게임을 즐겨야 하지 않겠어요?
-                        </p>
+                        <h5>{text.noBrowserModal.title[language]}</h5>
+                        <p>{text.noBrowserModal.content[language]}</p>
                         <a href='https://www.google.com/chrome/' target="_blank">
                             <button className="btn btn-action" onClick={() => this.setState({ openNoBrowserModal: false })}>
-                                get Chrome
+                                {text.noBrowserModal.getChromeBtn[language]}
                             </button>
                         </a>
                         <a href='https://www.mozilla.org' target="_blank">
                             <button className="btn btn-action" onClick={() => this.setState({ openNoBrowserModal: false })}>
-                                get Firefox
+                                {text.noBrowserModal.getFirefoxBtn[language]}
                             </button>
                         </a>
                 </Modal>
@@ -108,13 +131,22 @@ class Home extends Component {
                     </div>
                 </Link>
 
-                <div className="home-section" style={{ background: 'white' }}>
+                {/* <Dropdown trigger={
+                    <Button >Drop me!</Button>
+                }>
+                <NavItem>one</NavItem>
+                <NavItem>two</NavItem>
+                <NavItem divider />
+                <NavItem>three</NavItem>
+                </Dropdown> */}
+
+                <div className="home-section" style={{ background: '#e5e4e0' }}>
                     <Fade bottom duration={400} distance='60px' fraction={1}>
                         <p className='home-section-title'>
                             Who is <span style={{fontWeight: '800'}}>The Great Venus?</span>
                         </p>
                     </Fade>
-                    <Fade bottom duration={400} distance='60px' fraction={0.5}>
+                    <Fade bottom duration={400} distance='60px' fraction={0.8}>
                         <p className='home-section-text'>
                             The Guiliano's wish is to see the Venus, who has ULTIMATE Necklace, the greatest equipment in the world.<br />
                             Do you know? They can get more power by acquiring more special necklace!<br />
@@ -131,7 +163,7 @@ class Home extends Component {
                                 <span style={{fontWeight: '800'}}>Turn-based RPG</span> on <span style={{fontWeight: '800'}}>Ethereum network</span>
                             </p>
                         </Fade>
-                        <Fade bottom duration={400} distance='60px' fraction={0.5}>
+                        <Fade bottom duration={400} distance='60px' fraction={0.8}>
                             <p className='home-section-text'>
                                 TGV doesn't have any centralized stuff for running.<br />
                                 All transactions are <span style={{fontWeight: '700'}}>decentralized</span>, <span style={{fontWeight: '700'}}>transparent</span>, and <span style={{fontWeight: '700'}}>safe</span>.<br />
@@ -141,13 +173,13 @@ class Home extends Component {
                     </div>
                 </Parallax>
                 
-                <div className="home-section" style={{ background: 'white' }}>
+                <div className="home-section" style={{ background: '#e5e4e0' }}>
                     <Fade bottom duration={400} distance='60px' fraction={1}>
                         <p className='home-section-title'>
                             Get in <span style={{fontWeight: '800'}}>high rank</span> and become <span style={{fontWeight: '800'}}>rich!</span>
                         </p>
                     </Fade>
-                    <Fade bottom duration={400} distance='60px' fraction={0.5}>
+                    <Fade bottom duration={400} distance='60px' fraction={0.8}>
                         <p className='home-section-text'>
                             There is a big deal, <span style={{ fontWeight: '700'}}>Colosseum</span>, a PvP ranking system.<br />
                             TGV daily distributes <span style={{fontWeight: '700'}}>95%</span> of Ethereum it gathered during the day back to high rankers.<br />
@@ -158,17 +190,17 @@ class Home extends Component {
                     </Fade>
                 </div>
 
-                <div className="home-section" style={{ background: '#8e8b8a', color: 'white' }}>
+                <div className="home-section" style={{ background: '#7e7b78', color: 'white' }}>
                     <Fade bottom duration={400} distance='40px' fraction={1}>
                         <p className='home-section-title' style={{ fontSize: '2.2rem', fontWeight: '400', padding: '10px' }}>
-                            Our Team
+                            Our crews
                         </p>
                     </Fade>
                     <Flip left duration={1500} fraction={1}>
                         <div style={{ width: '50px', height: '3px', background: 'white', margin: 'auto' }} />
                     </Flip>
                     <div className='home-section-team-wrapper'>
-                        <Fade bottom distance='60px' duration={400} fraction={0.5}>
+                        <Fade bottom distance='60px' duration={400} fraction={0.6}>
                             <div className="home-section-team-item">
                                 <a target='_blank' href='https://www.octopusfantasy.com'><div className='home-section-team-avatar' style={{ backgroundImage: `url(${avatar1})` }} /></a>
                                 <h5>Moon Wanki</h5>
@@ -178,16 +210,16 @@ class Home extends Component {
                                 <p>Sound Director</p>
                             </div>
                         </Fade>
-                        <Fade bottom distance='60px' duration={400} fraction={0.5} delay={100}>
+                        <Fade bottom distance='60px' duration={400} fraction={0.6} delay={100}>
                             <div className="home-section-team-item">
-                                <div className='home-section-team-avatar' style={{ backgroundImage: `url(https://img00.deviantart.net/2cb8/i/2013/117/7/a/assassins_avatar_by_multispeedking-d6380y4.png)` }} />
+                                <div className='home-section-team-avatar' style={{ backgroundImage: `url(${avatar2})` }} />
                                 <h5>Jamlee</h5>
                                 <div style={{ width: '30px', height: '1px', background: 'white', margin: '5px 0 15px' }} />
                                 <p>Back-End Developer</p>
                                 <p>QA</p>
                             </div>
                         </Fade>
-                        <Fade bottom distance='60px' duration={400} fraction={0.5} delay={200}>
+                        <Fade bottom distance='60px' duration={400} fraction={0.6} delay={200}>
                             <div className="home-section-team-item">
                                 <div className='home-section-team-avatar' style={{ backgroundImage: `url(https://www.scholarshipacademy.org/online/wp-content/uploads/2017/10/chk_captcha.jpg)` }} />
                                 <h5>Jisoo Han</h5>
@@ -220,5 +252,6 @@ export default connect(
     (state) => ({
       web3Instance: state.web3Module.web3Instance,
       selectedAddress: state.web3Module.selectedAddress,
+      language: state.appModule.language,
     })
 )(Home);
