@@ -10,8 +10,9 @@ import $ from 'jquery';
 import './Home.scss';
 import { Icon, Footer, Dropdown, Button, NavItem } from 'react-materialize';
 import { Parallax } from 'react-parallax';
-import avatar1 from 'images/avatar_moonwanki.jpg';
-import avatar2 from 'images/avatar_jamlee.jpg';
+import crew1 from 'images/crew_moonwanki.jpg';
+import crew2 from 'images/crew_jamlee.jpg';
+import crew3 from 'images/crew_jisoohan.jpg';
 
 class Home extends Component {
 
@@ -38,11 +39,32 @@ class Home extends Component {
                     getFirefoxBtn: {
                         'en': 'GET FIREFOX',
                         'ko': '파이어폭스 설치하기',
-                    }
+                    },
                 },
                 noMetamaskModal: {
-
-                }
+                    title: {
+                        'en': 'You need to have Metamask!',
+                        'ko': '메타마스크를 까셔야죠!',
+                    },
+                    content: {
+                        'en': 'Get Metamask and set your Ethereum account! Then you will be ready to enjoy!',
+                        'ko': '이더리움 게임을 하려면 메타마스크는 필수입니다. 지금 당장 설치하세요. 1분도 안 걸립니다.',
+                    },
+                    getMetamaskBtn: {
+                        'en': 'GET METAMASK',
+                        'ko': '메타마스크 설치하기',
+                    },
+                },
+                plzLoginModal: {
+                    title: {
+                        'en': 'Please login to Metamask!',
+                        'ko': '메타마스크에 로그인 해주세요!',
+                    },
+                    content: {
+                        'en': 'Click the fox on your Chrome extension plugins and get login! Then you can enjoy!',
+                        'ko': '오른쪽 위의 여우 얼굴을 눌러주세요! 여우가 당신을 기다리고 있습니다.',
+                    },
+                },
             }
         }
     }
@@ -92,22 +114,20 @@ class Home extends Component {
                 </Modal>
 
                 <Modal open={openNoMetamaskModal} onClose={() => this.setState({ openNoMetamaskModal: false })} center>
-                        <h5>메타마스크를 까셔야죠!</h5>
+                        <h5>{text.noMetamaskModal.title[language]}</h5>
                         <p>
-                            이더리움 게임을 하려면 메타마스크는 필수입니다. 지금 당장 설치하세요. 1분도 안 걸립니다.
+                            
                         </p>
                         <a href='https://metamask.io/' target="_black">
                             <button className="btn btn-action" onClick={() => this.setState({ openNoMetamaskModal: false })}>
-                                GET METAMASK
+                                {text.noMetamaskModal.getMetamaskBtn[language]}
                             </button>
                         </a>
                 </Modal>
 
                 <Modal open={openPlzLoginModal} onClose={() => this.setState({ openPlzLoginModal: false })} center>
-                        <h5>메타마스크에 로그인 해주세요!</h5>
-                        <p>
-                            오른쪽 위의 여우 얼굴을 눌러주세요! 여우가 당신을 기다리고 있습니다.
-                        </p>
+                        <h5>{text.plzLoginModal.title[language]}</h5>
+                        <p>{text.plzLoginModal.content[language]}</p>
                 </Modal>
 
                 <div className="home-banner">
@@ -202,7 +222,7 @@ class Home extends Component {
                     <div className='home-section-team-wrapper'>
                         <Fade bottom distance='60px' duration={400} fraction={0.6}>
                             <div className="home-section-team-item">
-                                <a target='_blank' href='https://www.octopusfantasy.com'><div className='home-section-team-avatar' style={{ backgroundImage: `url(${avatar1})` }} /></a>
+                                <a target='_blank' href='https://www.octopusfantasy.com'><div className='home-section-team-avatar' style={{ backgroundImage: `url(${crew1})` }} /></a>
                                 <h5>Moon Wanki</h5>
                                 <div style={{ width: '30px', height: '1px', background: 'white', margin: '5px 0 15px' }} />
                                 <p>Project Manager</p>
@@ -212,7 +232,7 @@ class Home extends Component {
                         </Fade>
                         <Fade bottom distance='60px' duration={400} fraction={0.6} delay={100}>
                             <div className="home-section-team-item">
-                                <div className='home-section-team-avatar' style={{ backgroundImage: `url(${avatar2})` }} />
+                                <div className='home-section-team-avatar' style={{ backgroundImage: `url(${crew2})` }} />
                                 <h5>Jamlee</h5>
                                 <div style={{ width: '30px', height: '1px', background: 'white', margin: '5px 0 15px' }} />
                                 <p>Back-End Developer</p>
@@ -221,7 +241,7 @@ class Home extends Component {
                         </Fade>
                         <Fade bottom distance='60px' duration={400} fraction={0.6} delay={200}>
                             <div className="home-section-team-item">
-                                <div className='home-section-team-avatar' style={{ backgroundImage: `url(https://www.scholarshipacademy.org/online/wp-content/uploads/2017/10/chk_captcha.jpg)` }} />
+                                <div className='home-section-team-avatar' style={{ backgroundImage: `url(${crew3})` }} />
                                 <h5>Jisoo Han</h5>
                                 <div style={{ width: '30px', height: '1px', background: 'white', margin: '5px 0 15px' }} />
                                 <p>Art Designer</p>
