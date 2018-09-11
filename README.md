@@ -1,6 +1,7 @@
 # The Great Venus (2018)
-[![React](https://img.shields.io/badge/React-v16.4.0-blue.svg)](https://reactjs.org/)
-[![Redux](https://img.shields.io/badge/Redux-v4.0-9348ce.svg)](https://redux.js.org/)
+[![ReactJS](https://img.shields.io/badge/ReactJS-v16.4.0-blue.svg)](https://reactjs.org/)
+[![Redux](https://img.shields.io/badge/Redux-v4.0-9857cc.svg)](https://redux.js.org/)
+[![PixiJS](https://img.shields.io/badge/PixiJS-v4.8.2-e5405b.svg)](https://redux.js.org/)
 [![Solidity](https://img.shields.io/badge/Solidity-v0.4.22-6f7f8e.svg)](https://solidity.readthedocs.io)  
 
 This project is for ***2018-2 Media Project*** class of [*Dept. of Digital Media*](http://media.ajou.ac.kr) in [*Ajou Univ*](http://www.ajou.ac.kr).  
@@ -46,7 +47,7 @@ If you are in luck, it can be more than you invested - means that **you can earn
 ## All systems are decentralized
 
 We don't need any server for running TGV! <del>We have no server in fact.</del>  
-TGV is a **DApp**(Decentralized Application) based on **BLOCKCHAIN** technology.  
+TGV is a **DApp**(Decentralized Application) based on the **blockchain** technology.  
 Thus, all of your data, which includes armies, items, golds and battle records, will be in the public blockchain network whenever and *forever*.
 
 
@@ -69,7 +70,10 @@ No.1 Front-end library in 2018, ReactJS.
 ### Third-party libraries
 
 - **Redux** | https://redux.js.org/  
-For state management in react.
+For state management in react.  
+
+- **PixiJS** | http://www.pixijs.com/  
+Fast, flexible 2D WebGL Renderer engine.  
 
 - **Materialize CSS** | https://materializecss.com/  
 Provides a lot of well-designed components.
