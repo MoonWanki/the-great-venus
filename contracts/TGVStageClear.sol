@@ -5,54 +5,88 @@ import "./TGVItemShop.sol";
 contract TGVStageClear is TGVItemShop 
 {
 
-    function setStageMain(uint stagenum,uint roundnum) public view
+    function setStageMain(uint stagenum) external returns(uint)
     {
-        uint sumOfUnithp = 0;   //석상 총 체력
-        uint sumOfMobhp = 0;    //몬스터 총 체력
-
         //석상들 등장.
         UnitInfo[] memory Units = new UnitInfo[](users[msg.sender].numStatues);
         for(uint i = 0; i < users[msg.sender].numStatues; i++)
         {
             Units[i] = setUnitData()[i]; //장비 장착한 내 석상들..
-            sumOfUnithp = Units[i].hp;
         }
 
         //몬스터들 등장.
-        uint numOfMob = 0; 
+        uint32 numOfMob = 0; 
         UnitInfo[] memory Mobs;
-        (Mobs,numOfMob) = setRound(stagenum,roundnum);
-        for(uint j = 0; j < numOfMob ; j++ )
-        {
-            sumOfMobhp = Mobs[j].hp;
-        }
+        (Mobs,numOfMob) = setRound(stagenum);
+        
+        (uint sumOfUnithp,uint sumOfMobhp) = getSumOfHp(Units, Mobs, numOfMob);
 
         (UnitInfo[] memory roundOnUnits,uint serialnum) = Serialization(Units, Mobs, numOfMob);
 
-        //데미지 구하기
-        uint damage = getDamage(Units[1],Mobs[1]);
-        //데미지 적용
-        applyDamage(Mobs[1],damage);           //회피하면 false반환 ,회피안하면 데미지 적용 true반환
+        while(true)
+        {
+            (bool endofbattle,uint winner) = Endofbattle(sumOfUnithp,sumOfMobhp);
+            if(endofbattle)
+                break;
+            (uint from, uint to) = getAttacker(roundOnUnits,serialnum);         //공격 주체, 공격 대상 정하기
+            uint damage = getDamage(roundOnUnits[from],roundOnUnits[to]);       //데미지 구하기
+            applyDamage(roundOnUnits[to],damage);                               //데미지 적용
+        }
+        return winner;
+    }
 
-
-
+    //전투방식
+    //1. 일렬화된 유닛들을 가장 가까이에 있는 적을 공격
+    //2. 공격 종료시 사망 유무 확인
+    //2-1   공격당한 유닛 사망시-> 재배열 
+    //2-2   공격당한 유닛 생존시-> 진행
+    //3. if 석상 or 몬스터 총 HP == 0
+    //      전투 종료
+    //3. if 총 hp 둘 다 != 0
+    //      진행
+    function getSumOfHp(UnitInfo[] Units,UnitInfo[] Mobs,uint numOfMob)  internal view returns(uint , uint)
+    {
+        uint sumOfUnithp = 0;   //석상 총 체력
+        uint sumOfMobhp = 0;    //몬스터 총 체력
+        for(uint i = 0; i < users[msg.sender].numStatues; i++)
+        {
+            sumOfUnithp = Units[i].hp; //장비 장착한 내 석상들..
+        }
+        for(uint j = 0; j < numOfMob; j++)
+        {
+            sumOfMobhp = Mobs[i].hp; //장비 장착한 내 석상들..
+        }
+        return (sumOfUnithp,sumOfMobhp);
+    }
+    function getAttacker(UnitInfo[] roundOnUnits,uint serialnum) internal view returns(uint , uint)
+    {
+        return (0,0);
+        
     }
 
     //석상과 몬스터들 일렬화
-    function Serialization(UnitInfo[] Units,UnitInfo[] Mobs,uint numOfMob ) internal view returns(UnitInfo[] , uint)
+    function Serialization(UnitInfo[] Units,UnitInfo[] Mobs,uint numOfMob ) internal view returns(UnitInfo[] , uint32)
     {
-        uint serialnum = 0;
-        if(users[msg.sender].numStatues>=numOfMob)
-            serialnum = users[msg.sender].numStatues*2;
-        if(users[msg.sender].numStatues<numOfMob)
-            serialnum = numOfMob*2;
-        UnitInfo[] memory roundOnUnits = new UnitInfo[](serialnum);
-        for(uint k = 0; k < users[msg.sender].numStatues+numOfMob ; k++ )
+        uint32 serialnum = 0;
+        uint32 stackonunit = 0;
+        uint32 stackonmob = 0;
+        UnitInfo[] memory roundOnUnits = new UnitInfo[](users[msg.sender].numStatues+numOfMob);
+        while(true)
         {
-            if(k%2 == 0)    //짝수 인덱스에는 석상들 배치
-                roundOnUnits[k] = Units[(k%2)+1];
-            if(k%2 == 1)    //홀수 인덱스에는 몬스터들 배치
-                roundOnUnits[k] = Mobs[k%2];
+            if(stackonunit < users[msg.sender].numStatues)
+            {
+                roundOnUnits[serialnum] = Units[stackonunit];
+                serialnum++;    
+                stackonunit++;
+            }
+            if(stackonmob < numOfMob)
+            {
+                roundOnUnits[serialnum] = Mobs[stackonmob];
+                serialnum++;    
+                stackonmob++;
+            }
+            if(serialnum == users[msg.sender].numStatues+numOfMob)
+                break;
         }
         return (roundOnUnits,serialnum);
     }
@@ -72,7 +106,7 @@ contract TGVStageClear is TGVItemShop
     function applyDamage(UnitInfo to, uint damage)internal view returns (bool)
     {
         uint randNance = 0;
-        uint randomforAvoid = uint(keccak256(abi.encodePacked(now, msg.sender, randNance)))%100;    //회피율 적용위한 랜덤값
+        uint randomforAvoid = uint(keccak256(abi.encodePacked(block.timestamp, msg.sender, randNance)))%100;    //회피율 적용위한 랜덤값
         if(randomforAvoid<to.avd)   //회피 적용!
             return false;           //데미지 미적용
         else
@@ -89,9 +123,9 @@ contract TGVStageClear is TGVItemShop
     function getDamage(UnitInfo from, UnitInfo to)internal view returns (uint)
     {
         uint randNance = 0;
-        uint random = uint(keccak256(abi.encodePacked(now, msg.sender,randNance)))%40;                //데미지 구간 설정 위한 랜덤값
+        uint random = uint(keccak256(abi.encodePacked(block.timestamp, msg.sender,randNance)))%40;                //데미지 구간 설정 위한 랜덤값
         randNance++;
-        uint randomforCritical = uint(keccak256(abi.encodePacked(now, msg.sender,randNance)))%100;    //강타율 적용위한 랜덤값
+        uint randomforCritical = uint(keccak256(abi.encodePacked(block.timestamp, msg.sender,randNance)))%100;    //강타율 적용위한 랜덤값
         uint crk = 100;
         if(randomforCritical<from.crt)  //강타 적용!
             crk = 150;
@@ -124,33 +158,15 @@ contract TGVStageClear is TGVItemShop
 
 
     //Round 셋팅
-    function setRound(uint stagenum,uint roundnum) public view returns(UnitInfo[] Mobs , uint32 numofmob)
+    function setRound(uint stagenum) public view returns(UnitInfo[] Mobs , uint32 numofmob)
     {
         uint[5] memory round;
-        if(roundnum == 1)
-        {
-            round[0] = stageInfoList[stagenum].round1[0];
-            round[1] = stageInfoList[stagenum].round1[1];
-            round[2] = stageInfoList[stagenum].round1[2];
-            round[3] = stageInfoList[stagenum].round1[3];
-            round[4] = stageInfoList[stagenum].round1[4];
-        }
-        if(roundnum == 2)
-        {
-            round[0] = stageInfoList[stagenum].round2[0];
-            round[1] = stageInfoList[stagenum].round2[1];
-            round[2] = stageInfoList[stagenum].round2[2];
-            round[3] = stageInfoList[stagenum].round2[3];
-            round[4] = stageInfoList[stagenum].round2[4];
-        }
-        if(roundnum == 3)
-        {
-            round[0] = stageInfoList[stagenum].round3[0];
-            round[1] = stageInfoList[stagenum].round3[1];
-            round[2] = stageInfoList[stagenum].round3[2];
-            round[3] = stageInfoList[stagenum].round3[3];
-            round[4] = stageInfoList[stagenum].round3[4];
-        }
+
+        round[0] = stageInfoList[stagenum].round1[0];
+        round[1] = stageInfoList[stagenum].round1[1];
+        round[2] = stageInfoList[stagenum].round1[2];
+        round[3] = stageInfoList[stagenum].round1[3];
+        round[4] = stageInfoList[stagenum].round1[4];
 
         //해당 라운드에 필요한 몬스터 수 구하기
         uint32 NumOfMob = 0;

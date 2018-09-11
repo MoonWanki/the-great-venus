@@ -10,16 +10,16 @@ contract TGVConfig is TGVBase {
     function setToDefault() public onlyOwner {
 
         // 석상                                             // 이름            얻는 스테이지
-        statueInfoList[1] = UnitInfo(20, 11, 10, 10, 5);    // Guiliano        -
-        statueInfoList[2] = UnitInfo(20, 11, 10, 10, 5);    // Haetae          1
-        statueInfoList[3] = UnitInfo(20, 11, 10, 10, 5);    // Moai            15
-        statueInfoList[4] = UnitInfo(20, 11, 10, 10, 5);    // Agrippa         30
-        statueInfoList[5] = UnitInfo(20, 11, 10, 10, 5);    // Mars            45
-        statueInfoList[6] = UnitInfo(20, 11, 10, 10, 5);    // Wepping Angle   60
-        statueInfoList[7] = UnitInfo(20, 11, 10, 10, 5);    // The Thinker     75
-        statueInfoList[8] = UnitInfo(20, 11, 10, 10, 5);    // Liberty Queen   90
+        statueInfoList[1] = UnitInfo(20, 11, 10, 10, 5);    // Guiliano        - 
+        statueInfoList[2] = UnitInfo(20, 11, 10, 10, 5);    // Haetae          1 
+        statueInfoList[3] = UnitInfo(20, 11, 10, 10, 5);    // Moai            15 
+        statueInfoList[4] = UnitInfo(20, 11, 10, 10, 5);    // Agrippa         30 
+        statueInfoList[5] = UnitInfo(20, 11, 10, 10, 5);    // Mars            45 
+        statueInfoList[6] = UnitInfo(20, 11, 10, 10, 5);    // Wepping Angle   60 
+        statueInfoList[7] = UnitInfo(20, 11, 10, 10, 5);    // The Thinker     75 
+        statueInfoList[8] = UnitInfo(20, 11, 10, 10, 5);    // Liberty Queen   90 
         statueInfoList[9] = UnitInfo(20, 11, 10, 10, 5);    // Master Yee     105            
-        statueInfoList[10] = UnitInfo(20, 11, 10, 10, 5);   // Venus          120
+        statueInfoList[10] = UnitInfo(20, 11, 10, 10, 5);   // Venus          120 
         numStatueInfo = 10;
 
         // 레벨별 몬스터 능력치
