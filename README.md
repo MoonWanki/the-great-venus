@@ -1,7 +1,7 @@
 # The Great Venus (2018)
 [![ReactJS](https://img.shields.io/badge/ReactJS-v16.4.0-blue.svg)](https://reactjs.org/)
 [![Redux](https://img.shields.io/badge/Redux-v4.0-9857cc.svg)](https://redux.js.org/)
-[![PixiJS](https://img.shields.io/badge/PixiJS-v4.8.2-e5405b.svg)](https://redux.js.org/)
+[![PixiJS](https://img.shields.io/badge/PixiJS-v4.8.2-e5405b.svg)](http://www.pixijs.com/)
 [![Solidity](https://img.shields.io/badge/Solidity-v0.4.22-6f7f8e.svg)](https://solidity.readthedocs.io)  
 
 This project is for ***2018-2 Media Project*** class of [*Dept. of Digital Media*](http://media.ajou.ac.kr) in [*Ajou Univ*](http://www.ajou.ac.kr).  

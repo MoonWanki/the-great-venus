@@ -21,7 +21,6 @@ class Home extends Component {
         this.state = {
             openNoBrowserModal: false,
             openNoMetamaskModal: false,
-            openPlzLoginModal: false,
             text: {
                 noBrowserModal: {
                     title: {
@@ -55,15 +54,9 @@ class Home extends Component {
                         'ko': '메타마스크 설치하기',
                     },
                 },
-                plzLoginModal: {
-                    title: {
-                        'en': 'Please login to Metamask!',
-                        'ko': '메타마스크에 로그인 해주세요!',
-                    },
-                    content: {
-                        'en': 'Click the fox on your Chrome extension plugins and get login! Then you can enjoy!',
-                        'ko': '오른쪽 위의 여우 얼굴을 눌러주세요! 여우가 당신을 기다리고 있습니다.',
-                    },
+                plzLogin: {
+                    'en': 'Please login to Metamask!',
+                    'ko': '메타마스크에 로그인 해주세요!',
                 },
             }
         }
@@ -85,7 +78,7 @@ class Home extends Component {
             }
         } else { // if metamask OK
             if(!this.props.selectedAddress) {
-                this.setState({ openPlzLoginModal: true });
+                window.Materialize.toast(this.state.text.plzLogin[this.props.language], 1500);
             } else {
                 this.props.history.push('/client');
             }
@@ -93,7 +86,7 @@ class Home extends Component {
     }
 
     render() {
-        const { openNoBrowserModal, openNoMetamaskModal, openPlzLoginModal, text } = this.state;
+        const { openNoBrowserModal, openNoMetamaskModal, text } = this.state;
         const { language } = this.props;
         return (
             <Fragment>
@@ -123,11 +116,6 @@ class Home extends Component {
                                 {text.noMetamaskModal.getMetamaskBtn[language]}
                             </button>
                         </a>
-                </Modal>
-
-                <Modal open={openPlzLoginModal} onClose={() => this.setState({ openPlzLoginModal: false })} center>
-                        <h5>{text.plzLoginModal.title[language]}</h5>
-                        <p>{text.plzLoginModal.content[language]}</p>
                 </Modal>
 
                 <div className="home-banner">

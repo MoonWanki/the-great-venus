@@ -12,23 +12,20 @@ export default class RotatingJamlee extends Component {
         }
     }
 
-      componentDidMount() {
-        this.context.app.ticker.add(this.animate);
-      }
-    
-      componentWillUnmount() {
-        this.context.app.ticker.remove(this.animate);
-      }
-    
-      animate = delta => {
-        // just for fun, let's rotate mr rabbit a little
-        // delta is 1 if running at 100% performance
-        // creates frame-independent tranformation
+    componentDidMount() {
+    this.context.app.ticker.add(this.animate);
+    }
+
+    componentWillUnmount() {
+    this.context.app.ticker.remove(this.animate);
+    }
+
+    animate = delta => {
         this.setState(state => ({
-          ...state,
-          rotation: state.rotation + 0.01 * delta
+            ...state,
+            rotation: state.rotation + 0.01 * delta
         }));
-      };
+    };
 
 
   render() {
