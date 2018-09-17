@@ -11,39 +11,40 @@ contract TGVStageClear is TGVItemShop
         UnitInfo[] memory Units = new UnitInfo[](users[msg.sender].numStatues);
         for(uint i = 0; i < users[msg.sender].numStatues; i++)
         {
-            Units[i] = setUnitData()[i]; //장비 장착한 내 석상들..
+            Units[i] = setUnitData()[i];            //석상들 레벨당 기본 능력치 + 장비 추가 능력치 부여
         }
 
         //몬스터들 등장.
         uint32 numOfMob = 0; 
         UnitInfo[] memory Mobs;
-        (Mobs,numOfMob) = setRound(stagenum);
-        
-        (uint sumOfUnithp,uint sumOfMobhp) = getSumOfHp(Units, Mobs, numOfMob);
+        (Mobs,numOfMob) = setRound(stagenum);        //라운드에 등장할 몬스터 능력치부여
 
-        (UnitInfo[] memory roundOnUnits,uint serialnum) = Serialization(Units, Mobs, numOfMob);
+        //석상들과 몬스터들 일렬화
+        (UnitInfo[] memory roundOnUnits,bool[] memory boolarrayUnits) = Serialization(Units, Mobs, numOfMob);
 
         while(true)
         {
+            (uint sumOfUnithp,uint sumOfMobhp) = getSumOfHp(Units, Mobs, numOfMob);
             (bool endofbattle,uint winner) = Endofbattle(sumOfUnithp,sumOfMobhp);
             if(endofbattle)
                 break;
-            (uint from, uint to) = getAttacker(roundOnUnits,serialnum);         //공격 주체, 공격 대상 정하기
+            (uint from, uint to) = getAttacker(roundOnUnits);                   //공격 주체, 공격 대상 정하기
             uint damage = getDamage(roundOnUnits[from],roundOnUnits[to]);       //데미지 구하기
-            applyDamage(roundOnUnits[to],damage);                               //데미지 적용
+            applyDamage(roundOnUnits[to],damage);                                //데미지 적용 - 회피 했으면 false 반환.
+
         }
         return winner;
     }
 
-    //전투방식
-    //1. 일렬화된 유닛들을 가장 가까이에 있는 적을 공격
-    //2. 공격 종료시 사망 유무 확인
-    //2-1   공격당한 유닛 사망시-> 재배열 
-    //2-2   공격당한 유닛 생존시-> 진행
-    //3. if 석상 or 몬스터 총 HP == 0
-    //      전투 종료
-    //3. if 총 hp 둘 다 != 0
-    //      진행
+    //전투 방식
+    //iteration 반복
+    //1. 석상들과 몬스터들의 총 체력합을 계산
+    //2. 총 체력합이 먼저 0이되는 쪽이 패배
+    //3. 총 체력합이 두 쪽 모두 0이 아닌경우 전투 지속
+    //4. 공격 주체와 공격 대상을 계산
+    //5. 공격 대상에 가할 데미지 계산 - 강타율 고려
+    //6. 데미지 적용 - 회피율 고려
+    //7. 공격 대상 사망시 - 재배열
     function getSumOfHp(UnitInfo[] Units,UnitInfo[] Mobs,uint numOfMob)  internal view returns(uint , uint)
     {
         uint sumOfUnithp = 0;   //석상 총 체력
@@ -58,29 +59,32 @@ contract TGVStageClear is TGVItemShop
         }
         return (sumOfUnithp,sumOfMobhp);
     }
-    function getAttacker(UnitInfo[] roundOnUnits,uint serialnum) internal view returns(uint , uint)
+    function getAttacker(UnitInfo[] roundOnUnits) internal view returns(uint , uint)
     {
         return (0,0);
         
     }
 
     //석상과 몬스터들 일렬화
-    function Serialization(UnitInfo[] Units,UnitInfo[] Mobs,uint numOfMob ) internal view returns(UnitInfo[] , uint32)
+    function Serialization(UnitInfo[] Units,UnitInfo[] Mobs,uint numOfMob ) internal view returns(UnitInfo[],bool[])
     {
         uint32 serialnum = 0;
         uint32 stackonunit = 0;
         uint32 stackonmob = 0;
         UnitInfo[] memory roundOnUnits = new UnitInfo[](users[msg.sender].numStatues+numOfMob);
+        bool[] memory boolarrayUnits = new bool[](roundOnUnits.length);
         while(true)
         {
             if(stackonunit < users[msg.sender].numStatues)
             {
+                boolarrayUnits[serialnum] = true;                       //석상이면 true
                 roundOnUnits[serialnum] = Units[stackonunit];
                 serialnum++;    
                 stackonunit++;
             }
             if(stackonmob < numOfMob)
             {
+                boolarrayUnits[serialnum] = false;                      //몬스터이면 false
                 roundOnUnits[serialnum] = Mobs[stackonmob];
                 serialnum++;    
                 stackonmob++;
@@ -88,7 +92,7 @@ contract TGVStageClear is TGVItemShop
             if(serialnum == users[msg.sender].numStatues+numOfMob)
                 break;
         }
-        return (roundOnUnits,serialnum);
+        return (roundOnUnits,boolarrayUnits);
     }
 
     //전투 종료 판정 함수
