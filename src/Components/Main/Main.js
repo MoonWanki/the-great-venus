@@ -1,5 +1,5 @@
 import React, { Component } from 'react';
-import { Stage } from "react-pixi-fiber";
+import { Stage, Text } from "react-pixi-fiber";
 import RotatingJamlee from './RotatingJamlee';
 
 const width = 1920;
@@ -10,10 +10,24 @@ const OPTIONS = {
 
 class Main extends Component {
 
+    state = {
+        n: 0,
+        m: 5
+    }
+
+    componentDidMount() {
+        setInterval(()=>
+            this.setState(({ n })=>({
+                n: n + 1
+            }))
+        , 1000);
+    }
+
     render() {
         return (
             <Stage options={OPTIONS} width={width} height={height}>
-                <RotatingJamlee x={960} y={540} width={1000} height={1000} />
+                <RotatingJamlee x={960} y={540} width={700} height={700} />
+                <Text text={this.state.n + ' ' +  this.state.m }/>
             </Stage>
         );
     }

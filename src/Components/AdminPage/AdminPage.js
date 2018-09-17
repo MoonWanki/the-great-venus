@@ -9,31 +9,29 @@ import './AdminPage.scss';
 
 class AdminPage extends Component {
 
-    constructor(props) {
-        super(props);
-        this.state = {
-            statueInfoForm: {
-                hp: '',
-                atk: '',
-                def: '',
-                crt: '',
-                avd: '',
-                whatNo: '',
-            },
-            mobInfoForm: {
-                hp: '',
-                atk: '',
-                def: '',
-                crt: '',
-                avd: '',
-                whatNo: '',
-            },
-            requiredExpForm: {
-                exp: '',
-                whatLevel: '',
-            },
-        }
+    state = {
+        statueInfoForm: {
+            hp: '',
+            atk: '',
+            def: '',
+            crt: '',
+            avd: '',
+            whatNo: '',
+        },
+        mobInfoForm: {
+            hp: '',
+            atk: '',
+            def: '',
+            crt: '',
+            avd: '',
+            whatNo: '',
+        },
+        requiredExpForm: {
+            exp: '',
+            whatLevel: '',
+        },
     }
+
 
     componentDidMount() {
         setInterval(()=>{
@@ -44,6 +42,7 @@ class AdminPage extends Component {
         }, 1000);
     }
 
+    
     render() {
         let key1 = 0, key2 = 0, key3 = 0;
         const { web3Instance, AdminActions, UserActions, statueInfoList, mobInfoList, requiredExpList, userData, isLoaded } = this.props;

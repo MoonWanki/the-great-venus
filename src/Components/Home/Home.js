@@ -10,57 +10,56 @@ import $ from 'jquery';
 import './Home.scss';
 import { Icon, Footer, Dropdown, Button, NavItem } from 'react-materialize';
 import { Parallax } from 'react-parallax';
+import networkImg from 'images/network.jpg';
 import crew1 from 'images/crew_moonwanki.jpg';
 import crew2 from 'images/crew_jamlee.jpg';
 import crew3 from 'images/crew_jisoohan.jpg';
 
 class Home extends Component {
 
-    constructor(props) {
-        super(props);
-        this.state = {
-            openNoBrowserModal: false,
-            openNoMetamaskModal: false,
-            text: {
-                noBrowserModal: {
-                    title: {
-                        'en': 'Not supported browser!',
-                        'ko': '엥? 크롬이 아니신데요?',
-                    },
-                    content: {
-                        'en': 'You should use Chrome or Firefox to enjoy this game.',
-                        'ko': '크롬이나 파폭을 까세요. 어서 이 게임을 즐겨야 하지 않겠어요?',
-                    },
-                    getChromeBtn: {
-                        'en': 'GET CHROME',
-                        'ko': '크롬 설치하기',
-                    },
-                    getFirefoxBtn: {
-                        'en': 'GET FIREFOX',
-                        'ko': '파이어폭스 설치하기',
-                    },
+    state = {
+        openNoBrowserModal: false,
+        openNoMetamaskModal: false,
+        text: {
+            noBrowserModal: {
+                title: {
+                    'en': 'Not supported browser!',
+                    'ko': '엥? 크롬이 아니신데요?',
                 },
-                noMetamaskModal: {
-                    title: {
-                        'en': 'You need to have Metamask!',
-                        'ko': '메타마스크를 까셔야죠!',
-                    },
-                    content: {
-                        'en': 'Get Metamask and set your Ethereum account! Then you will be ready to enjoy!',
-                        'ko': '이더리움 게임을 하려면 메타마스크는 필수입니다. 지금 당장 설치하세요. 1분도 안 걸립니다.',
-                    },
-                    getMetamaskBtn: {
-                        'en': 'GET METAMASK',
-                        'ko': '메타마스크 설치하기',
-                    },
+                content: {
+                    'en': 'You should use Chrome or Firefox to enjoy this game.',
+                    'ko': '크롬이나 파폭을 까세요. 어서 이 게임을 즐겨야 하지 않겠어요?',
                 },
-                plzLogin: {
-                    'en': 'Please login to Metamask!',
-                    'ko': '메타마스크에 로그인 해주세요!',
+                getChromeBtn: {
+                    'en': 'GET CHROME',
+                    'ko': '크롬 설치하기',
                 },
-            }
+                getFirefoxBtn: {
+                    'en': 'GET FIREFOX',
+                    'ko': '파이어폭스 설치하기',
+                },
+            },
+            noMetamaskModal: {
+                title: {
+                    'en': 'You need to have Metamask!',
+                    'ko': '메타마스크를 까셔야죠!',
+                },
+                content: {
+                    'en': 'Get Metamask and set your Ethereum account! Then you will be ready to enjoy!',
+                    'ko': '이더리움 게임을 하려면 메타마스크는 필수입니다. 지금 당장 설치하세요. 1분도 안 걸립니다.',
+                },
+                getMetamaskBtn: {
+                    'en': 'GET METAMASK',
+                    'ko': '메타마스크 설치하기',
+                },
+            },
+            plzLogin: {
+                'en': 'Please login to Metamask!',
+                'ko': '메타마스크에 로그인 해주세요!',
+            },
         }
     }
+    
 
     componentDidMount() {
         $(window).scroll(()=>{
@@ -68,6 +67,7 @@ class Home extends Component {
             $('.home-banner').css('top', scrolled*0.5 + 'px');
         })
     }
+
 
     onStartButtonClick = () => {
         if(!this.props.web3Instance) {
@@ -84,6 +84,7 @@ class Home extends Component {
             }
         }
     }
+
 
     render() {
         const { openNoBrowserModal, openNoMetamaskModal, text } = this.state;
@@ -164,7 +165,7 @@ class Home extends Component {
                     </Fade>
                 </div>
 
-                <Parallax bgImage={require('../../images/network.jpg')} strength={500}>
+                <Parallax bgImage={networkImg} strength={500}>
                     <div className="home-section" style={{ color: 'white' }}>
                         <Fade bottom duration={400} distance='60px' fraction={1}>
                             <p className='home-section-title'>
