@@ -10,9 +10,9 @@ Our members and roles are like below.
 
 Name | Position | Roles
 ---|---|---
-:alien: Moon Wanki (Media 13) | PM / Main developer / Sound director | Creator of this game. Front-end & Back-end development. Composing BGMs for the game.
+:alien: Moon Wanki (Media 13) | PM / Main Developer / Sound Director | Creator of this game. Front-end & Back-end development. Composing BGMs for the game.
 :boy: Jamlee Kim (Media 13) | Developer / QA | Back-end development. Design algorithms for game logics.
-:woman: Han Jisoo (Media 14) | Graphic designer | Image resource creator by 2D graphic Illustration.
+:woman: Han Jisoo (Media 14) | UI·UX Designer / Art Designer | Image resource creator by 2D graphic Illustration.
 
 
 ## Synopsys
