@@ -14,6 +14,7 @@ contract TGVStageClear is TGVItemShop
         }
 
         uint[7] memory roundResult;     //각 라운드 승리 유무, 획득 경험치 저장 배열
+
         (roundResult[0],roundResult[1]) = roundProgress(stagenum,1,Units);
         if(roundResult[0]==1)           //1라운드 승리 시에만 2라운드 진행
             (roundResult[2],roundResult[3]) = roundProgress(stagenum,2,Units);
@@ -43,7 +44,7 @@ contract TGVStageClear is TGVItemShop
     // 한 라운드 진행 함수
     function roundProgress(uint num, uint roundnum, UnitInfo[] memory Units) internal view returns (uint, uint)
     {
-        uint stagenum = num;    
+        uint stagenum = num;   
         uint exp = 0;
         uint num_mobs = 0;
         bool roundwin = false;
@@ -110,36 +111,139 @@ contract TGVStageClear is TGVItemShop
     // 한 라운드 배틀 함수
     function roundBattle(UnitInfo[] memory units, UnitInfo[] memory mobs) internal returns(bool)
     {
-        UnitInfo[] memory serialUnits = serialization(units,mobs);      // 석상과 몬스터들 번갈아가면서 채운 일렬화 과정
-        return true;
-    }
-
-    // 석상들과 몬스터 일렬화
-    function serialization(UnitInfo[] memory units, UnitInfo[] memory mobs) internal view returns (UnitInfo[])
-    {
-        uint32 n = 0;
-        uint32 n1 = 0;
-        uint32 n2 = 0;
-        UnitInfo[] memory serialUnits = new UnitInfo[](units.length+mobs.length);
+        //UnitInfo[] memory serialUnits = serialization(units,mobs);      // 석상과 몬스터들 번갈아가면서 채운 일렬화 과정
+        uint unit = 0;      // 석상 1개 가리키는 index
+        uint mob = 0;       // 몬스터 1개 가리키는 index
+        uint hp_units = 0;  // 석상들 총 체력
+        uint hp_mobs = 0;   // 몬스터 총 체력
         while(true)
         {
-            if(n1<units.length)
-            {
-                serialUnits[n] = units[n1];
-                n.add(1);
-                n1.add(1);
-            }
-            if(n2<mobs.length)
-            {
-                serialUnits[n] = mobs[n2];
-                n.add(1);
-                n2.add(1);
-            }
-            if(n == serialUnits.length)
+            (hp_units,hp_mobs) = getSumOfHp(units,mobs);
+            if(hp_units == 0 || hp_mobs == 0)
                 break;
+            (unit,mob) = DealExchange(unit,mob,units,mobs);
         }
-        return serialUnits;
+
+        if(hp_units == 0)   //몬스터가 이긴 경우 false 반환
+            return false;
+        if(hp_mobs == 0)    //석상이 이긴 경우 true 반환
+            return true;
     }
+
+    // 1대1 딜 교환 함수
+    function DealExchange(uint unit, uint mob,UnitInfo[] memory units, UnitInfo[] memory mobs)internal view returns (uint, uint)
+    {
+        uint u = unit;  //직전에 딜교환을 마친 석상 인덱스, 초기값은 0
+        uint m = mob;   //직전에 딜교환을 마친 몬스터 인덱스, 초기값은 0
+        
+        // 다음 딜 교환 대상의 인덱스 구하기
+        for(uint i = 1 ;i<=units.length;i++)
+        {
+            uint next = 0;
+            if(u+i>=units.length) next = (u+i)%units.length;
+            else next = u+i;
+            if(units[next].hp!=0)
+            {
+                u = next;
+                break;
+            }
+        }
+        for(uint j = 1 ;j<=mobs.length;j++)
+        {
+            uint next2 = 0;
+            if(m+j>=mobs.length) next2 = (m+j)%mobs.length;
+            else next2 = m+j;
+            if(mobs[next2].hp!=0)
+            {
+                m = next2;
+                break;
+            }
+        }
+
+        // 석상 -> 몬스터 공격
+        uint damage = getDamage(units[u],mobs[m]);
+        applyDamage(mobs[m],damage);
+        if(mobs[m].hp!=0)   // 공격 당한 몬스터가 죽지 않은 경우
+        {
+            // 몬스터 -> 석상 공격
+            damage = getDamage(mobs[m],units[u]);
+            applyDamage(units[u],damage);
+        }
+        //딜 교환 종료한 석상과 몬스터 인덱스 반환
+        return (u,m);
+    }
+
+    function getSumOfHp(UnitInfo[] memory units,UnitInfo[] memory mobs)internal view returns (uint,uint)
+    {
+        uint sum = 0;   //석상들 총 체력
+        uint sum2 = 0;  //몬스터들 총 체력
+        for(uint i = 0 ;i<units.length;i++)
+        {
+            sum.add(units[i].hp);
+        }
+        for(uint j = 0 ;j<mobs.length;j++)
+        {
+            sum2.add(mobs[i].hp);
+        }
+        return (sum,sum2);
+    }
+
+    // 데미지 계산
+    function getDamage(UnitInfo from, UnitInfo to)internal view returns (uint)
+    {
+        uint randNance = 0;
+        uint random = uint(keccak256(abi.encodePacked(block.timestamp, msg.sender,randNance)))%40;                //데미지 구간 설정 위한 랜덤값
+        randNance.add(1);
+        uint randomforCritical = uint(keccak256(abi.encodePacked(block.timestamp, msg.sender,randNance)))%100;    //강타율 적용위한 랜덤값
+        uint crk = 100;
+        if(randomforCritical<from.crt)  //강타 적용!
+            crk = 150;
+        return ((from.hp*2) / to.def + 2 ) * (random+80)/100 * crk/100;
+        //데미지 = (나의공격력 * 2  / 상대방어력  + 2 ) * (0.8~1.2 랜덤수) * (1.5강타일때)
+    } 
+
+    // 데미지 적용 함수
+    function applyDamage(UnitInfo to, uint damage)internal view returns (bool)
+    {
+        uint randNance = 0;
+        uint randomforAvoid = uint(keccak256(abi.encodePacked(block.timestamp, msg.sender, randNance)))%100;    //회피율 적용위한 랜덤값
+        if(randomforAvoid<to.avd)   //회피 적용!
+            return false;           //데미지 미적용
+        else
+        {
+            if(uint32(damage)>=to.hp) to.hp.sub(uint32(damage));
+            else
+                to.hp = 0;          //데미지 적용
+            return true;            
+        }
+    }
+
+    // // 석상들과 몬스터 일렬화
+    // function serialization(UnitInfo[] memory units, UnitInfo[] memory mobs) internal view returns (UnitInfo[])
+    // {
+    //     uint32 n = 0;
+    //     uint32 n1 = 0;
+    //     uint32 n2 = 0;
+    //     UnitInfo[] memory serialUnits = new UnitInfo[](units.length+mobs.length);
+    //     while(true)
+    //     {
+    //         if(n1<units.length)
+    //         {
+    //             serialUnits[n] = units[n1];
+    //             n.add(1);
+    //             n1.add(1);
+    //         }
+    //         if(n2<mobs.length)
+    //         {
+    //             serialUnits[n] = mobs[n2];
+    //             n.add(1);
+    //             n2.add(1);
+    //         }
+    //         if(n == serialUnits.length)
+    //             break;
+    //     }
+    //     return serialUnits;
+    // }
 
     // 몬스터 레벨에 따라 얻는 경험치 계산 함수 - 수정 필요
     function getMobExp(uint level) public view returns (uint)
