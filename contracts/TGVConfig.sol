@@ -36,11 +36,16 @@ contract TGVConfig is TGVBase {
         numMobInfo = 10;
 
         // 스테이지 마다 출현 몬스터 정보
-        stageInfoList[1] = StageInfo([uint(1), 1, 0, 0, 0], [uint(1), 2, 0, 0, 0], [uint(1), 1, 2, 0, 0]);
-        stageInfoList[2] = StageInfo([uint(2), 2, 0, 0, 0], [uint(2), 2, 2, 0, 0], [uint(2), 2, 3, 0, 0]);
-        stageInfoList[3] = StageInfo([uint(2), 3, 0, 0, 0], [uint(2), 3, 3, 0, 0], [uint(2), 3, 3, 3, 0]);
-        stageInfoList[4] = StageInfo([uint(3), 3, 4, 0, 0], [uint(3), 3, 3, 4, 0], [uint(3), 3, 3, 3, 4]);
-        stageInfoList[5] = StageInfo([uint(3), 4, 4, 0, 0], [uint(3), 4, 4, 4, 0], [uint(3), 3, 4, 4, 4]);
+        stageInfoList[1] = [uint(1),1,0,0,0,1,2,0,0,0,1,1,2,0,0];
+        stageInfoList[2] = [uint(2),2,0,0,0,2,2,2,0,0,2,2,3,0,0];
+        stageInfoList[3] = [uint(3),3,0,0,0,2,3,3,0,0,2,3,3,3,0];
+        stageInfoList[4] = [uint(3),3,4,0,0,3,3,3,4,0,3,3,3,3,4];
+        stageInfoList[5] = [uint(3),4,4,0,0,3,4,4,4,4,3,3,4,4,4];
+        // stageInfoList[1] = StageInfo([uint(1), 1, 0, 0, 0], [uint(1), 2, 0, 0, 0], [uint(1), 1, 2, 0, 0]);
+        // stageInfoList[2] = StageInfo([uint(2), 2, 0, 0, 0], [uint(2), 2, 2, 0, 0], [uint(2), 2, 3, 0, 0]);
+        // stageInfoList[3] = StageInfo([uint(2), 3, 0, 0, 0], [uint(2), 3, 3, 0, 0], [uint(2), 3, 3, 3, 0]);
+        // stageInfoList[4] = StageInfo([uint(3), 3, 4, 0, 0], [uint(3), 3, 3, 4, 0], [uint(3), 3, 3, 3, 4]);
+        // stageInfoList[5] = StageInfo([uint(3), 4, 4, 0, 0], [uint(3), 4, 4, 4, 0], [uint(3), 3, 4, 4, 4]);
         numStageInfo = 5;
 
         // 레벨 업 마다 필요한 경험치 정보
@@ -78,7 +83,7 @@ contract TGVConfig is TGVBase {
     function addStageInfo() external onlyOwner returns(uint) {
 
         numStageInfo = numStageInfo.add(1);
-        stageInfoList[numStageInfo] = StageInfo([uint(0), 0, 0, 0, 0], [uint(0), 0, 0, 0, 0], [uint(0), 0, 0, 0, 0]);
+        stageInfoList[numStageInfo] = [0,0,0,0,0,0,0,0,0,0,0,0,0,0,0];
         return numStageInfo;
     }
 
