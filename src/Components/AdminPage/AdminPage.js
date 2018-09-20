@@ -76,6 +76,10 @@ class AdminPage extends Component {
                                     <td>{userData.gold ? userData.gold.c : '-'}</td>
                                 </tr>
                                 <tr>
+                                    <td>석상 개수</td>
+                                    <td>{userData.lastStage ? userData.numStatue.c : '-'}</td>
+                                </tr>
+                                <tr>
                                     <td>완료 스테이지</td>
                                     <td>{userData.lastStage ? userData.lastStage.c : '-'}</td>
                                 </tr>
