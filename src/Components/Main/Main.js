@@ -2,32 +2,31 @@ import React, { Component } from 'react';
 import { Stage, Text } from "react-pixi-fiber";
 import RotatingJamlee from './RotatingJamlee';
 
-const width = 1920;
-const height = 1080;
 const OPTIONS = {
-    backgroundColor: 0x1099bb
+    backgroundColor: 0x0,
 };
 
 class Main extends Component {
 
     state = {
-        n: 0,
-        m: 5
+        w: window.innerWidth-8,
+        h: window.innerHeight-8
     }
 
     componentDidMount() {
-        setInterval(()=>
-            this.setState(({ n })=>({
-                n: n + 1
-            }))
-        , 1000);
+        window.onresize = () => {
+            this.setState({
+                w: window.innerWidth-8,
+                h: window.innerHeight-8
+            })
+        }
     }
 
     render() {
+        const { w, h } = this.state;
         return (
-            <Stage options={OPTIONS} width={width} height={height}>
-                <RotatingJamlee x={960} y={540} width={700} height={700} />
-                <Text text={this.state.n + ' ' +  this.state.m }/>
+            <Stage options={OPTIONS} width={this.state.w} height={this.state.h} >
+                <RotatingJamlee x={w/2} y={h/2} width={700} height={700} />
             </Stage>
         );
     }

@@ -1,4 +1,4 @@
-import React, { Component } from 'react';
+import React, { Component, Fragment } from 'react';
 
 import { connect } from 'react-redux';
 import { bindActionCreators } from 'redux';
@@ -39,59 +39,121 @@ class AdminPage extends Component {
                 this.props.UserActions.loadUserData(this.props.web3Instance);
                 this.props.AdminActions.loadConfig(this.props.web3Instance);
             }
-        }, 1000);
+        }, 2000);
     }
 
-    
     render() {
-        let key1 = 0, key2 = 0, key3 = 0;
         const { web3Instance, AdminActions, UserActions, statueInfoList, mobInfoList, requiredExpList, userData, isLoaded } = this.props;
         const { statueInfoForm, mobInfoForm } = this.state;
-        
         return (
-            <div>
+            <Fragment>
                 <Navbar brand='Test page' right className='blue-grey darken-3'>
                     <NavItem onClick={() => AdminActions.setConfigToDefault(web3Instance)}>Set to default</NavItem>
-                    <NavItem onClick={() => {
-                        AdminActions.loadConfig(web3Instance);
-                        UserActions.loadUserData(web3Instance);
-                    }}><Icon>refresh</Icon></NavItem>
                 </Navbar>
                 <div className='admin-simulation'>
-                    <div className='admin-simulation-myinfo'>
+                    <div className='admin-simulation-segment'>
                         <Table>
-                        <thead>
-                            <tr>
-                                <th>내 정보</th>
-                                <th>
-                                    <Button className='red darken-4' waves='light' onClick={() => UserActions.createUser(web3Instance, 'Administator')}>초기화</Button>
-                                </th>
-                            </tr>
-                        </thead>
-                        <tbody>
-                            <tr>
-                                <td>닉네임</td>
-                                <td>{userData.name ? userData.name : '정보를 불러올 수 없습니다'}</td>
-                            </tr>
-                            <tr>
-                                <td>레벨</td>
-                                <td>{userData.level ? userData.level.c : '정보를 불러올 수 없습니다'}</td>
-                            </tr>
-                            <tr>
-                                <td>경험치</td>
-                                <td>{userData.exp ? userData.exp.c : '정보를 불러올 수 없습니다'}</td>
-                            </tr>
-                            <tr>
-                                <td>골드</td>
-                                <td>{userData.gold ? userData.gold.c : '정보를 불러올 수 없습니다'}</td>
-                            </tr>
-                            <tr>
-                                <td>완료 스테이지</td>
-                                <td>{userData.lastStage ? userData.lastStage.c : '정보를 불러올 수 없습니다'}</td>
-                            </tr>
-                        </tbody>
+                            <thead>
+                                <tr>
+                                    <th>내 정보</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr>
+                                    <td>닉네임</td>
+                                    <td>{userData.name ? userData.name : '-'}</td>
+                                </tr>
+                                <tr>
+                                    <td>레벨</td>
+                                    <td>{userData.level ? userData.level.c : '-'}</td>
+                                </tr>
+                                <tr>
+                                    <td>경험치</td>
+                                    <td>{userData.exp ? userData.exp.c : '-'}</td>
+                                </tr>
+                                <tr>
+                                    <td>골드</td>
+                                    <td>{userData.gold ? userData.gold.c : '-'}</td>
+                                </tr>
+                                <tr>
+                                    <td>완료 스테이지</td>
+                                    <td>{userData.lastStage ? userData.lastStage.c : '-'}</td>
+                                </tr>
+                                <tr>
+                                    <td>초기화</td>
+                                    <th>
+                                        <Button floating flat large className='teal darken-2' waves='light' icon='refresh' onClick={() => UserActions.createUser(web3Instance, 'Administator')} />
+                                    </th>
+                                </tr>
+                            </tbody>
                         </Table>
                     </div>
+                    <div className='admin-simulation-segment'>
+                        <Table>
+                            <thead>
+                                <tr>
+                                    <th>장비</th>
+                                    <th>레벨</th>
+                                    <th>강화</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr>
+                                    <td>HP</td>
+                                    <td>1</td>
+                                    <td>
+                                        <Button floating flat className='teal lighten-2' waves='light' icon='gavel' onClick={()=>{
+                                            window.Materialize.toast('준비중입니다', 1500);
+                                        }} />
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <td>ATK</td>
+                                    <td>1</td>
+                                    <td>
+                                        <Button floating flat className='teal lighten-1' waves='light' icon='gavel' onClick={()=>{
+                                            window.Materialize.toast('준비중입니다', 1500);
+                                        }} />
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <td>DEF</td>
+                                    <td>1</td>
+                                    <td>
+                                        <Button floating flat className='teal' waves='light' icon='gavel' onClick={()=>{
+                                            window.Materialize.toast('준비중입니다', 1500);
+                                        }} />
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <td>CRT</td>
+                                    <td>1</td>
+                                    <td>
+                                        <Button floating flat className='teal darken-1' waves='light' icon='gavel' onClick={()=>{
+                                            window.Materialize.toast('준비중입니다', 1500);
+                                        }} />
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <td>AVD</td>
+                                    <td>1</td>
+                                    <td>
+                                        <Button floating flat className='teal darken-2' waves='light' icon='gavel' onClick={()=>{
+                                            window.Materialize.toast('준비중입니다', 1500);
+                                        }} />
+                                    </td>
+                                </tr>
+                            </tbody>
+                        </Table>
+                    </div>
+                </div>
+                <div className='admin-stage-list'>
+                <h5>스테이지입장☞</h5>
+                    {userData.lastStage ? [1,2,3,4,5].map(i=>{
+                        if(i <= userData.lastStage.c[0]) return(<div key={i} className='admin-stage-item' style={{ background: 'yellow', cursor: 'pointer'}} onClick={()=>UserActions.clearStage(web3Instance, i)}>{i}</div>)
+                        else if(i === userData.lastStage.c[0] + 1) return(<div key={i} className='admin-stage-item' style={{ background: 'orange', cursor: 'pointer'}} onClick={()=>UserActions.clearStage(web3Instance, i)}>{i}</div>)
+                        else return (<div key={i} className='admin-stage-item' style={{ background: 'gray'}}>{i}</div>)
+                    }) : null}
                 </div>
                 {isLoaded?
                 <div>
@@ -128,7 +190,7 @@ class AdminPage extends Component {
                                 </tr>
                             </thead>
                             <tbody>
-                                {statueInfoList.map(unit => <tr key={key1++}><th>{key1}</th><td>{unit[0].c}</td><td>{unit[1].c}</td><td>{unit[2].c}</td><td>{unit[3].c}%</td><td>{unit[4].c}%</td></tr>)}
+                                {statueInfoList.map((unit, i) => <tr key={i}><th>{i+1}</th><td>{unit[0].c}</td><td>{unit[1].c}</td><td>{unit[2].c}</td><td>{unit[3].c}%</td><td>{unit[4].c}%</td></tr>)}
                             </tbody>
                         </Table>
                     </div>
@@ -165,7 +227,7 @@ class AdminPage extends Component {
                                 </tr>
                             </thead>
                             <tbody>
-                                {mobInfoList.map(unit => <tr key={key2++}><th>{key2}</th><td>{unit[0].c}</td><td>{unit[1].c}</td><td>{unit[2].c}</td><td>{unit[3].c}%</td><td>{unit[4].c}%</td></tr>)}
+                                {mobInfoList.map((unit, i) => <tr key={i}><th>{i+1}</th><td>{unit[0].c}</td><td>{unit[1].c}</td><td>{unit[2].c}</td><td>{unit[3].c}%</td><td>{unit[4].c}%</td></tr>)}
                             </tbody>
                         </Table>
                     </div>
@@ -188,13 +250,13 @@ class AdminPage extends Component {
                                 </tr>
                             </thead>
                             <tbody>
-                                {requiredExpList.map(unit => <tr key={key3++}><th>{key3}</th><td>{unit.c}</td></tr>)}
+                                {requiredExpList.map((unit, i) => <tr key={i}><th>{i+1}</th><td>{unit.c}</td></tr>)}
                             </tbody>
                         </Table>
                     </div>
                 </div>
                 :null}
-            </div>
+            </Fragment>
         );
     }
 }

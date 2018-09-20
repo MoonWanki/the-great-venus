@@ -25,7 +25,7 @@ export const loadUserData = web3Instance => dispatch => {
         if (!err) {
             TGV.deployed()
             .then(instance => {
-                return instance.getMyInfo(coinbase);
+                return instance.users(coinbase);
             }).then(data => {
                 dispatch({
                     type: SET_USER_DATA,
@@ -63,6 +63,26 @@ export const createUser = (web3Instance, name) => dispatch => {
     });
 }
 
+export const clearStage = (web3Instance, stageNo) => dispatch => {
+
+    const TGV = contract(abi);
+    TGV.setProvider(web3Instance.currentProvider);
+    web3Instance.eth.getCoinbase((err, coinbase) => {
+        if (!err) {
+            TGV.deployed()
+            .then(instance => {
+                return instance.setStageMain(stageNo, [1], { from: coinbase });
+            }).then(data => {
+                window.Materialize.toast(JSON.stringify(data));
+            }).catch(err => {
+                console.error(err);
+            })
+        } else {
+            console.error("error in getCoinbase()");
+        }
+    });
+}
+
 export default handleActions({
 
     [SET_USER_DATA]: (state, { payload }) => {
@@ -74,7 +94,7 @@ export default handleActions({
             level: payload[4],
             lastStage: payload[5],
             numStatue: payload[6],
-            // equips: payload[7],
+            equips: payload[7],
         }
        return {
            ...state,

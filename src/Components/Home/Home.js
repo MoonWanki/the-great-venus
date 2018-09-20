@@ -88,7 +88,7 @@ class Home extends Component {
 
     render() {
         const { openNoBrowserModal, openNoMetamaskModal, text } = this.state;
-        const { language } = this.props;
+        const { language, selectedAddress } = this.props;
         return (
             <Fragment>
 
@@ -133,12 +133,12 @@ class Home extends Component {
                         </Fade>
                     </div>
                 </div>
-
-                <Link to='/test'>
-                    <div style={{ position: "absolute", top: '5px', left: '5px', color: 'lightgrey' }}>
-                        <Icon>settings</Icon>
-                    </div>
-                </Link>
+                {selectedAddress ?
+                    <Link to='/test'>
+                        <div style={{ position: "absolute", top: '5px', left: '5px', color: 'lightgrey' }}>
+                            <Icon>settings</Icon>
+                        </div>
+                    </Link> : null}
 
                 {/* <Dropdown trigger={
                     <Button >Drop me!</Button>
