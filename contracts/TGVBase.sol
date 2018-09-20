@@ -11,23 +11,25 @@ contract TGVBase is Ownable {
     uint public balance;       // 금고. 사용자 결제금을 모아서 정기적으로 티어별 차등 분배
 
     // 유저 DB
-    uint numUsers; // 총 유저 수
+    uint public numUsers; // 총 유저 수
     mapping (address => User) public users;
 
     // 스테이지 DB
-    uint numStageInfo; // 구현된 스테이지 개수
-    mapping (uint => StageInfo) stageInfoList;
+    uint public numStageInfo; // 구현된 스테이지 개수
+    //mapping (uint => StageInfo) stageInfoList;
+    mapping (uint => uint[15]) public stageInfoList;
 
     // 석상 DB
-    uint numStatueInfo; // 구현된 석상 수
+    uint public numStatueInfo; // 구현된 석상 수
     mapping (uint => UnitInfo) public statueInfoList;
 
+
     // 몬스터 DB
-    uint numMobInfo; // 구현된 몬스터 수
+    uint public numMobInfo; // 구현된 몬스터 수
     mapping (uint => UnitInfo) public mobInfoList;
 
     // 레벨 당 요구 경험치
-    uint numRequiredExp; // 최대 레벨
+    uint public numRequiredExp; // 최대 레벨
     mapping (uint => uint) public requiredExp;
 
 
