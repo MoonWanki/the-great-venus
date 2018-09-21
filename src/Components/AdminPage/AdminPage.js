@@ -4,7 +4,7 @@ import { connect } from 'react-redux';
 import { bindActionCreators } from 'redux';
 import * as adminActions from 'store/modules/adminModule';
 import * as userActions from 'store/modules/userModule';
-import { Table, Navbar, NavItem, Icon, Input, Row, Button } from 'react-materialize';
+import { Table, Navbar, NavItem, Input, Row, Button } from 'react-materialize';
 import './AdminPage.scss';
 
 class AdminPage extends Component {

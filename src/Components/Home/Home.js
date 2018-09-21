@@ -8,7 +8,7 @@ import Modal from 'react-responsive-modal';
 import { connect } from 'react-redux';
 import $ from 'jquery';
 import './Home.scss';
-import { Icon, Footer, Dropdown, Button, NavItem } from 'react-materialize';
+import { Icon, Footer } from 'react-materialize';
 import { Parallax } from 'react-parallax';
 import networkImg from 'images/network.jpg';
 import crew1 from 'images/crew_moonwanki.jpg';
@@ -139,15 +139,6 @@ class Home extends Component {
                             <Icon>settings</Icon>
                         </div>
                     </Link> : null}
-
-                {/* <Dropdown trigger={
-                    <Button >Drop me!</Button>
-                }>
-                <NavItem>one</NavItem>
-                <NavItem>two</NavItem>
-                <NavItem divider />
-                <NavItem>three</NavItem>
-                </Dropdown> */}
 
                 <div className="home-section" style={{ background: '#e5e4e0' }}>
                     <Fade bottom duration={400} distance='60px' fraction={1}>
