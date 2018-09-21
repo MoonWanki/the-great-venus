@@ -41,11 +41,6 @@ contract TGVConfig is TGVBase {
         stageInfoList[3] = [uint(3),3,0,0,0,2,3,3,0,0,2,3,3,3,0];
         stageInfoList[4] = [uint(3),3,4,0,0,3,3,3,4,0,3,3,3,3,4];
         stageInfoList[5] = [uint(3),4,4,0,0,3,4,4,4,4,3,3,4,4,4];
-        // stageInfoList[1] = StageInfo([uint(1), 1, 0, 0, 0], [uint(1), 2, 0, 0, 0], [uint(1), 1, 2, 0, 0]);
-        // stageInfoList[2] = StageInfo([uint(2), 2, 0, 0, 0], [uint(2), 2, 2, 0, 0], [uint(2), 2, 3, 0, 0]);
-        // stageInfoList[3] = StageInfo([uint(2), 3, 0, 0, 0], [uint(2), 3, 3, 0, 0], [uint(2), 3, 3, 3, 0]);
-        // stageInfoList[4] = StageInfo([uint(3), 3, 4, 0, 0], [uint(3), 3, 3, 4, 0], [uint(3), 3, 3, 3, 4]);
-        // stageInfoList[5] = StageInfo([uint(3), 4, 4, 0, 0], [uint(3), 4, 4, 4, 0], [uint(3), 3, 4, 4, 4]);
         numStageInfo = 5;
 
         // 레벨 업 마다 필요한 경험치 정보

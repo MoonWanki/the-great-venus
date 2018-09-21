@@ -14,6 +14,10 @@ contract TGVBase is Ownable {
     uint public numUsers; // 총 유저 수
     mapping (address => User) public users;
 
+    // 장비 DB
+    uint public numEquips; // 총 장비명세서  수 - 총 유저수와 동일
+    mapping (address => mapping (uint => Equip)) public equipList;
+
     // 스테이지 DB
     uint public numStageInfo; // 구현된 스테이지 개수
     //mapping (uint => StageInfo) stageInfoList;
@@ -22,7 +26,6 @@ contract TGVBase is Ownable {
     // 석상 DB
     uint public numStatueInfo; // 구현된 석상 수
     mapping (uint => UnitInfo) public statueInfoList;
-
 
     // 몬스터 DB
     uint public numMobInfo; // 구현된 몬스터 수
@@ -65,7 +68,6 @@ contract TGVBase is Ownable {
         uint32 level;
         uint32 lastStage;
         uint32 numStatues;
-        mapping (uint => Equip) equipList;
     }
 
     struct Equip {
@@ -88,11 +90,6 @@ contract TGVBase is Ownable {
         uint32 avd;     // 기본 회피율
     }
 
-    struct StageInfo {
-        uint[5] round1;
-        uint[5] round2;
-        uint[5] round3;
-    }
 
     function getMyInfo() external view returns (
         string name,
@@ -108,14 +105,14 @@ contract TGVBase is Ownable {
         uint[] memory localequiplist;
         for(uint i = 0;i<numStatues;i++)
         {
-            localequiplist[i*10] = users[msg.sender].equipList[i+1].hpEquipType;
-            localequiplist[i*10+1] = users[msg.sender].equipList[i+1].hpEquipLevel;
-            localequiplist[i*10+2] = users[msg.sender].equipList[i+1].atkEquipType;
-            localequiplist[i*10+3] = users[msg.sender].equipList[i+1].atkEquipLevel;
-            localequiplist[i*10+4] = users[msg.sender].equipList[i+1].defEquipType;
-            localequiplist[i*10+5] = users[msg.sender].equipList[i+1].defEquipLevel;
-            localequiplist[i*10+6] = users[msg.sender].equipList[i+1].crtEquipType;
-            localequiplist[i*10+7] = users[msg.sender].equipList[i+1].avdEquipType;
+            localequiplist[i*10] = equipList[msg.sender][i+1].hpEquipType;
+            localequiplist[i*10+1] = equipList[msg.sender][i+1].hpEquipLevel;
+            localequiplist[i*10+2] = equipList[msg.sender][i+1].atkEquipType;
+            localequiplist[i*10+3] = equipList[msg.sender][i+1].atkEquipLevel;
+            localequiplist[i*10+4] = equipList[msg.sender][i+1].defEquipType;
+            localequiplist[i*10+5] = equipList[msg.sender][i+1].defEquipLevel;
+            localequiplist[i*10+6] = equipList[msg.sender][i+1].crtEquipType;
+            localequiplist[i*10+7] = equipList[msg.sender][i+1].avdEquipType;
         }
         return (
             users[msg.sender].name,

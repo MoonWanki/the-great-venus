@@ -7,6 +7,7 @@ contract TGVStageClear is TGVItemShop
     function setStageMain(uint stagenum,uint[] units) external returns(uint[6])
     {
         uint num_units = units.length;
+        uint stage = stagenum;
         UnitInfo[] memory Units = new UnitInfo[](num_units);
         for(uint i = 0; i<num_units;i++)
         {
@@ -20,7 +21,8 @@ contract TGVStageClear is TGVItemShop
             (roundResult[2],roundResult[3]) = roundProgress(stagenum,2,Units);
         if(roundResult[2]==1)           //2라운드 승리 시에만 2라운드 진행
             (roundResult[4],roundResult[5]) = roundProgress(stagenum,3,Units);
-
+        User storage user = users[msg.sender];
+        user.exp.add(100);
         renewalExpOfUser(roundResult[1]+roundResult[3]+roundResult[5]); //각 라운드 당 얻은 경험치 반영
         return roundResult;
     }
@@ -29,7 +31,8 @@ contract TGVStageClear is TGVItemShop
     function setUnitData(uint unit_num) public view returns(UnitInfo)
     {
         UnitInfo memory unit = statueInfoList[unit_num];
-        Equip memory equip = users[msg.sender].equipList[unit_num];
+        //    equipList[msg.sender][unit_num]
+        Equip memory equip = equipList[msg.sender][unit_num];
         uint k = 2;
         uint level = users[msg.sender].level;
         unit.hp.add(uint32(level*3*k));
@@ -211,42 +214,5 @@ contract TGVStageClear is TGVItemShop
             return true;            
         }
     }
-
-    //전투 방식
-    //iteration 반복
-    //1. 석상들과 몬스터들의 총 체력합을 계산
-    //2. 총 체력합이 먼저 0이되는 쪽이 패배
-    //3. 총 체력합이 두 쪽 모두 0이 아닌경우 전투 지속
-    //4. 공격 주체와 공격 대상을 계산
-    //5. 공격 대상에 가할 데미지 계산 - 강타율 고려
-    //6. 데미지 적용 - 회피율 고려
-    //7. 공격 대상 사망시 - 재배열
-
-    // // 석상들과 몬스터 일렬화
-    // function serialization(UnitInfo[] memory units, UnitInfo[] memory mobs) internal view returns (UnitInfo[])
-    // {
-    //     uint32 n = 0;
-    //     uint32 n1 = 0;
-    //     uint32 n2 = 0;
-    //     UnitInfo[] memory serialUnits = new UnitInfo[](units.length+mobs.length);
-    //     while(true)
-    //     {
-    //         if(n1<units.length)
-    //         {
-    //             serialUnits[n] = units[n1];
-    //             n.add(1);
-    //             n1.add(1);
-    //         }
-    //         if(n2<mobs.length)
-    //         {
-    //             serialUnits[n] = mobs[n2];
-    //             n.add(1);
-    //             n2.add(1);
-    //         }
-    //         if(n == serialUnits.length)
-    //             break;
-    //     }
-    //     return serialUnits;
-    // }
 
 }
