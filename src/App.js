@@ -7,7 +7,7 @@ import * as web3Actions from './store/modules/web3Module';
 import * as userActions from './store/modules/userModule';
 import * as appActions from './store/modules/appModule';
 import { BrowserRouter, Route, Switch } from 'react-router-dom';
-import { Home, AdminPage, Main } from 'Components';
+import { Home, AdminPage, Client } from 'Components';
 
 class App extends Component {
 
@@ -44,7 +44,7 @@ class App extends Component {
         <Switch>
           <Route exact path="/" component={Home} />
           <Route path="/test" component={AdminPage} />
-          <Route path="/client" component={Main} />
+          <Route path="/client" component={Client} />
         </Switch>
       </BrowserRouter>
     );
