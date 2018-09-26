@@ -1,0 +1,15 @@
+.canvas-wrapper {
+
+    position: relative;
+    background: black;
+    overflow: hidden;
+    padding-top: 6px;
+
+    .floating-from-wrapper {
+        position: absolute;
+        background: white;
+        width: 40%;
+        height: 40%;
+        left: 30%;
+    }
+}
