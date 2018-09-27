@@ -17,6 +17,7 @@ contract TGVBase is Ownable {
     // 장비 DB
     uint public numEquips; // 총 장비명세서  수 - 총 유저수와 동일
     mapping (address => mapping (uint => Equip)) public equipList;
+    //getter 함수 필요
 
     // 스테이지 DB
     uint public numStageInfo; // 구현된 스테이지 개수
@@ -42,13 +43,11 @@ contract TGVBase is Ownable {
         _;
     }
 
-
     // 구현된 석상인지
     modifier onlyValidStatueNo(uint _no) {
         require(_no > 0 && _no <= numStatueInfo, "out of statue range");
         _;
     }
-
 
     // 구현된 몬스터인지
     modifier onlyValidMobNo(uint _no) {
@@ -137,10 +136,4 @@ contract TGVBase is Ownable {
             users[msg.sender].name
         );
     }
-
-    function isAdmin() external view returns (bool) {
-        if(msg.sender == owner) return true;
-        else return false;
-    }
-    
 }

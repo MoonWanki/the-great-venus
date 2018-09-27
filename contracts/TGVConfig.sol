@@ -36,7 +36,7 @@ contract TGVConfig is TGVBase {
         numMobInfo = 10;
 
         // 스테이지 마다 출현 몬스터 정보
-        stageInfoList[1] = [uint(1),1,0,0,0,1,2,0,0,0,1,1,2,0,0];
+        stageInfoList[1] = [uint(1),1,0,0,0,1,1,0,0,0,1,1,0,0,0];
         stageInfoList[2] = [uint(2),2,0,0,0,2,2,2,0,0,2,2,3,0,0];
         stageInfoList[3] = [uint(3),3,0,0,0,2,3,3,0,0,2,3,3,3,0];
         stageInfoList[4] = [uint(3),3,4,0,0,3,3,3,4,0,3,3,3,3,4];

@@ -4,6 +4,8 @@ import "./TGVItemShop.sol";
 
 contract TGVStageClear is TGVItemShop 
 {
+    using SafeMath for uint256;
+
     function setStageMain(uint stagenum,uint[] units) external returns(uint[6])
     {
         uint num_units = units.length;
@@ -15,15 +17,31 @@ contract TGVStageClear is TGVItemShop
         }
 
         uint[6] memory roundResult;     //각 라운드 승리 유무, 획득 경험치 저장 배열
-
-        (roundResult[0],roundResult[1]) = roundProgress(stagenum,1,Units);
-        if(roundResult[0]==1)           //1라운드 승리 시에만 2라운드 진행
-            (roundResult[2],roundResult[3]) = roundProgress(stagenum,2,Units);
-        if(roundResult[2]==1)           //2라운드 승리 시에만 2라운드 진행
-            (roundResult[4],roundResult[5]) = roundProgress(stagenum,3,Units);
-        User storage user = users[msg.sender];
-        user.exp.add(100);
-        renewalExpOfUser(roundResult[1]+roundResult[3]+roundResult[5]); //각 라운드 당 얻은 경험치 반영
+        uint exp = 0;
+        (roundResult[0],roundResult[1]) = roundProgress(stage,1,Units);
+        exp += roundResult[1];
+        if(roundResult[0]==1)    
+        {
+            for(uint j = 0; j<num_units;j++)
+                Units[j] = setUnitData(units[j]);
+            (roundResult[2],roundResult[3]) = roundProgress(stage,2,Units);
+            exp += roundResult[3];
+             //1라운드 승리 시에만 2라운드 진행
+        }      
+            
+        if(roundResult[2]==1)      
+        {
+            for(uint m = 0; m<num_units;m++)
+                Units[m] = setUnitData(units[m]);
+            //2라운드 승리 시에만 2라운드 진행
+            (roundResult[4],roundResult[5]) = roundProgress(stage,3,Units);
+            exp += roundResult[5];
+        }     
+        users[msg.sender].exp += exp;
+        if(users[msg.sender].exp>=requiredExp[users[msg.sender].level])
+            users[msg.sender].level += 1;
+        if(roundResult[5]>0)
+            users[msg.sender].lastStage += 1;
         return roundResult;
     }
 
@@ -31,7 +49,6 @@ contract TGVStageClear is TGVItemShop
     function setUnitData(uint unit_num) public view returns(UnitInfo)
     {
         UnitInfo memory unit = statueInfoList[unit_num];
-        //    equipList[msg.sender][unit_num]
         Equip memory equip = equipList[msg.sender][unit_num];
         uint k = 2;
         uint level = users[msg.sender].level;
@@ -51,22 +68,6 @@ contract TGVStageClear is TGVItemShop
         return uint32((level/10+1)*10+(level-1)*k);
     }
 
-    // 스테이지 종료 이후 경험치 storage에 반영
-    function renewalExpOfUser(uint exp) public returns (bool)   
-    {
-        if(exp<=0)
-            return false;   //잘못된 Input이 들어 온 경우
-        uint user_level = users[msg.sender].level;
-        uint user_exp = users[msg.sender].exp;
-        users[msg.sender].exp.add(exp);
-        if(users[msg.sender].exp>=requiredExp[user_level])
-            users[msg.sender].level.add(1);
-        if(user_exp!=users[msg.sender].exp)
-            return true;    // 경험치 반영이 제대로 된 경우
-        else
-            return false;   // 경험치 반영이 제대로 되지 않은 경우
-    }
-
     // 한 라운드 진행 함수
     function roundProgress(uint num, uint num2, UnitInfo[] memory Units) internal view returns (uint, uint)
     {
@@ -77,25 +78,27 @@ contract TGVStageClear is TGVItemShop
         bool roundwin = false;
         UnitInfo[] memory Mobs;
         uint[15] memory stageInfo = stageInfoList[stagenum];
+
         for(uint i = (roundnum-1)*5;i<(roundnum-1)*5+5;i++)
         {
-            if(stageInfo[i]!=0)         
-                num_mobs.add(1);        //한 라운드에 등장하는 몬스터 수 세기
-        }
-        Mobs = new UnitInfo[](num_mobs);
-        for(uint j = (roundnum-1)*5;j<(roundnum-1)*5+5;j++)
-        {
-            if(stageInfo[j]!=0) 
+            if(stageInfo[i]==0)  
             {
-                Mobs[j] = mobInfoList[stageInfo[j]];
-                exp.add(getMobExp(stageInfo[j]));
-            }
+                num_mobs = i - (roundnum-1)*5;
+                break;
+            }       
+        }
+        
+        Mobs = new UnitInfo[](num_mobs);
+        for(uint j = 0;j<num_mobs;j++)
+        {
+            Mobs[j] = mobInfoList[stageInfo[j+(roundnum-1)*5]];
+            exp += getMobExp(stageInfo[j+(roundnum-1)*5]);
         }
         roundwin = roundBattle(Units,Mobs);
         if(roundwin)                        //1라운드 승리시
             return (1,exp);                 //승리값 1 과 해당 라운드 경험치반환
         else                                //1라운드 패배시
-            return (0,0);                   //패배값 0 과 경험치 없으므로 0반환
+            return (2,0);                   //패배값 0 과 경험치 없으므로 0반환
     }
 
     // 몬스터 레벨에 따라 얻는 경험치 계산 함수 - 수정 필요
@@ -104,21 +107,24 @@ contract TGVStageClear is TGVItemShop
         return 300 + 100 * (level-1);
     }
 
-
     // 한 라운드 배틀 함수
-    function roundBattle(UnitInfo[] memory units, UnitInfo[] memory mobs) internal returns(bool)
+    function roundBattle(UnitInfo[] memory Units, UnitInfo[] memory Mobs) internal returns(bool)
     {
-        //UnitInfo[] memory serialUnits = serialization(units,mobs);      // 석상과 몬스터들 번갈아가면서 채운 일렬화 과정
         uint unit = 0;      // 석상 1개 가리키는 index
         uint mob = 0;       // 몬스터 1개 가리키는 index
         uint hp_units = 0;  // 석상들 총 체력
         uint hp_mobs = 0;   // 몬스터 총 체력
+//        (unit,mob) = DealExchange(unit,mob,Units,Mobs);
+//        (users[msg.sender].gold,users[msg.sender].exp) = getSumOfHp(Units,Mobs);
         while(true)
         {
-            (hp_units,hp_mobs) = getSumOfHp(units,mobs);
+            (hp_units,hp_mobs) = getSumOfHp(Units,Mobs);
             if(hp_units == 0 || hp_mobs == 0)
                 break;
-            (unit,mob) = DealExchange(unit,mob,units,mobs);
+            else
+            {
+                (unit,mob) = DealExchange(unit,mob,Units,Mobs);
+            }
         }
 
         if(hp_units == 0)   //몬스터가 이긴 경우 false 반환
@@ -128,7 +134,7 @@ contract TGVStageClear is TGVItemShop
     }
 
     // 1대1 딜 교환 함수
-    function DealExchange(uint unit, uint mob,UnitInfo[] memory units, UnitInfo[] memory mobs)internal view returns (uint, uint)
+    function DealExchange(uint unit, uint mob,UnitInfo[] memory units, UnitInfo[] memory mobs) internal returns (uint, uint)
     {
         uint u = unit;  //직전에 딜교환을 마친 석상 인덱스, 초기값은 0
         uint m = mob;   //직전에 딜교환을 마친 몬스터 인덱스, 초기값은 0
@@ -159,30 +165,26 @@ contract TGVStageClear is TGVItemShop
 
         // 석상 -> 몬스터 공격
         uint damage = getDamage(units[u],mobs[m]);
-        applyDamage(mobs[m],damage);
+        applyDamage(mobs[m],uint32(damage));
         if(mobs[m].hp!=0)   // 공격 당한 몬스터가 죽지 않은 경우
         {
             // 몬스터 -> 석상 공격
             damage = getDamage(mobs[m],units[u]);
-            applyDamage(units[u],damage);
+            applyDamage(units[u],uint32(damage));
         }
         //딜 교환 종료한 석상과 몬스터 인덱스 반환
         return (u,m);
     }
 
-    function getSumOfHp(UnitInfo[] memory units,UnitInfo[] memory mobs)internal view returns (uint,uint)
+    function getSumOfHp(UnitInfo[] memory Units, UnitInfo[] memory Mobs) internal returns (uint,uint)
     {
-        uint sum = 0;   //석상들 총 체력
-        uint sum2 = 0;  //몬스터들 총 체력
-        for(uint i = 0 ;i<units.length;i++)
-        {
-            sum.add(units[i].hp);
-        }
-        for(uint j = 0 ;j<mobs.length;j++)
-        {
-            sum2.add(mobs[i].hp);
-        }
-        return (sum,sum2);
+        uint hp_units = 0;  // 석상들 총 체력
+        uint hp_mobs = 0;   // 몬스터 총 체력
+        for(uint i = 0;i<Units.length;i++)
+            hp_units += Units[i].hp;
+        for(uint j = 0;j<Mobs.length;j++)
+            hp_mobs += Mobs[j].hp;
+        return (hp_units,hp_mobs);
     }
 
     // 데미지 계산
@@ -200,7 +202,7 @@ contract TGVStageClear is TGVItemShop
     } 
 
     // 데미지 적용 함수
-    function applyDamage(UnitInfo to, uint damage)internal view returns (bool)
+    function applyDamage(UnitInfo memory to, uint32 damage)internal view returns (bool)
     {
         uint randNance = 0;
         uint randomforAvoid = uint(keccak256(abi.encodePacked(block.timestamp, msg.sender, randNance)))%100;    //회피율 적용위한 랜덤값
@@ -208,11 +210,11 @@ contract TGVStageClear is TGVItemShop
             return false;           //데미지 미적용
         else
         {
-            if(uint32(damage)<=to.hp) to.hp.sub(uint32(damage));
+            if(damage<=to.hp) 
+                to.hp -= damage;
             else
                 to.hp = 0;          //데미지 적용
             return true;            
         }
     }
-
 }
