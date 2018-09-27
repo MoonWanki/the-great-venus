@@ -1,12 +1,12 @@
 import React, { Component } from 'react';
-import { Container, Text, CustomPIXIComponent } from 'react-pixi-fiber';
+import { Container, Text } from 'react-pixi-fiber';
 import { connect } from 'react-redux';
 import { bindActionCreators } from 'redux';
 import * as userActions from 'store/modules/userModule';
 import * as appActions from 'store/modules/appModule';
 import PropTypes from 'prop-types';
-import * as PIXI from "pixi.js";
 import Animated from "animated";
+import Box from './Box';
 
 const AnimatedContainer = Animated.createAnimatedComponent(Container);
 
@@ -85,23 +85,12 @@ class GameIntroScreen extends Component {
     render() {
         return (
             <AnimatedContainer alpha={this.state.alpha}>
-                <BlackBox x={0} y={0} width={this.props.width} height={this.props.height}/>
+                <Box color={0x0} x={0} y={0} width={this.props.width} height={this.props.height} alpha={1}/>
                 <Text text={`로딩 중...${this.state.loadingProgress}%\n${this.state.loadingText}`} style={{ fill: 0xffffff, fontSize: 14 }} />
             </AnimatedContainer>
         )
     }
 }
-  
-const BlackBox = CustomPIXIComponent({
-    customDisplayObject: () => new PIXI.Graphics(),
-    customApplyProps: (instance, oldProps, {x, y, width, height}) => {
-
-        instance.beginFill(0x0);
-        instance.drawRect(x, y, width, height);
-        instance.endFill();
-    },
-}, 'BlackBox');
-  
 
 export default connect(
     (state) => ({

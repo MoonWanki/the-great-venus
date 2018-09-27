@@ -1,7 +1,7 @@
 import React, { Component } from 'react';
 import { Stage } from "react-pixi-fiber";
 import GameIntroScreen from './GameIntroScreen';
-import GameMain from './GameMain';
+import GameBase from './GameBase';
 import Animated from 'animated';
 import './index.scss';
 
@@ -29,7 +29,7 @@ export default class Client extends Component {
     setToFullSize = () => {
         this.setState({
             width: window.innerWidth,
-            height: window.innerHeight - 12
+            height: window.innerHeight - 6
         });
     }
 
@@ -44,7 +44,7 @@ export default class Client extends Component {
             <div className='canvas-wrapper'>
                 <Stage options={{ backgroundColor: 0x0 }} width={width} height={height} >
                     {this.state.isGameReady
-                        ? <GameMain x={0} y={0} width={width} height={height} /> : null}
+                        ? <GameBase x={0} y={0} width={width} height={height} /> : null}
                     <GameIntroScreen width={width} height={height} onReady={this.onReady}/>
                 </Stage>
                 <FloatingForm style={{ top: this.state.floatingFormPosition.interpolate({ inputRange: [0, 1], outputRange: [-height/2, height/3]}) }} />

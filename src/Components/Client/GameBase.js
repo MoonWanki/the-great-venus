@@ -2,7 +2,7 @@ import React, { Component, Fragment } from 'react';
 import GameLobby from './GameLobby';
 import GameBattle from './GameBattle';
 
-class GameMain extends Component {
+class GameBase extends Component {
 
     state = {
         onBattle: false
@@ -18,4 +18,4 @@ class GameMain extends Component {
     }
 }
 
-export default GameMain;
+export default GameBase;

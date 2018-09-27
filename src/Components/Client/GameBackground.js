@@ -9,10 +9,9 @@ const AnimatedContainer = Animated.createAnimatedComponent(Container);
 const AnimatedSprite = Animated.createAnimatedComponent(Sprite);
 const AnimatedTilingSprite = Animated.createAnimatedComponent(TilingSprite);
 
-class Background extends Component {
+class GameBackground extends Component {
 
     state = {
-        beforePressToStart: true,
         themes: [{
             sky: this.context.app.loader.resources.bg1_1,
             items: [
@@ -110,8 +109,8 @@ class Background extends Component {
     }
 }
 
-Background.contextTypes = {
+GameBackground.contextTypes = {
     app: PropTypes.object,
 };
 
-export default Background;
+export default GameBackground;
