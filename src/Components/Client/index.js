@@ -9,8 +9,8 @@ export default class Client extends Component {
 
     state = {
         isGameReady: false,
-        width: 0,
-        height: 0,
+        stageWidth: 0,
+        stageHeight: 0,
         floatingFormPosition: new Animated.Value(0),
     }
 
@@ -20,6 +20,15 @@ export default class Client extends Component {
         window.onpopstate = () => {
             window.location.reload();
         };
+        window.onkeydown = () => {
+            console.log(this.state.floatingFormPosition._value);
+            if(this.state.floatingFormPosition._value < 0.1) {
+                Animated.timing(this.state.floatingFormPosition, {toValue: 1}).start();
+            }
+            else {
+                Animated.timing(this.state.floatingFormPosition, {toValue: 0}).start();
+            }
+        }
     }
 
     componentWillUnmount() {
@@ -28,8 +37,8 @@ export default class Client extends Component {
 
     setToFullSize = () => {
         this.setState({
-            width: window.innerWidth,
-            height: window.innerHeight - 6
+            stageWidth: window.innerWidth,
+            stageHeight: window.innerHeight - 6
         });
     }
 
@@ -39,15 +48,15 @@ export default class Client extends Component {
     }
 
     render() {
-        const { width, height } = this.state;
+        const { stageWidth, stageHeight } = this.state;
         return (
             <div className='canvas-wrapper'>
-                <Stage options={{ backgroundColor: 0x0 }} width={width} height={height} >
+                <Stage options={{ backgroundColor: 0x0 }} width={stageWidth} height={stageHeight} >
                     {this.state.isGameReady
-                        ? <GameBase x={0} y={0} width={width} height={height} /> : null}
-                    <GameIntroScreen width={width} height={height} onReady={this.onReady}/>
+                        ? <GameBase x={0} y={0} width={stageWidth} height={stageHeight} /> : null}
+                    <GameIntroScreen width={stageWidth} height={stageHeight} onReady={this.onReady}/>
                 </Stage>
-                <FloatingForm style={{ top: this.state.floatingFormPosition.interpolate({ inputRange: [0, 1], outputRange: [-height/2, height/3]}) }} />
+                <FloatingForm style={{ top: this.state.floatingFormPosition.interpolate({ inputRange: [0, 1], outputRange: [-stageHeight/2, stageHeight/3]}) }} />
             </div>
         );
     }
