@@ -32,7 +32,7 @@ class GameLobby extends Component {
                     width={this.props.width}
                     height={this.props.height} />
                 <StageSelectBoard />
-                <WalletStatusBar />
+                <WalletStatusBar width={300} height={200} x={this.props.width-300} y={20}/>
             </Fragment>
         );
     }
