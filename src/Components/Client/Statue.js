@@ -9,8 +9,7 @@ class Statue extends Component {
         return (
             <Sprite
                 texture={PIXI.Texture.fromImage(Agrippa)}
-                scale={0.1}
-                anchor={new PIXI.Point(0.5, 0.5)} />
+                {...this.props} />
         )
     }
 }
