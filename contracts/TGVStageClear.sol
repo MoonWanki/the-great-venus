@@ -18,22 +18,19 @@ contract TGVStageClear is TGVItemShop
 
         uint[6] memory roundResult;     //각 라운드 승리 유무, 획득 경험치 저장 배열
         uint exp = 0;
-        uint gold = 0;
-        uint[3] memory getgold;
 
         //1라운드 진행
-        (roundResult[0],roundResult[1],getgold[0]) = roundProgress(stage,1,Units);
+        (roundResult[0],roundResult[1]) = roundProgress(stage,1,Units);
         exp += roundResult[1];
-        gold += getgold[0];
+
 
         //이전 라운드 승리시 2라운드 진행
         if(roundResult[0]==1)    
         {
             for(uint8 j = 0; j<num_units;j++)
                 Units[j] = setUnitData(units[j]);
-            (roundResult[2],roundResult[3],getgold[1]) = roundProgress(stage,2,Units);
+            (roundResult[2],roundResult[3]) = roundProgress(stage,2,Units);
             exp += roundResult[3];
-            gold += getgold[1];
         }      
 
         //이전 라운드 승리시 3라운드 진행
@@ -41,57 +38,33 @@ contract TGVStageClear is TGVItemShop
         {
             for(uint8 m = 0; m<num_units;m++)
                 Units[m] = setUnitData(units[m]);
-            (roundResult[4],roundResult[5],getgold[2]) = roundProgress(stage,3,Units);
+            (roundResult[4],roundResult[5]) = roundProgress(stage,3,Units);
             exp += roundResult[5];
-            gold += getgold[2];
         }   
-
-        getLevel_Exp_Gold(exp, gold,stage, roundResult[4]);
-        getNewUnit();
-
-        return roundResult;
-    }
-    function getLevel_Exp_Gold(uint exp, uint gold,uint8 stagenum,uint stageclear) internal
-    {
-        //라운드 별 얻은 경험치 획득  
+        // 라운드 별 얻은 경험치 획득  
         users[msg.sender].exp += exp;
-        users[msg.sender].exp -= gold;
+        //users[msg.sender].gold += exp;
 
-        //누적 경험치 상승으로 레벨 업
+        // 누적 경험치 상승으로 레벨 업
         if(users[msg.sender].exp>requiredExp[users[msg.sender].level+1])
             users[msg.sender].level += 1;
 
-        // //클리어 스테이지 +1
-        if(stageclear==1)
+        // 클리어 스테이지 +1
+        if(roundResult[4]==1)
         {
-            if(users[msg.sender].lastStage<stagenum)
-                 users[msg.sender].lastStage += 1;
+            if(users[msg.sender].lastStage<stagenum) //처음 스테이지 클리어 할 때
+            {
+                users[msg.sender].lastStage += 1;
+                // if(users[msg.sender].lastStage == 1 || users[msg.sender].lastStage == 10 || users[msg.sender].lastStage == 25 ||
+                //    users[msg.sender].lastStage == 40 || users[msg.sender].lastStage == 55 || users[msg.sender].lastStage == 70 ||
+                //    users[msg.sender].lastStage == 85 || users[msg.sender].lastStage == 100 || users[msg.sender].lastStage == 120)
+                //    users[msg.sender].numStatues += 1;
+            }         
         }
+
+        return roundResult;
     }
 
-    function getNewUnit() internal 
-    {
-        //스테이지 별 석상 추가
-        if(users[msg.sender].lastStage==1)
-            users[msg.sender].numStatues += 1;
-        if(users[msg.sender].lastStage==10)
-            users[msg.sender].numStatues += 1;  
-        if(users[msg.sender].lastStage==25)
-            users[msg.sender].numStatues += 1;  
-        if(users[msg.sender].lastStage==40)
-            users[msg.sender].numStatues += 1;  
-        if(users[msg.sender].lastStage==55)
-            users[msg.sender].numStatues += 1;  
-        if(users[msg.sender].lastStage==70)
-            users[msg.sender].numStatues += 1;  
-        if(users[msg.sender].lastStage==85)
-            users[msg.sender].numStatues += 1;  
-        if(users[msg.sender].lastStage==100)
-            users[msg.sender].numStatues += 1;
-        if(users[msg.sender].lastStage==120)
-            users[msg.sender].numStatues += 1; 
-
-    }
     // 석상 기본 능력치와 장비 능력치 추가 함수
     function setUnitData(uint8 unit_num) public view returns(UnitInfo)
     {
@@ -116,12 +89,11 @@ contract TGVStageClear is TGVItemShop
     }
 
     // 한 라운드 진행 함수
-    function roundProgress(uint8 num, uint8 num2, UnitInfo[] memory Units) internal view returns (uint, uint,uint)
+    function roundProgress(uint8 num, uint8 num2, UnitInfo[] memory Units) internal view returns (uint, uint)
     {
         uint8 stagenum = num;   
         uint8 roundnum = num2;   
         uint exp = 0;
-        uint gold = 0;
         uint8 num_mobs = 0;
         bool roundwin = false;
         UnitInfo[] memory Mobs;
@@ -141,15 +113,14 @@ contract TGVStageClear is TGVItemShop
         {
             Mobs[j] = mobInfoList[stageInfo[j+(roundnum-1)*5]];
             exp += getMobExp(stageInfo[j+(roundnum-1)*5]);
-            gold += getMobExp(stageInfo[j+(roundnum-1)*5]);
         }
         roundwin = roundBattle(Units,Mobs);
         if(roundwin)                        //1라운드 승리시
         {
-            return (1,exp,gold);                 //승리값 1 과 해당 라운드 경험치반환
+            return (1,exp);                 //승리값 1 과 해당 라운드 경험치반환
         }                                      
         else                                //1라운드 패배시
-            return (2,0,0);                   //패배값 0 과 경험치 없으므로 0반환
+            return (2,0);                   //패배값 0 과 경험치 없으므로 0반환
     }
 
     // 몬스터 레벨에 따라 얻는 경험치 계산 함수 - 수정 필요
