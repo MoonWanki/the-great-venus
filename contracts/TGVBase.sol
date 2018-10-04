@@ -17,19 +17,17 @@ contract TGVBase is Ownable {
     // 장비 DB
     uint public numEquips; // 총 장비명세서  수 - 총 유저수와 동일
     mapping (address => mapping (uint => Equip)) public equipList;
-    //getter 함수 필요
 
     // 스테이지 DB
-    uint public numStageInfo; // 구현된 스테이지 개수
-    //mapping (uint => StageInfo) stageInfoList;
-    mapping (uint => uint[15]) public stageInfoList;
+    uint8 public numStageInfo; // 구현된 스테이지 개수
+    mapping (uint8 => uint8[15]) public stageInfoList;
 
     // 석상 DB
-    uint public numStatueInfo; // 구현된 석상 수
+    uint8 public numStatueInfo; // 구현된 석상 수
     mapping (uint => UnitInfo) public statueInfoList;
 
     // 몬스터 DB
-    uint public numMobInfo; // 구현된 몬스터 수
+    uint8 public numMobInfo; // 구현된 몬스터 수
     mapping (uint => UnitInfo) public mobInfoList;
 
     // 레벨 당 요구 경험치
@@ -64,65 +62,29 @@ contract TGVBase is Ownable {
         uint rank;
         uint gold;
         uint exp;
-        uint32 level;
-        uint32 lastStage;
-        uint32 numStatues;
+        uint8 level;
+        uint8 lastStage;
+        uint8 numStatues;
     }
 
     struct Equip {
-        uint32 hpEquipType;     // HP 장비 종류
-        uint32 hpEquipLevel;    // HP 장비 레벨
-        uint32 atkEquipType;    // 공격력 장비 종류
-        uint32 atkEquipLevel;   // 공격력 장비 레벨
-        uint32 defEquipType;    // 방어력 장비 종류
-        uint32 defEquipLevel;   // 방어력 장비 레벨
-        uint32 crtEquipType;    // 크리티컬 장비 종류
-        uint32 avdEquipType;    // 회피율 장비 종류
+        uint16 hpEquipType;     // HP 장비 종류
+        uint16 hpEquipLevel;    // HP 장비 레벨
+        uint16 atkEquipType;    // 공격력 장비 종류
+        uint16 atkEquipLevel;   // 공격력 장비 레벨
+        uint16 defEquipType;    // 방어력 장비 종류
+        uint16 defEquipLevel;   // 방어력 장비 레벨
+        uint16 crtEquipType;    // 크리티컬 장비 종류
+        uint16 avdEquipType;    // 회피율 장비 종류
     }
 
     // 유닛
     struct UnitInfo {
-        uint32 hp;      // 기본 HP
-        uint32 atk;     // 기본 공격력
-        uint32 def;     // 기본 방어력
-        uint32 crt;     // 기본 크리티컬 확률
-        uint32 avd;     // 기본 회피율
-    }
-
-
-    function getMyInfo() external view returns (
-        string name,
-        uint rank,
-        uint gold,
-        uint exp,
-        uint level,
-        uint lastStage,
-        uint numStatues,
-        uint[] Localequiplist
-    ) 
-    {
-        uint[] memory localequiplist;
-        for(uint i = 0;i<numStatues;i++)
-        {
-            localequiplist[i*10] = equipList[msg.sender][i+1].hpEquipType;
-            localequiplist[i*10+1] = equipList[msg.sender][i+1].hpEquipLevel;
-            localequiplist[i*10+2] = equipList[msg.sender][i+1].atkEquipType;
-            localequiplist[i*10+3] = equipList[msg.sender][i+1].atkEquipLevel;
-            localequiplist[i*10+4] = equipList[msg.sender][i+1].defEquipType;
-            localequiplist[i*10+5] = equipList[msg.sender][i+1].defEquipLevel;
-            localequiplist[i*10+6] = equipList[msg.sender][i+1].crtEquipType;
-            localequiplist[i*10+7] = equipList[msg.sender][i+1].avdEquipType;
-        }
-        return (
-            users[msg.sender].name,
-            users[msg.sender].rank,
-            users[msg.sender].gold,
-            users[msg.sender].exp,
-            users[msg.sender].level,
-            users[msg.sender].lastStage,
-            users[msg.sender].numStatues,
-            localequiplist
-        );
+        uint16 hp;      // 기본 HP
+        uint16 atk;     // 기본 공격력
+        uint16 def;     // 기본 방어력
+        uint16 crt;     // 기본 크리티컬 확률
+        uint16 avd;     // 기본 회피율
     }
 
     // 신규 유저 생성.
