@@ -12,7 +12,7 @@ const initialState = {
         level: null,
         lastStage: null,
         numStatue: null,
-        equips: null,
+        equipList: null,
     },
     balance: 0,
 };
@@ -23,33 +23,59 @@ const SET_USER_DATA = 'user/SET_USER_DATA';
 export const loadUserData = web3Instance => dispatch => {
     const TGV = contract(abi);
     TGV.setProvider(web3Instance.currentProvider);
-    web3Instance.eth.getCoinbase((err, coinbase) => {
-        web3Instance.eth.getBalance(coinbase, (err, balance) => {
-            if(!err) {
-                dispatch({
-                    type: SET_BALANCE,
-                    payload: balance
-                });
-            } else {
-                console.log("getBalance failed")
-            }
-        })
+    const coinbase = web3Instance.eth.coinbase;
+    web3Instance.eth.getBalance(coinbase, (err, balance) => {
+        if(!err) {
+            dispatch({
+                type: SET_BALANCE,
+                payload: balance
+            });
+        } else console.log(err);
+    });
 
-        if (!err) {
-            TGV.deployed()
-            .then(instance => {
-                return instance.users(coinbase);
-            }).then(data => {
-                dispatch({
-                    type: SET_USER_DATA,
-                    payload: data
-                });
-            }).catch(err => {
-                console.error(err);
-            })
-        } else {
-            console.error("error in getCoinbase()");
+    // Get user data
+    let TGVInstance, userData;
+    TGV.deployed()
+    .then(instance => {
+        TGVInstance = instance;
+        return TGVInstance.users(coinbase);
+    }).then(data => {
+        userData = {
+            name: data[0],
+            rank: data[1],
+            gold: data[2],
+            exp: data[3],
+            level: data[4],
+            lastStage: data[5],
+            numStatue: data[6],
         }
+        let promises = [];
+        for(let i=0 ; i<data[6] ; i++) {
+            promises.push(TGVInstance.equipList(coinbase, i));
+        }
+        return Promise.all(promises);
+    }).then(data => {
+        userData = {
+            ...userData,
+            equipList: data.map(unit=>{
+                return {
+                    hpEquipType: unit[0].c[0],
+                    hpEquipLevel: unit[1].c[0],
+                    atkEquipType: unit[2].c[0],
+                    atkEquipLevel: unit[3].c[0],
+                    defEquipType: unit[4].c[0],
+                    defEquipLevel: unit[5].c[0],
+                    crtEquipType: unit[6].c[0],
+                    avdEquipType: unit[7].c[0],
+                }
+            }),
+        };
+        dispatch({
+            type: SET_USER_DATA,
+            payload: userData
+        });
+    }).catch(err => {
+        console.error(err);
     });
 }
 
@@ -71,7 +97,7 @@ export const createUser = (web3Instance, name) => dispatch => {
                 console.error(err);
             })
         } else {
-            console.error("error in getCoinbase()");
+            console.error(err);
         }
     });
 }
@@ -91,33 +117,40 @@ export const clearStage = (web3Instance, stageNo) => dispatch => {
                 console.error(err);
             })
         } else {
-            console.error("error in getCoinbase()");
+            console.error(err);
         }
     });
 }
 
-export const upgradeEquip = (web3Instance, statueNo, equipType) => {
-    
+export const upgradeEquip = (web3Instance, unit, part) => {
+    const TGV = contract(abi);
+    TGV.setProvider(web3Instance.currentProvider);
+    web3Instance.eth.getCoinbase((err, coinbase) => {
+        if (!err) {
+            TGV.deployed()
+            .then(instance => {
+                return instance.reinforceEquip(unit, part, { from: coinbase });
+            }).then(data => {
+                console.log(data);
+                window.Materialize.toast("장비를 강화했습니다.", 1500);
+            }).catch(err => {
+                console.error(err);
+            })
+        } else {
+            console.error(err);
+        }
+    });
 }
 
 export default handleActions({
 
     [SET_USER_DATA]: (state, { payload }) => {
-        const data = {
-            name: payload[0],
-            rank: payload[1],
-            gold: payload[2],
-            exp: payload[3],
-            level: payload[4],
-            lastStage: payload[5],
-            numStatue: payload[6],
-            equips: payload[7],
-        }
-       return {
+        return {
            ...state,
-           userData: data
+           userData: payload
        }
     },
+  
     [SET_BALANCE]: (state, { payload }) => {
         const balance = payload.c[0]*(10**5) + payload.c[1]/(10**9);
         return {

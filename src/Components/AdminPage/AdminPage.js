@@ -92,71 +92,70 @@ class AdminPage extends Component {
                             </tbody>
                         </Table>
                     </div>
-                    <div className='admin-simulation-segment'>
-                        <Table>
-                            <thead>
-                                <tr>
-                                    <th>장비</th>
-                                    <th>레벨</th>
-                                    <th>강화</th>
-                                </tr>
-                            </thead>
-                            <tbody>
-                                <tr>
-                                    <td>HP</td>
-                                    <td>1</td>
-                                    <td>
-                                        <Button floating flat className='teal lighten-2' waves='light' icon='gavel' onClick={()=>{
-                                            window.Materialize.toast('준비중입니다', 1500);
-                                        }} />
-                                    </td>
-                                </tr>
-                                <tr>
-                                    <td>ATK</td>
-                                    <td>1</td>
-                                    <td>
-                                        <Button floating flat className='teal lighten-1' waves='light' icon='gavel' onClick={()=>{
-                                            window.Materialize.toast('준비중입니다', 1500);
-                                        }} />
-                                    </td>
-                                </tr>
-                                <tr>
-                                    <td>DEF</td>
-                                    <td>1</td>
-                                    <td>
-                                        <Button floating flat className='teal' waves='light' icon='gavel' onClick={()=>{
-                                            window.Materialize.toast('준비중입니다', 1500);
-                                        }} />
-                                    </td>
-                                </tr>
-                                <tr>
-                                    <td>CRT</td>
-                                    <td>1</td>
-                                    <td>
-                                        <Button floating flat className='teal darken-1' waves='light' icon='gavel' onClick={()=>{
-                                            window.Materialize.toast('준비중입니다', 1500);
-                                        }} />
-                                    </td>
-                                </tr>
-                                <tr>
-                                    <td>AVD</td>
-                                    <td>1</td>
-                                    <td>
-                                        <Button floating flat className='teal darken-2' waves='light' icon='gavel' onClick={()=>{
-                                            window.Materialize.toast('준비중입니다', 1500);
-                                        }} />
-                                    </td>
-                                </tr>
-                            </tbody>
-                        </Table>
-                    </div>
+                    {userData.equipList ? userData.equipList.map((unit, i)=>{
+                        return (
+                            <div className='admin-simulation-segment' key={i}>
+                                <Table>
+                                    <thead>
+                                        <tr>
+                                            <th>장비</th>
+                                            <th>타입</th>
+                                            <th>레벨</th>
+                                            <th>강화</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        <tr>
+                                            <td>HP</td>
+                                            <td>{unit.hpEquipType}</td>
+                                            <td>{unit.hpEquipLevel}</td>
+                                            <td>
+                                                <Button floating flat className='teal lighten-2' waves='light' icon='gavel' onClick={()=>{
+                                                    UserActions.upgradeEquip(web3Instance, i, 1);
+                                                }} />
+                                            </td>
+                                        </tr>
+                                        <tr>
+                                            <td>ATK</td>
+                                            <td>{unit.atkEquipType}</td>
+                                            <td>{unit.atkEquipLevel}</td>
+                                            <td>
+                                                <Button floating flat className='teal lighten-1' waves='light' icon='gavel' onClick={()=>{
+                                                    UserActions.upgradeEquip(web3Instance, i, 2);
+                                                }} />
+                                            </td>
+                                        </tr>
+                                        <tr>
+                                            <td>DEF</td>
+                                            <td>{unit.defEquipType}</td>
+                                            <td>{unit.defEquipLevel}</td>
+                                            <td>
+                                                <Button floating flat className='teal' waves='light' icon='gavel' onClick={()=>{
+                                                    UserActions.upgradeEquip(web3Instance, i, 3);
+                                                }} />
+                                            </td>
+                                        </tr>
+                                        <tr>
+                                            <td>CRT</td>
+                                            <td>{unit.hpEquipType}</td>
+                                        </tr>
+                                        <tr>
+                                            <td>AVD</td>
+                                            <td>{unit.hpEquipType}</td>
+                                        </tr>
+                                    </tbody>
+                                </Table>
+                            </div>
+                        );
+                    }) : null}
+                    
                 </div>
                 <div className='admin-stage-list'>
-                <h5>스테이지입장☞</h5>
+                <h5>스테이지 입장 </h5>
                     {userData.lastStage ? [1,2,3,4,5,6,7,8,9,10,11,12,13,14,15,16,17,18,19,20].map(i=>{
-                        if(i <= userData.lastStage.c[0]) return(<div key={i} className='admin-stage-item' style={{ background: 'yellow', cursor: 'pointer'}} onClick={()=>UserActions.clearStage(web3Instance, i)}>{i}</div>)
-                        else if(i === userData.lastStage.c[0] + 1) return(<div key={i} className='admin-stage-item' style={{ background: 'orange', cursor: 'pointer'}} onClick={()=>UserActions.clearStage(web3Instance, i)}>{i}</div>)
-                        else return (<div key={i} className='admin-stage-item' style={{ background: 'gray'}}>{i}</div>)
+                        if(i <= userData.lastStage.c[0]) return(<div key={i} className='admin-stage-item' style={{ background: '#d19159', cursor: 'pointer' }} onClick={()=>UserActions.clearStage(web3Instance, i)}>{i}</div>)
+                        else if(i === userData.lastStage.c[0] + 1) return(<div key={i} className='admin-stage-item' style={{ background: '#cc6c18', cursor: 'pointer', fontWeight: '700'}} onClick={()=>UserActions.clearStage(web3Instance, i)}>{i}</div>)
+                        else return (<div key={i} className='admin-stage-item' style={{ background: '#777', color: '#999'}}>{i}</div>)
                     }) : null}
                 </div>
                 {isLoaded?

@@ -22,40 +22,34 @@ export const loadConfig = web3Instance => dispatch => {
     const TGV = contract(abi);
     TGV.setProvider(web3Instance.currentProvider);
     let TGVInstance, promises;
-    web3Instance.eth.getCoinbase((err, coinbase) => {
-        if(!err) {
-            TGV.deployed()
-            .then(instance => {
-                TGVInstance = instance;
-                promises = [];
-                for(var i=1 ; i<=20 ; i++) {
-                    promises.push(TGVInstance.statueInfoList(i));
-                }
-                return Promise.all(promises);
-            }).then(statueInfoList => {
-                dispatch({ type: SET_STATUE, payload: statueInfoList });
-                promises = [];
-                for(var i=1 ; i<=20 ; i++) {
-                    promises.push(TGVInstance.mobInfoList(i));
-                }
-                return Promise.all(promises);
-            }).then(mobInfoList => {
-                dispatch({ type: SET_MOB, payload: mobInfoList });
-                promises = [];
-                for(var i=1 ; i<=20 ; i++) {
-                    promises.push(TGVInstance.requiredExp(i));
-                }
-                return Promise.all(promises);
-            }).then(requiredExpList => {
-                dispatch({ type: SET_REQUIRED_EXP, payload: requiredExpList });
-                dispatch({ type: SET_LOADED, payload: true });
-            }).catch(err => {
-                dispatch({ type: SET_LOADED, payload: false });
-                console.error(err);
-            });
-        } else {
-            console.error("error in getCoinbase()");
+    TGV.deployed()
+    .then(instance => {
+        TGVInstance = instance;
+        promises = [];
+        for(var i=1 ; i<=20 ; i++) {
+            promises.push(TGVInstance.statueInfoList(i));
         }
+        return Promise.all(promises);
+    }).then(statueInfoList => {
+        dispatch({ type: SET_STATUE, payload: statueInfoList });
+        promises = [];
+        for(var i=1 ; i<=20 ; i++) {
+            promises.push(TGVInstance.mobInfoList(i));
+        }
+        return Promise.all(promises);
+    }).then(mobInfoList => {
+        dispatch({ type: SET_MOB, payload: mobInfoList });
+        promises = [];
+        for(var i=1 ; i<=20 ; i++) {
+            promises.push(TGVInstance.requiredExp(i));
+        }
+        return Promise.all(promises);
+    }).then(requiredExpList => {
+        dispatch({ type: SET_REQUIRED_EXP, payload: requiredExpList });
+        dispatch({ type: SET_LOADED, payload: true });
+    }).catch(err => {
+        dispatch({ type: SET_LOADED, payload: false });
+        console.error(err);
     });
 }
 
