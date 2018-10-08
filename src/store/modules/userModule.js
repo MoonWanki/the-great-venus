@@ -122,6 +122,26 @@ export const clearStage = (web3Instance, stageNo) => dispatch => {
     });
 }
 
+export const buyEquip = (web3Instance, unit, part, type) => {
+    const TGV = contract(abi);
+    TGV.setProvider(web3Instance.currentProvider);
+    web3Instance.eth.getCoinbase((err, coinbase) => {
+        if (!err) {
+            TGV.deployed()
+            .then(instance => {
+                return instance.addEquipInfo(unit, part, type, { from: coinbase });
+            }).then(data => {
+                console.log(data);
+                window.Materialize.toast("장비를 장착했습니다!", 1500);
+            }).catch(err => {
+                console.error(err);
+            })
+        } else {
+            console.error(err);
+        }
+    });
+}
+
 export const upgradeEquip = (web3Instance, unit, part) => {
     const TGV = contract(abi);
     TGV.setProvider(web3Instance.currentProvider);
@@ -129,10 +149,10 @@ export const upgradeEquip = (web3Instance, unit, part) => {
         if (!err) {
             TGV.deployed()
             .then(instance => {
-                return instance.reinforceEquip(unit, part, { from: coinbase });
+                return instance.upgradeEquip(unit, part, { from: coinbase });
             }).then(data => {
                 console.log(data);
-                window.Materialize.toast("장비를 강화했습니다.", 1500);
+                window.Materialize.toast("장비를 강화했습니다!", 1500);
             }).catch(err => {
                 console.error(err);
             })

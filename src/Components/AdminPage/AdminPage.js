@@ -4,7 +4,7 @@ import { connect } from 'react-redux';
 import { bindActionCreators } from 'redux';
 import * as adminActions from 'store/modules/adminModule';
 import * as userActions from 'store/modules/userModule';
-import { Table, Navbar, NavItem, Input, Row, Button } from 'react-materialize';
+import { Table, Navbar, NavItem, Input, Row, Button, Dropdown } from 'react-materialize';
 import './AdminPage.scss';
 
 class AdminPage extends Component {
@@ -55,33 +55,33 @@ class AdminPage extends Component {
                         <Table>
                             <thead>
                                 <tr>
-                                    <th>내 정보</th>
+                                    <th style={{ fontSize: '1.4rem'}}>내 정보</th>
                                 </tr>
                             </thead>
                             <tbody>
                                 <tr>
                                     <td>닉네임</td>
-                                    <td>{userData.name ? userData.name : '-'}</td>
+                                    <td>{userData.name ? userData.name : null}</td>
                                 </tr>
                                 <tr>
                                     <td>레벨</td>
-                                    <td>{userData.level ? userData.level.c : '-'}</td>
+                                    <td>{userData.level ? userData.level.c : null}</td>
                                 </tr>
                                 <tr>
                                     <td>경험치</td>
-                                    <td>{userData.exp ? userData.exp.c : '-'}</td>
+                                    <td>{userData.exp ? userData.exp.c : null}</td>
                                 </tr>
                                 <tr>
                                     <td>골드</td>
-                                    <td>{userData.gold ? userData.gold.c : '-'}</td>
+                                    <td>{userData.gold ? userData.gold.c : null}</td>
                                 </tr>
                                 <tr>
                                     <td>석상 개수</td>
-                                    <td>{userData.lastStage ? userData.numStatue.c : '-'}</td>
+                                    <td>{userData.lastStage ? userData.numStatue.c : null}</td>
                                 </tr>
                                 <tr>
                                     <td>완료 스테이지</td>
-                                    <td>{userData.lastStage ? userData.lastStage.c : '-'}</td>
+                                    <td>{userData.lastStage ? userData.lastStage.c : null}</td>
                                 </tr>
                                 <tr>
                                     <td>초기화</td>
@@ -98,50 +98,97 @@ class AdminPage extends Component {
                                 <Table>
                                     <thead>
                                         <tr>
-                                            <th>장비</th>
+                                            <th style={{ fontSize: '1.4rem'}}>{i}</th>
                                             <th>타입</th>
                                             <th>레벨</th>
-                                            <th>강화</th>
                                         </tr>
                                     </thead>
                                     <tbody>
                                         <tr>
                                             <td>HP</td>
-                                            <td>{unit.hpEquipType}</td>
-                                            <td>{unit.hpEquipLevel}</td>
-                                            <td>
-                                                <Button floating flat className='teal lighten-2' waves='light' icon='gavel' onClick={()=>{
+                                            <td>{unit.hpEquipType ? unit.hpEquipType : '-'}</td>
+                                            <td>{unit.hpEquipLevel ? unit.hpEquipLevel : null}</td>
+                                            <td>{unit.hpEquipLevel ?
+                                                <Button floating flat className='teal accent-4' waves='light' icon='gavel' onClick={()=>{
                                                     UserActions.upgradeEquip(web3Instance, i, 1);
                                                 }} />
-                                            </td>
+                                                :
+                                                <Dropdown trigger={
+                                                    <Button floating flat className='lime accent-4' waves='light' icon='add_shopping_cart' />
+                                                  }>
+                                                  <NavItem onClick={() => UserActions.buyEquip(web3Instance, i, 1, 1)}>중절모</NavItem>
+                                                  <NavItem onClick={() => UserActions.buyEquip(web3Instance, i, 1, 2)}>텍사스카우보이모자</NavItem>
+                                                  <NavItem onClick={() => UserActions.buyEquip(web3Instance, i, 1, 3)}>힙합 스냅백</NavItem>
+                                                </Dropdown>
+                                            }</td>
                                         </tr>
                                         <tr>
                                             <td>ATK</td>
-                                            <td>{unit.atkEquipType}</td>
-                                            <td>{unit.atkEquipLevel}</td>
-                                            <td>
-                                                <Button floating flat className='teal lighten-1' waves='light' icon='gavel' onClick={()=>{
+                                            <td>{unit.atkEquipType ? unit.atkEquipType : '-'}</td>
+                                            <td>{unit.atkEquipLevel ? unit.atkEquipLevel : null}</td>
+                                            <td>{unit.atkEquipLevel ?
+                                                <Button floating flat className='teal accent-4' waves='light' icon='gavel' onClick={()=>{
                                                     UserActions.upgradeEquip(web3Instance, i, 2);
                                                 }} />
-                                            </td>
+                                                :
+                                                <Dropdown trigger={
+                                                    <Button floating flat className='lime accent-4' waves='light' icon='add_shopping_cart' />
+                                                  }>
+                                                  <NavItem onClick={() => UserActions.buyEquip(web3Instance, i, 2, 1)}>루비 펜던트</NavItem>
+                                                  <NavItem onClick={() => UserActions.buyEquip(web3Instance, i, 2, 2)}>사파이어 펜던트</NavItem>
+                                                  <NavItem onClick={() => UserActions.buyEquip(web3Instance, i, 2, 3)}>해골 펜던트</NavItem>
+                                                </Dropdown>
+                                            }</td>
                                         </tr>
                                         <tr>
                                             <td>DEF</td>
-                                            <td>{unit.defEquipType}</td>
-                                            <td>{unit.defEquipLevel}</td>
-                                            <td>
-                                                <Button floating flat className='teal' waves='light' icon='gavel' onClick={()=>{
+                                            <td>{unit.defEquipType ? unit.defEquipType : '-'}</td>
+                                            <td>{unit.defEquipLevel ? unit.defEquipLevel : null}</td>
+                                            <td>{unit.defEquipLevel ?
+                                                <Button floating flat className='teal accent-4' waves='light' icon='gavel' onClick={()=>{
                                                     UserActions.upgradeEquip(web3Instance, i, 3);
                                                 }} />
-                                            </td>
+                                                :
+                                                <Dropdown trigger={
+                                                    <Button floating flat className='lime accent-4' waves='light' icon='add_shopping_cart' />
+                                                  }>
+                                                  <NavItem onClick={() => UserActions.buyEquip(web3Instance, i, 3, 1)}>불멸의 오라</NavItem>
+                                                  <NavItem onClick={() => UserActions.buyEquip(web3Instance, i, 3, 2)}>냉기의 오라</NavItem>
+                                                  <NavItem onClick={() => UserActions.buyEquip(web3Instance, i, 3, 3)}>잿빛 오라</NavItem>
+                                                </Dropdown>
+                                            }</td>
                                         </tr>
                                         <tr>
                                             <td>CRT</td>
-                                            <td>{unit.hpEquipType}</td>
+                                            <td>{unit.crtEquipType ? unit.crtEquipType : '-'}</td>
+                                            <td></td>
+                                            <td>{unit.crtEquipType ?
+                                                <Button floating icon='gavel' disabled />
+                                                :
+                                                <Dropdown trigger={
+                                                    <Button floating flat className='lime accent-4' waves='light' icon='add_shopping_cart' />
+                                                  }>
+                                                  <NavItem onClick={() => UserActions.buyEquip(web3Instance, i, 4, 1)}>블루문 이어링</NavItem>
+                                                  <NavItem onClick={() => UserActions.buyEquip(web3Instance, i, 4, 2)}>실버 이어링</NavItem>
+                                                  <NavItem onClick={() => UserActions.buyEquip(web3Instance, i, 4, 3)}>합금도금 이어링</NavItem>
+                                                </Dropdown>
+                                            }</td>
                                         </tr>
                                         <tr>
                                             <td>AVD</td>
-                                            <td>{unit.hpEquipType}</td>
+                                            <td>{unit.avdEquipType ? unit.avdEquipType : '-'}</td>
+                                            <td></td>
+                                            <td>{unit.avdEquipType ?
+                                                <Button floating icon='gavel' disabled />
+                                                :
+                                                <Dropdown trigger={
+                                                    <Button floating flat className='lime accent-4' waves='light' icon='add_shopping_cart' />
+                                                  }>
+                                                  <NavItem onClick={() => UserActions.buyEquip(web3Instance, i, 5, 1)}>네이비 페인트</NavItem>
+                                                  <NavItem onClick={() => UserActions.buyEquip(web3Instance, i, 5, 2)}>블루 페인트</NavItem>
+                                                  <NavItem onClick={() => UserActions.buyEquip(web3Instance, i, 5, 3)}>얼룩무늬 페인트</NavItem>
+                                                </Dropdown>
+                                            }</td>
                                         </tr>
                                     </tbody>
                                 </Table>
