@@ -43,7 +43,7 @@ contract TGVStageClear is TGVItemShop
         }   
         // 라운드 별 얻은 경험치 획득  
         users[msg.sender].exp += exp;
-        //users[msg.sender].gold += exp;
+        users[msg.sender].gold += exp;
 
         // 누적 경험치 상승으로 레벨 업
         if(users[msg.sender].exp>requiredExp[users[msg.sender].level+1])
@@ -55,10 +55,10 @@ contract TGVStageClear is TGVItemShop
             if(users[msg.sender].lastStage<stagenum) //처음 스테이지 클리어 할 때
             {
                 users[msg.sender].lastStage += 1;
-                // if(users[msg.sender].lastStage == 1 || users[msg.sender].lastStage == 10 || users[msg.sender].lastStage == 25 ||
-                //    users[msg.sender].lastStage == 40 || users[msg.sender].lastStage == 55 || users[msg.sender].lastStage == 70 ||
-                //    users[msg.sender].lastStage == 85 || users[msg.sender].lastStage == 100 || users[msg.sender].lastStage == 120)
-                //    users[msg.sender].numStatues += 1;
+                if(users[msg.sender].lastStage == 1 || users[msg.sender].lastStage == 10 || users[msg.sender].lastStage == 25 ||
+                   users[msg.sender].lastStage == 40 || users[msg.sender].lastStage == 55 || users[msg.sender].lastStage == 70 ||
+                   users[msg.sender].lastStage == 85 || users[msg.sender].lastStage == 100 || users[msg.sender].lastStage == 120)
+                   users[msg.sender].numStatues += 1;
             }         
         }
 

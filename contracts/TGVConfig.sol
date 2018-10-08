@@ -46,17 +46,7 @@ contract TGVConfig is TGVBase {
         stageInfoList[8] = [uint8(4),4,4,4,0,2,3,3,4,4,3,3,3,3,4];
         stageInfoList[9] = [uint8(2),3,4,0,0,2,2,3,4,0,2,2,3,4,0];
         stageInfoList[10] = [uint8(3),3,3,0,0,3,3,3,4,0,1,2,2,3,3];
-        stageInfoList[11] = [uint8(1),1,0,0,0,1,1,0,0,0,1,1,0,0,0];
-        stageInfoList[12] = [uint8(2),2,0,0,0,2,2,2,0,0,2,2,3,0,0];
-        stageInfoList[13] = [uint8(3),3,0,0,0,2,3,3,0,0,2,3,3,3,0];
-        stageInfoList[14] = [uint8(2),3,4,0,0,2,2,3,4,0,2,2,3,4,0];
-        stageInfoList[15] = [uint8(3),3,3,0,0,3,3,3,4,0,1,2,2,3,3];
-        stageInfoList[16] = [uint8(3),3,4,0,0,3,3,3,4,0,3,3,4,4,0];
-        stageInfoList[17] = [uint8(3),4,4,0,0,3,3,4,4,0,3,4,4,5,0];
-        stageInfoList[18] = [uint8(4),4,4,4,0,2,3,3,4,4,3,3,3,3,4];
-        stageInfoList[19] = [uint8(2),3,4,0,0,2,2,3,4,0,2,2,3,4,0];
-        stageInfoList[20] = [uint8(3),3,3,0,0,3,3,3,4,0,1,2,2,3,3];
-        numStageInfo = 20;
+        numStageInfo = 10;
 
         // 레벨 업 마다 필요한 경험치 정보
         requiredExp[1] = 0;
@@ -109,6 +99,8 @@ contract TGVConfig is TGVBase {
         mobInfoList[numMobInfo] = UnitInfo(_hp, _atk, _def, _crt, _avd);
         return numMobInfo;
     }
+
+
 
     function editStatueInfo(
         uint _no,
