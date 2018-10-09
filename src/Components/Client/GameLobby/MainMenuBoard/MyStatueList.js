@@ -16,7 +16,7 @@ class MyStatueList extends Component {
         editorOffset: new Animated.Value(0),
         statues: [
             {
-                name: "HaeTae",
+                name: "Me",
                 hp: 20,
                 atk: 30,
                 def: 10,
@@ -33,6 +33,14 @@ class MyStatueList extends Component {
             },
             {
                 name: "Agrippa",
+                hp: 32,
+                atk: 150,
+                def: 55,
+                crt: 15,
+                avd: 5
+            },
+            {
+                name: "Venus",
                 hp: 32,
                 atk: 150,
                 def: 55,
@@ -58,7 +66,7 @@ class MyStatueList extends Component {
     componentWillUnmount = () => $(document).off('mousewheel DOMMouseScroll');
 
     onMouseWheelDown = () => {
-        if(!this.state.editorOn && this.state.currentSelected < 10) this.toNthStatue(this.state.currentSelected + 1);
+        if(!this.state.editorOn && this.state.currentSelected < this.state.statues.length-1) this.toNthStatue(this.state.currentSelected + 1);
     }
 
     onMouseWheelUp = () => {

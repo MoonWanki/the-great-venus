@@ -112,7 +112,7 @@ export const clearStage = (web3Instance, stageNo) => dispatch => {
             .then(instance => {
                 return instance.setStageMain(stageNo, [1], { from: coinbase });
             }).then(data => {
-                window.Materialize.toast(JSON.stringify(data));
+                window.Materialize.toast(`${stageNo}스테이지에 입장합니다.`, 1500);
             }).catch(err => {
                 console.error(err);
             })

@@ -13,6 +13,7 @@ class StatueSpriteRoller extends Component {
             <AnimatedContainer {...this.props} >
                 {this.props.statues.map((statue, i) => 
                     <AnimatedStatue
+                        no={i}
                         interactive
                         cursor='pointer'
                         key={i}

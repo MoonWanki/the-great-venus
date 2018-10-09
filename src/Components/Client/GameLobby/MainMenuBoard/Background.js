@@ -13,48 +13,48 @@ class GameBackground extends Component {
 
     state = {
         themes: [{
-            sky: this.context.app.loader.resources.bg1_1,
+            sky: this.context.app.loader.resources.bg_main1_1,
             items: [
-                { src: this.context.app.loader.resources.bg1_2, speed: 1 },
-                { src: this.context.app.loader.resources.bg1_3, speed: 1.5 },
-                { src: this.context.app.loader.resources.bg1_4, speed: 0 },
-                { src: this.context.app.loader.resources.bg1_5, speed: 2 },
-                { src: this.context.app.loader.resources.bg1_6, speed: 0 },
-                { src: this.context.app.loader.resources.bg1_7, speed: 2.5 },
+                { src: this.context.app.loader.resources.bg_main1_2, speed: 1 },
+                { src: this.context.app.loader.resources.bg_main1_3, speed: 1.5 },
+                { src: this.context.app.loader.resources.bg_main1_4, speed: 0 },
+                { src: this.context.app.loader.resources.bg_main1_5, speed: 2 },
+                { src: this.context.app.loader.resources.bg_main1_6, speed: 0 },
+                { src: this.context.app.loader.resources.bg_main1_7, speed: 2.5 },
             ]
         },
         {
-            sky: this.context.app.loader.resources.bg2_1,
+            sky: this.context.app.loader.resources.bg_main2_1,
             items: [
-                { src: this.context.app.loader.resources.bg2_2, speed: 0 },
-                { src: this.context.app.loader.resources.bg2_3, speed: 0 },
-                { src: this.context.app.loader.resources.bg2_4, speed: 0 },
-                { src: this.context.app.loader.resources.bg2_5, speed: 0 },
-                { src: this.context.app.loader.resources.bg2_6, speed: 1 },
-                { src: this.context.app.loader.resources.bg2_7, speed: 1.5 },
-                { src: this.context.app.loader.resources.bg2_8, speed: 2 },
-                { src: this.context.app.loader.resources.bg2_9, speed: 0 },
+                { src: this.context.app.loader.resources.bg_main2_2, speed: 0 },
+                { src: this.context.app.loader.resources.bg_main2_3, speed: 0 },
+                { src: this.context.app.loader.resources.bg_main2_4, speed: 0 },
+                { src: this.context.app.loader.resources.bg_main2_5, speed: 0 },
+                { src: this.context.app.loader.resources.bg_main2_6, speed: 1 },
+                { src: this.context.app.loader.resources.bg_main2_7, speed: 1.5 },
+                { src: this.context.app.loader.resources.bg_main2_8, speed: 2 },
+                { src: this.context.app.loader.resources.bg_main2_9, speed: 0 },
             ]
         },
         {
-            sky: this.context.app.loader.resources.bg3_1,
+            sky: this.context.app.loader.resources.bg_main3_1,
             items: [
-                { src: this.context.app.loader.resources.bg3_2, speed: 1 },
-                { src: this.context.app.loader.resources.bg3_3, speed: 0 },
-                { src: this.context.app.loader.resources.bg3_4, speed: 2 },
-                { src: this.context.app.loader.resources.bg3_5, speed: 0 },
-                { src: this.context.app.loader.resources.bg3_6, speed: 0 },
-                { src: this.context.app.loader.resources.bg3_7, speed: 0 },
-                { src: this.context.app.loader.resources.bg3_8, speed: 0 },
+                { src: this.context.app.loader.resources.bg_main3_2, speed: 1 },
+                { src: this.context.app.loader.resources.bg_main3_3, speed: 0 },
+                { src: this.context.app.loader.resources.bg_main3_4, speed: 2 },
+                { src: this.context.app.loader.resources.bg_main3_5, speed: 0 },
+                { src: this.context.app.loader.resources.bg_main3_6, speed: 0 },
+                { src: this.context.app.loader.resources.bg_main3_7, speed: 0 },
+                { src: this.context.app.loader.resources.bg_main3_8, speed: 0 },
             ]
         },
         {
-            sky: this.context.app.loader.resources.bg4_1,
+            sky: this.context.app.loader.resources.bg_main4_1,
             items: [
-                { src: this.context.app.loader.resources.bg4_2, speed: 1 },
-                { src: this.context.app.loader.resources.bg4_3, speed: 0 },
-                { src: this.context.app.loader.resources.bg4_4, speed: 2 },
-                { src: this.context.app.loader.resources.bg4_5, speed: 0 },
+                { src: this.context.app.loader.resources.bg_main4_2, speed: 1 },
+                { src: this.context.app.loader.resources.bg_main4_3, speed: 0 },
+                { src: this.context.app.loader.resources.bg_main4_4, speed: 2 },
+                { src: this.context.app.loader.resources.bg_main4_5, speed: 0 },
             ]
         }],
         skyY: new Animated.Value(0),
