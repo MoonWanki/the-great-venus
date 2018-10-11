@@ -65,6 +65,7 @@ contract TGVBase is Ownable {
         uint8 level;
         uint8 lastStage;
         uint8 numStatues;
+        uint8 randnance;
     }
 
     struct Equip {
@@ -87,15 +88,16 @@ contract TGVBase is Ownable {
         uint16 avd;     // 기본 회피율
     }
 
-    // 신규 유저 생성.
-    function createUser(string _name) external returns (string) {
-        users[msg.sender] = User(_name, 0, 0, 0, 1, 0, 1);
-        if(users[msg.sender].level == 0)
-        {   
-            numUsers.add(1);
-        }
-        return (
-            users[msg.sender].name
-        );
+    struct RoundResult
+    {
+        // 1. 누가 누굴 공격?
+        // 2. damage량
+        // 3. 크리티컬 유무
+        uint8[] attacker;
+        uint8[] mattchar;
+        uint[] damage;
+        bool[] isCrk;
+
     }
+
 }
