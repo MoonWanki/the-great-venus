@@ -17,6 +17,7 @@ contract TGVStageClear is TGVItemShop
         uint exp = 0;
         uint[300] memory all_data;
         uint[100] memory datas;
+        
         //1라운드 진행
         (roundResult[0],roundResult[1],datas) = roundProgress(stagenum,1,Units);
         exp += roundResult[1];
