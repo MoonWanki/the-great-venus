@@ -11,6 +11,8 @@ export default class Client extends Component {
         isGameReady: false,
         stageWidth: 0,
         stageHeight: 0,
+        contentWidth: screen.width,
+        contentHeight: screen.height,
         floatingFormPosition: new Animated.Value(0),
     }
 
@@ -20,19 +22,6 @@ export default class Client extends Component {
         window.onpopstate = () => {
             window.location.reload();
         };
-        window.onkeydown = () => {
-            console.log(this.state.floatingFormPosition._value);
-            if(this.state.floatingFormPosition._value < 0.1) {
-                Animated.timing(this.state.floatingFormPosition, {toValue: 1}).start();
-            }
-            else {
-                Animated.timing(this.state.floatingFormPosition, {toValue: 0}).start();
-            }
-        }
-    }
-
-    componentWillUnmount() {
-        window.onbeforeunload = null;
     }
 
     setToFullSize = () => {
@@ -48,13 +37,13 @@ export default class Client extends Component {
     }
 
     render() {
-        const { stageWidth, stageHeight } = this.state;
+        const { stageWidth, stageHeight, contentWidth, contentHeight } = this.state;
         return (
             <div className='canvas-wrapper'>
                 <Stage options={{ backgroundColor: 0x0 }} width={stageWidth} height={stageHeight} >
                     {this.state.isGameReady
-                        ? <GameBase x={0} y={0} width={stageWidth} height={stageHeight} /> : null}
-                    <GameIntroScreen width={stageWidth} height={stageHeight} onReady={this.onReady}/>
+                        ? <GameBase x={0} y={0} width={contentWidth} height={contentHeight} /> : null}
+                    <GameIntroScreen width={contentWidth} height={contentHeight} onReady={this.onReady}/>
                 </Stage>
                 <FloatingForm style={{ top: this.state.floatingFormPosition.interpolate({ inputRange: [0, 1], outputRange: [-stageHeight/2, stageHeight/3]}) }} />
             </div>

@@ -1,13 +1,11 @@
 import React, { Component, Fragment } from 'react';
 
-class StageSelectBoard extends Component {
+export default class ForgeUI extends Component {
     render() {
         return (
             <Fragment>
                 
             </Fragment>
-        );
+        )
     }
 }
-
-export default StageSelectBoard;

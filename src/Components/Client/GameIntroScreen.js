@@ -4,6 +4,7 @@ import { connect } from 'react-redux';
 import { bindActionCreators } from 'redux';
 import * as userActions from 'store/modules/userModule';
 import * as appActions from 'store/modules/appModule';
+import * as gameActions from 'store/modules/gameModule';
 import PropTypes from 'prop-types';
 import Animated from "animated";
 import Box from './Box';
@@ -14,7 +15,7 @@ class GameIntroScreen extends Component {
 
     state = {
         isLoading: false,
-        loadingText: '유저 정보를 불러오고 있습니다.',
+        loadingText: '',
         loadingProgress: 0,
         alpha: new Animated.Value(1),
     }
@@ -35,6 +36,9 @@ class GameIntroScreen extends Component {
     }
 
     loadGame = async() => {
+        this.setState({ loadingText: '게임 정보를 불러오고 있습니다.' });
+        await this.props.GameActions.loadConfig(this.props.web3Instance);
+        this.setState({ loadingText: '유저 정보를 불러오고 있습니다.' });
         await this.props.UserActions.loadUserData(this.props.web3Instance);
         this.setState({ loadingText: '리소스를 불러오고 있습니다.' });
         await this.loadImages();
@@ -84,6 +88,7 @@ class GameIntroScreen extends Component {
         .add("bg_main4_3", require("../../images/background/main/4/3.png"))
         .add("bg_main4_4", require("../../images/background/main/4/4.png"))
         .add("bg_main4_5", require("../../images/background/main/4/5.png"))
+        .add("bg_forge1", require("../../images/background/forge/1.jpg"))
         .add("bg_field1_1_1", require("../../images/background/field/1/1/1.png"))
         .add("bg_field1_1_2", require("../../images/background/field/1/1/2.png"))
         .add("bg_field1_1_3", require("../../images/background/field/1/1/3.png"))
@@ -171,6 +176,7 @@ export default connect(
     }),
     (dispatch) => ({
         UserActions: bindActionCreators(userActions, dispatch),
+        GameActions: bindActionCreators(gameActions, dispatch),
         AppActions: bindActionCreators(appActions, dispatch),
     })
 )(GameIntroScreen);

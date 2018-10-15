@@ -2,7 +2,7 @@ import React, { Component } from 'react';
 import { Container, Text } from 'react-pixi-fiber';
 import { connect } from 'react-redux';
 
-class WalletStatusBar extends Component {
+class WalletDisplay extends Component {
     render() {
         return (
             <Container {...this.props}>
@@ -18,4 +18,4 @@ export default connect(
         userData: state.userModule.userData,
         balance: state.userModule.balance
     })
-)(WalletStatusBar);
+)(WalletDisplay);

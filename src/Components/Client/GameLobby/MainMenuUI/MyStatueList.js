@@ -3,7 +3,6 @@ import { Container } from 'react-pixi-fiber';
 import Animated from 'animated';
 import Easing from 'animated/lib/Easing';
 import StatueSpriteRoller from './StatueSpriteRoller';
-import StatueEditor from './StatueEditor';
 import StatueStatusView from './StatueStatusView';
 import $ from 'jquery';
 
@@ -12,8 +11,8 @@ class MyStatueList extends Component {
     state = {
         currentSelected: 0,
         currentSelectedOffset: new Animated.Value(0),
-        editorOn: false,
-        editorOffset: new Animated.Value(0),
+        // editorOn: false,
+        // editorOffset: new Animated.Value(0),
         statues: [
             {
                 name: "Me",
@@ -91,7 +90,7 @@ class MyStatueList extends Component {
 
     render() {
 
-        const { currentSelected, currentSelectedOffset, statues, editorOffset } = this.state;
+        const { currentSelected, currentSelectedOffset, statues } = this.state;
         return (
             <Container {...this.props}>
                 <StatueSpriteRoller
@@ -106,9 +105,9 @@ class MyStatueList extends Component {
                     currentSelected={currentSelected}
                     offset={currentSelectedOffset._value}
                     onClickItem={this.onEditStart} />
-                <StatueEditor
+                {/* <StatueEditor
                     info={statues[currentSelected]}
-                    offset={editorOffset} />
+                    offset={editorOffset} /> */}
                 <StatueStatusView
                     
                     status={statues[currentSelected]} />

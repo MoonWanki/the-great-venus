@@ -2,21 +2,17 @@ import React, { Component, Fragment } from 'react';
 import Box from 'Components/Client/Box';
 import Animated from 'animated';
 import MyStatueList from './MyStatueList';
-import Navbar from './Navbar';
-import Background from './Background';
+import ColosseumButton from './ColosseumButton';
+import GoButton from './GoButton';
 
 const AnimatedBlackBox = Animated.createAnimatedComponent(Box);
 
-class MainMenuBoard extends Component {
+class MainMenuUI extends Component {
     
     render() {
         const { width, height, offset } = this.props;
         return (
             <Fragment>
-                <Background
-                    theme={0}
-                    width={width}
-                    height={height} />
                 <AnimatedBlackBox
                     color={0x0}
                     x={0}
@@ -24,9 +20,8 @@ class MainMenuBoard extends Component {
                     width={width}
                     height={height}
                     alpha={offset.interpolate({ inputRange: [0, 1], outputRange: [0, 0.5] })} />
-                <Navbar
-                    x={100}
-                    y={offset.interpolate({ inputRange: [0, 1], outputRange: [-60, 20] })}
+                <ColosseumButton
+                    click={this.props.onColosseumButtonClick}
                     width={140}
                     height={30} />
                 <MyStatueList
@@ -34,10 +29,15 @@ class MainMenuBoard extends Component {
                     x={0}
                     y={0}
                     width={width}
-                    height={height} />
+                    height={height}
+                    onStatueClick={this.props.onStatueClick} />
+                <GoButton
+                    x={window.innerWidth}
+                    y={window.innerHeight}
+                    click={this.props.onGoButtonClick} />
             </Fragment>
         );
     }
 }
 
-export default MainMenuBoard;
+export default MainMenuUI;

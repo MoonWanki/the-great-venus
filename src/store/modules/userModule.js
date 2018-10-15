@@ -102,17 +102,23 @@ export const createUser = (web3Instance, name) => dispatch => {
     });
 }
 
-export const clearStage = (web3Instance, stageNo) => dispatch => {
+
+
+export const clearFirstStage = (web3Instance, name) => dispatch => {
 
     const TGV = contract(abi);
     TGV.setProvider(web3Instance.currentProvider);
+    let TGVInstance;
     web3Instance.eth.getCoinbase((err, coinbase) => {
         if (!err) {
             TGV.deployed()
             .then(instance => {
-                return instance.setStageMain(stageNo, [1], { from: coinbase });
+                TGVInstance = instance;
+                return TGVInstance.createUser(name, { from: coinbase });
+            }).then(()=> {
+                return TGVInstance.setStageMain.call(1, [1], { from: coinbase });
             }).then(data => {
-                window.Materialize.toast(`${stageNo}스테이지에 입장합니다.`, 1500);
+                console.log(data);
             }).catch(err => {
                 console.error(err);
             })
@@ -121,6 +127,28 @@ export const clearStage = (web3Instance, stageNo) => dispatch => {
         }
     });
 }
+
+export const clearStage = (web3Instance, stageNo) => async dispatch => {
+
+    const TGV = contract(abi);
+    TGV.setProvider(web3Instance.currentProvider);
+    web3Instance.eth.getCoinbase((err, coinbase) => {
+        if (!err) {
+            TGV.deployed()
+            .then(instance => {
+                return instance.setStageMain.call(stageNo, [1], { from: coinbase });
+            }).then(data => {
+                console.log(data);
+            }).catch(err => {
+                console.error(err);
+            })
+        } else {
+            console.error(err);
+        }
+    });
+    
+}
+
 
 export const buyEquip = (web3Instance, unit, part, type) => {
     const TGV = contract(abi);
