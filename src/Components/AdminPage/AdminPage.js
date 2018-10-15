@@ -199,11 +199,11 @@ class AdminPage extends Component {
                 </div>
                 <div className='admin-stage-list'>
                 <h5>스테이지 입장 </h5>
-                    {userData.lastStage ?
+                    {/* {userData.lastStage ?
                         (userData.lastStage.c[0] > 1 ?
                         <div className='admin-stage-item' style={{ background: '#cc6c18', cursor: 'pointer', fontWeight: '700' }} onClick={()=>UserActions.clearStage(web3Instance, "Administrator")}>{1}</div>
-                         : <div className='admin-stage-item' style={{ background: '#d19159', cursor: 'pointer' }} onClick={()=>UserActions.clearStage(web3Instance, "Administrator")}>{1}</div>):null}
-                    {userData.lastStage ? [2,3,4,5,6,7,8,9,10].map(i=>{
+                         : <div className='admin-stage-item' style={{ background: '#d19159', cursor: 'pointer' }} onClick={()=>UserActions.clearStage(web3Instance, "Administrator")}>{1}</div>):null} */}
+                    {userData.lastStage ? [1,2,3,4,5,6,7,8,9,10].map(i=>{
                         if(i <= userData.lastStage.c[0]) return(<div key={i} className='admin-stage-item' style={{ background: '#d19159', cursor: 'pointer' }} onClick={()=>UserActions.clearStage(web3Instance, i)}>{i}</div>)
                         else if(i === userData.lastStage.c[0] + 1) return(<div key={i} className='admin-stage-item' style={{ background: '#cc6c18', cursor: 'pointer', fontWeight: '700'}} onClick={()=>UserActions.clearStage(web3Instance, i)}>{i}</div>)
                         else return (<div key={i} className='admin-stage-item' style={{ background: '#777', color: '#999'}}>{i}</div>)
