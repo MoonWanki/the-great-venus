@@ -14,7 +14,6 @@ contract TGVStageClear is TGVItemShop
             users[msg.sender].randnance = 0;
         else
             users[msg.sender].randnance += 1;
-        
             
         UnitInfo[] memory Units = new UnitInfo[](units.length);
         uint8 i = 0;
@@ -50,7 +49,8 @@ contract TGVStageClear is TGVItemShop
         users[msg.sender].gold += exp;
 
         // 누적 경험치 상승으로 레벨 업
-        LevelUp();
+        if(getRequiredExp(users[msg.sender].level)<users[msg.sender].exp)
+            users[msg.sender].level += 1;
 
         // 클리어 스테이지 +1
         if(roundResult[4]==1)
@@ -68,23 +68,35 @@ contract TGVStageClear is TGVItemShop
         return (roundResult);
     }
 
-    function LevelUp() internal
+    function getRequiredExp(uint level) internal returns(uint)
     {
-        uint[] memory requiredExp = new uint[](16);
-        uint[] memory fibo = new uint[](13);
-        fibo[1] = 1000;
-        fibo[2] = 1000;
-        uint8 i;
-        for(i = 3; i<=12;i++)
-            fibo[i] = fibo[i-1] + fibo[i-2];
-        requiredExp[1] = 0;
-        requiredExp[2] = 1000;
-        for(i = 3; i<=11;i++)
-            requiredExp[i] = fibo[i+1];
-        for(i = 12; i<=15;i++)
-            requiredExp[i] += 10000;
-        if(users[msg.sender].exp>requiredExp[users[msg.sender].level+1])
-            users[msg.sender].level += 1;
+        if(level == 1)
+            return 0;
+        if(level<=10 && level>=2)
+        {
+            uint sum = 0;
+            for(uint8 i = 1;i<=level-1;i++)
+            {
+                sum += (1000*i);
+            }
+            return sum;
+        } 
+
+        if(level > 10)
+        {
+            return 45000 + 10000*(level-10)*(level/10);
+        }
+
+        // 1: 0     2: 1000  3: 3000  4: 6000
+        // 5: 10000 6: 15000 7: 21000 8: 28000
+        // 9: 35000 10: 45000 11: 55000
+
+    }
+
+    // 몬스터 레벨에 따라 얻는 경험치 계산 함수 - 수정 필요
+    function getMobExp(uint level) public returns (uint)
+    {
+        return 200 + 100 * (level-1);
     }
 
     // 석상 기본 능력치와 장비 능력치 추가 함수
@@ -144,18 +156,12 @@ contract TGVStageClear is TGVItemShop
             return (2,0);                   //패배값 0 과 경험치 없으므로 0반환
     }
 
-    // 몬스터 레벨에 따라 얻는 경험치 계산 함수 - 수정 필요
-    function getMobExp(uint level) public returns (uint)
-    {
-        return 300 + 100 * (level-1);
-    }
-
     // 한 라운드 배틀 함수
     function roundBattle(UnitInfo[] memory Units, UnitInfo[] memory Mobs) internal returns(bool)
     {
         uint8 unit = 0;      // 석상 1개 가리키는 index
         uint8 mob = 0;       // 몬스터 1개 가리키는 index
-        //uint[40] memory dealDatas;
+
         uint damage;
         uint isCrk;
         uint8 num_data = 0;
@@ -208,11 +214,14 @@ contract TGVStageClear is TGVItemShop
     {
         uint damage = 0;
         uint isCrk = 0;
+
+        //direction 1 : 석고상 -> 몬스터 방향 공격
         if(direction == 1)
         {
             (damage, isCrk) = getDamage(units[u],mobs[m]);
             applyDamage(mobs[m],uint16(damage));
         }
+        //direction 2 : 몬스터 -> 석고상 방향 공격
         if(direction == 2)
         {
             (damage, isCrk) = getDamage(mobs[m],units[u]);
