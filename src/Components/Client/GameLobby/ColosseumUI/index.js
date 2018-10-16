@@ -4,7 +4,7 @@ import Animated from 'animated';
 
 const AnimatedFlatButton = Animated.createAnimatedComponent(FlatButton);
 
-class StageSelectUI extends Component {
+class ColosseumUI extends Component {
 
     render() {
         const { offset, stageHeight } = this.props;
@@ -23,4 +23,4 @@ class StageSelectUI extends Component {
     }
 }
 
-export default StageSelectUI;
+export default ColosseumUI;

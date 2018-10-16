@@ -25,7 +25,7 @@ export default class LobbyBackgroundSlider extends Component {
                     width={this.props.width}
                     height={this.props.height} />
                 <Background
-                    theme='main2'
+                    theme='colosseum_lobby'
                     offsetX={0}
                     offsetY={this.props.colosseumOffset}
                     width={this.props.width}

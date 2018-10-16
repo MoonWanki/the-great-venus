@@ -51,6 +51,12 @@ class Background extends Component {
             'forge': [
                 { src: this.context.app.loader.resources.bg_forge1, speed: 0 },
             ],
+            'colosseum_lobby': [
+                { src: this.context.app.loader.resources.bg_colosseum_lobby, speed: 0 },
+            ],
+            'colosseum_field': [
+                
+            ],
             'stageselect1': [
                 { src: this.context.app.loader.resources.bg_stageselect1_1, speed: 0 },
                 { src: this.context.app.loader.resources.bg_stageselect1_2, speed: 1 },
@@ -108,8 +114,8 @@ class Background extends Component {
                         width={this.props.width}
                         height={this.props.height}
                         tilePosition={[
-                            (this.props.width - 1920)/2 + (this.state.mousePosition.x - this.props.width/2) * (i+1) * 0.002 + this.state.x*speed,
-                            (this.props.height - 1080)/2 + (this.state.mousePosition.y - this.props.height/2) * (i+1) * 0.002
+                            (this.props.width - 1920)/2 + (this.state.mousePosition.x - this.props.width/2) * i * 0.002 + this.state.x*speed,
+                            (this.props.height - 1080)/2 + (this.state.mousePosition.y - this.props.height/2) * i * 0.002
                         ]}
                          />
                 )}

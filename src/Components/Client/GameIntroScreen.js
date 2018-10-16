@@ -89,6 +89,7 @@ class GameIntroScreen extends Component {
         .add("bg_main4_4", require("../../images/background/main/4/4.png"))
         .add("bg_main4_5", require("../../images/background/main/4/5.png"))
         .add("bg_forge1", require("../../images/background/forge/1.jpg"))
+        .add("bg_colosseum_lobby", require("../../images/background/colosseum/lobby/1.jpg"))
         .add("bg_field1_1_1", require("../../images/background/field/1/1/1.png"))
         .add("bg_field1_1_2", require("../../images/background/field/1/1/2.png"))
         .add("bg_field1_1_3", require("../../images/background/field/1/1/3.png"))

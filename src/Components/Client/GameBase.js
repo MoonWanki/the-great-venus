@@ -11,7 +11,7 @@ class GameBase extends Component {
     render() {
         return (
             <Fragment >
-                <GameLobby width={this.props.width} height={this.props.height} />
+                <GameLobby {...this.props} />
                 {this.state.onBattle ? <GameBattle /> : null }
             </Fragment>
         );

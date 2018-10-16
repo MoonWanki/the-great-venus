@@ -43,7 +43,7 @@ class AdminPage extends Component {
     }
 
     render() {
-        const { web3Instance, AdminActions, UserActions, statueInfoList, mobInfoList, requiredExpList, userData, isLoaded } = this.props;
+        const { web3Instance, AdminActions, UserActions, statueInfoList, mobInfoList, userData, isLoaded } = this.props;
         const { statueInfoForm, mobInfoForm } = this.state;
         return (
             <Fragment>

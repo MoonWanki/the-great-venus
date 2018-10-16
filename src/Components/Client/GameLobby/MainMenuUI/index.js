@@ -2,39 +2,47 @@ import React, { Component, Fragment } from 'react';
 import Box from 'Components/Client/Box';
 import Animated from 'animated';
 import MyStatueList from './MyStatueList';
-import ColosseumButton from './ColosseumButton';
-import GoButton from './GoButton';
+import FlatButton from '../../FlatButton';
 
 const AnimatedBlackBox = Animated.createAnimatedComponent(Box);
+const AnimatedFlatButton = Animated.createAnimatedComponent(FlatButton);
 
 class MainMenuUI extends Component {
     
     render() {
-        const { width, height, offset } = this.props;
+        const { offset, stageWidth, stageHeight } = this.props;
         return (
             <Fragment>
                 <AnimatedBlackBox
                     color={0x0}
                     x={0}
                     y={0}
-                    width={width}
-                    height={height}
+                    width={stageWidth}
+                    height={stageHeight}
                     alpha={offset.interpolate({ inputRange: [0, 1], outputRange: [0, 0.5] })} />
-                <ColosseumButton
-                    click={this.props.onColosseumButtonClick}
-                    width={140}
-                    height={30} />
                 <MyStatueList
                     alpha={offset}
                     x={0}
                     y={0}
-                    width={width}
-                    height={height}
+                    width={stageWidth}
+                    height={stageHeight}
                     onStatueClick={this.props.onStatueClick} />
-                <GoButton
-                    x={window.innerWidth}
-                    y={window.innerHeight}
-                    click={this.props.onGoButtonClick} />
+                <AnimatedFlatButton
+                    x={100}
+                    y={offset.interpolate({ inputRange: [0, 1], outputRange: [0, 50] })}
+                    alpha={offset}
+                    width={150}
+                    height={36}
+                    text={'COLOSSEUM'}
+                    onClick={this.props.onColosseumButtonClick} />
+                <AnimatedFlatButton
+                    x={stageWidth - 280}
+                    y={offset.interpolate({ inputRange: [0, 1], outputRange: [stageHeight, stageHeight - 86] })}
+                    alpha={offset}
+                    width={180}
+                    height={36}
+                    text={'SELECT STAGE'}
+                    onClick={this.props.onGoButtonClick} />
             </Fragment>
         );
     }

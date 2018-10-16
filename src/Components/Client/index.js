@@ -37,22 +37,22 @@ export default class Client extends Component {
     }
 
     render() {
+
         const { stageWidth, stageHeight, contentWidth, contentHeight } = this.state;
+
         return (
             <div className='canvas-wrapper'>
                 <Stage options={{ backgroundColor: 0x0 }} width={stageWidth} height={stageHeight} >
                     {this.state.isGameReady
-                        ? <GameBase x={0} y={0} width={contentWidth} height={contentHeight} /> : null}
-                    <GameIntroScreen width={contentWidth} height={contentHeight} onReady={this.onReady}/>
+                        ? <GameBase
+                            stageWidth={stageWidth}
+                            stageHeight={stageHeight}
+                            contentWidth={contentWidth}
+                            contentHeight={contentHeight} />
+                        : null}
+                    <GameIntroScreen width={stageWidth} height={stageHeight} onReady={this.onReady}/>
                 </Stage>
-                <FloatingForm style={{ top: this.state.floatingFormPosition.interpolate({ inputRange: [0, 1], outputRange: [-stageHeight/2, stageHeight/3]}) }} />
             </div>
         );
     }
 }
-
-const FloatingForm = Animated.createAnimatedComponent(({style})=>
-    <div className='floating-from-wrapper' style={style}>
-        <h5>당신은 누구인가요?</h5>
-    </div>
-);
