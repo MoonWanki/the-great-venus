@@ -6,8 +6,16 @@ contract TGVStageClear is TGVItemShop
 {
     using SafeMath for uint256;
 
-    function setStageMain(uint8 stagenum,uint8[] units) external returns(uint[6],uint[300])
+    event attackResult(uint way, uint unit, uint mob, uint damamge, uint isCrk);
+
+    function setStageMain(uint8 stagenum,uint8[] units) external returns(uint[6])
     {
+        if(users[msg.sender].randnance == 65535)
+            users[msg.sender].randnance = 0;
+        else
+            users[msg.sender].randnance += 1;
+        
+            
         UnitInfo[] memory Units = new UnitInfo[](units.length);
         uint8 i = 0;
         for(i = 0; i<units.length;i++)
@@ -15,23 +23,18 @@ contract TGVStageClear is TGVItemShop
 
         uint[6] memory roundResult;     //각 라운드 승리 유무, 획득 경험치 저장 배열
         uint exp = 0;
-        uint[300] memory all_data;
-        uint[100] memory datas;
         
         //1라운드 진행
-        (roundResult[0],roundResult[1],datas) = roundProgress(stagenum,1,Units);
+        (roundResult[0],roundResult[1]) = roundProgress(stagenum,1,Units);
         exp += roundResult[1];
-        for(i = 0; i<100;i++)
-            all_data[i] = datas[i];
+
         //이전 라운드 승리시 2라운드 진행
         if(roundResult[0]==1)    
         {
             for(i = 0; i<units.length;i++)
                 Units[i] = setUnitData(units[i]);
-            (roundResult[2],roundResult[3],datas) = roundProgress(stagenum,2,Units);
+            (roundResult[2],roundResult[3]) = roundProgress(stagenum,2,Units);
             exp += roundResult[3];
-            for(i = 0; i<100;i++)
-                all_data[i+100] = datas[i];
         }      
 
         //이전 라운드 승리시 3라운드 진행
@@ -39,18 +42,15 @@ contract TGVStageClear is TGVItemShop
         {
             for(i = 0; i<units.length;i++)
                 Units[i] = setUnitData(units[i]);
-            (roundResult[4],roundResult[5],datas) = roundProgress(stagenum,3,Units);
+            (roundResult[4],roundResult[5]) = roundProgress(stagenum,3,Units);
             exp += roundResult[5];
-            for(i = 0; i<100;i++)
-                all_data[i+200] = datas[i];
         }   
         // 라운드 별 얻은 경험치 획득  
         users[msg.sender].exp += exp;
         users[msg.sender].gold += exp;
 
         // 누적 경험치 상승으로 레벨 업
-        if(users[msg.sender].exp>requiredExp[users[msg.sender].level+1])
-            users[msg.sender].level += 1;
+        LevelUp();
 
         // 클리어 스테이지 +1
         if(roundResult[4]==1)
@@ -65,7 +65,26 @@ contract TGVStageClear is TGVItemShop
             }         
         }
 
-        return (roundResult,all_data);
+        return (roundResult);
+    }
+
+    function LevelUp() internal
+    {
+        uint[] memory requiredExp = new uint[](16);
+        uint[] memory fibo = new uint[](13);
+        fibo[1] = 1000;
+        fibo[2] = 1000;
+        uint8 i;
+        for(i = 3; i<=12;i++)
+            fibo[i] = fibo[i-1] + fibo[i-2];
+        requiredExp[1] = 0;
+        requiredExp[2] = 1000;
+        for(i = 3; i<=11;i++)
+            requiredExp[i] = fibo[i+1];
+        for(i = 12; i<=15;i++)
+            requiredExp[i] += 10000;
+        if(users[msg.sender].exp>requiredExp[users[msg.sender].level+1])
+            users[msg.sender].level += 1;
     }
 
     // 석상 기본 능력치와 장비 능력치 추가 함수
@@ -92,7 +111,7 @@ contract TGVStageClear is TGVItemShop
     }
 
     // 한 라운드 진행 함수
-    function roundProgress(uint8 stagenum, uint8 roundnum, UnitInfo[] memory Units) internal view returns (uint, uint ,uint[100])
+    function roundProgress(uint8 stagenum, uint8 roundnum, UnitInfo[] memory Units) internal view returns (uint, uint)
     {    
         uint exp = 0;
         uint8 num_mobs = 0;
@@ -116,14 +135,13 @@ contract TGVStageClear is TGVItemShop
             Mobs[i] = mobInfoList[mob_num];
             exp += getMobExp(mob_num);
         }
-        uint[100] memory dealDatas;
-        (roundwin,dealDatas) = roundBattle(Units,Mobs);
+        (roundwin) = roundBattle(Units,Mobs);
         if(roundwin)                        //1라운드 승리시
         {
-            return (1,exp,dealDatas);                 //승리값 1 과 해당 라운드 경험치반환
+            return (1,exp);                 //승리값 1 과 해당 라운드 경험치반환
         }                                      
         else                                //1라운드 패배시
-            return (2,0,dealDatas);                   //패배값 0 과 경험치 없으므로 0반환
+            return (2,0);                   //패배값 0 과 경험치 없으므로 0반환
     }
 
     // 몬스터 레벨에 따라 얻는 경험치 계산 함수 - 수정 필요
@@ -133,11 +151,13 @@ contract TGVStageClear is TGVItemShop
     }
 
     // 한 라운드 배틀 함수
-    function roundBattle(UnitInfo[] memory Units, UnitInfo[] memory Mobs) internal returns(bool, uint[100])
+    function roundBattle(UnitInfo[] memory Units, UnitInfo[] memory Mobs) internal returns(bool)
     {
         uint8 unit = 0;      // 석상 1개 가리키는 index
         uint8 mob = 0;       // 몬스터 1개 가리키는 index
-        uint[100] memory dealDatas;
+        //uint[40] memory dealDatas;
+        uint damage;
+        uint isCrk;
         uint8 num_data = 0;
         while(true)
         {
@@ -147,29 +167,24 @@ contract TGVStageClear is TGVItemShop
             mob = getNextIndex(mob, Mobs);
             if(num_data%2 == 0)
             {
-                dealDatas[num_data*4] = 111;
-                dealDatas[num_data*4+1] = unit;                    
-                dealDatas[num_data*4+2] = mob;
-                dealDatas[num_data*4+3] = attack(unit, mob, 1, Units, Mobs);
+                (damage, isCrk) = attack(unit, mob, 1, Units, Mobs);
+                emit attackResult(1, unit, mob, damage, isCrk);
                 num_data += 1;
                 continue;
             }
             if(num_data%2 == 1)
             {                    
-                dealDatas[num_data*4] = 222;
-                dealDatas[num_data*4+1] = mob;
-                dealDatas[num_data*4+2] = unit;
-                dealDatas[num_data*4+3] = attack(unit, mob, 2, Units, Mobs);
+                (damage, isCrk) = attack(unit, mob, 2, Units, Mobs);
+                emit attackResult(2, unit, mob, damage, isCrk);
                 num_data += 1;
                 continue;
             }
-                //(unit,mob,dealData) = DealExchange(unit,mob,Units,Mobs);
         }
 
         if(getSumOfHp(Units) == 0)   //몬스터가 이긴 경우 false 반환
-            return (false,dealDatas);
+            return (false);
         if(getSumOfHp(Mobs) == 0)    //석상이 이긴 경우 true 반환
-            return (true,dealDatas);
+            return (true);
     }
 
     function getNextIndex(uint8 index, UnitInfo[] memory units) internal returns (uint8)
@@ -189,20 +204,21 @@ contract TGVStageClear is TGVItemShop
         return u;
     }
 
-    function attack(uint8 u, uint8 m, uint8 direction, UnitInfo[] memory units, UnitInfo[] memory mobs) internal returns (uint)
+    function attack(uint8 u, uint8 m, uint8 direction, UnitInfo[] memory units, UnitInfo[] memory mobs) internal returns (uint, uint)
     {
-        uint16 damage = 0;
+        uint damage = 0;
+        uint isCrk = 0;
         if(direction == 1)
         {
-            damage = uint16(getDamage(units[u],mobs[m]));
+            (damage, isCrk) = getDamage(units[u],mobs[m]);
             applyDamage(mobs[m],uint16(damage));
         }
         if(direction == 2)
         {
-            damage = uint16(getDamage(mobs[m],units[u]));
+            (damage, isCrk) = getDamage(mobs[m],units[u]);
             applyDamage(units[u],uint16(damage));
         }
-        return damage;
+        return (damage,isCrk);
     }
 
     function getSumOfHp(UnitInfo[] memory Units) internal returns (uint)
@@ -215,16 +231,21 @@ contract TGVStageClear is TGVItemShop
     }
 
     // 데미지 계산
-    function getDamage(UnitInfo from, UnitInfo to)internal view returns (uint)
+    function getDamage(UnitInfo memory from, UnitInfo memory to)internal view returns (uint, uint)
     {
         uint randNance = 0;
-        uint8 random = uint8(keccak256(abi.encodePacked(block.timestamp, msg.sender,randNance)))%40;                //데미지 구간 설정 위한 랜덤값
+        uint isCrk = 0;
+        uint8 random = uint8(keccak256(abi.encodePacked(users[msg.sender].randnance, msg.sender,randNance)))%40;  //데미지 구간 설정 위한 랜덤값
         randNance.add(1);
-        uint8 randomforCritical = uint8(keccak256(abi.encodePacked(block.timestamp, msg.sender,randNance)))%100;    //강타율 적용위한 랜덤값
+        uint8 randomforCritical = uint8(keccak256(abi.encodePacked(users[msg.sender].randnance, msg.sender,randNance)))%100;    //강타율 적용위한 랜덤값
         uint8 crk = 100;
         if(randomforCritical<from.crt)  //강타 적용!
+        {
             crk = 150;
-        return ((from.hp*2) / to.def + 2 ) * (random+80)/100 * crk/100;
+            isCrk = 1;
+        }
+            
+        return (((from.hp*2) / to.def + 2 ) * (random+80)/100 * crk/100,isCrk);
         //데미지 = (나의공격력 * 2  / 상대방어력  + 2 ) * (0.8~1.2 랜덤수) * (1.5강타일때)
     } 
 
@@ -232,7 +253,7 @@ contract TGVStageClear is TGVItemShop
     function applyDamage(UnitInfo memory to, uint16 damage)internal view returns (bool)
     {
         uint randNance = 0;
-        uint8 randomforAvoid = uint8(keccak256(abi.encodePacked(block.timestamp, msg.sender, randNance)))%100;    //회피율 적용위한 랜덤값
+        uint8 randomforAvoid = uint8(keccak256(abi.encodePacked(users[msg.sender].randnance, msg.sender, randNance)))%100;    //회피율 적용위한 랜덤값
         if(randomforAvoid<to.avd)   //회피 적용!
             return false;           //데미지 미적용
         else

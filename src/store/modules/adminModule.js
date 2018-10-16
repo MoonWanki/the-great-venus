@@ -62,13 +62,6 @@ export const loadConfig = web3Instance => dispatch => {
                 return Promise.all(promises);
             }).then(mobInfoList => {
                 dispatch({ type: SET_MOB, payload: mobInfoList });
-                promises = [];
-                for(var i=1 ; i<=20 ; i++) {
-                    promises.push(TGVInstance.requiredExp(i));
-                }
-                return Promise.all(promises);
-            }).then(requiredExpList => {
-                dispatch({ type: SET_REQUIRED_EXP, payload: requiredExpList });
                 dispatch({ type: SET_LOADED, payload: true });
             }).catch(err => {
                 dispatch({ type: SET_LOADED, payload: false });

@@ -30,11 +30,6 @@ contract TGVBase is Ownable {
     uint8 public numMobInfo; // 구현된 몬스터 수
     mapping (uint => UnitInfo) public mobInfoList;
 
-    // 레벨 당 요구 경험치
-    uint public numRequiredExp; // 최대 레벨
-    mapping (uint => uint) public requiredExp;
-
-
     // 구현된 스테이지인지
     modifier onlyValidStageNo(uint _no) {
         require(_no > 0 && _no <= numStageInfo, "out of stage range");
@@ -65,7 +60,7 @@ contract TGVBase is Ownable {
         uint8 level;
         uint8 lastStage;
         uint8 numStatues;
-        uint8 randnance;
+        uint16 randnance;
     }
 
     struct Equip {
@@ -91,7 +86,7 @@ contract TGVBase is Ownable {
 
     // 신규 유저 생성.
     function createUser(string _name) external returns (string) {
-        users[msg.sender] = User(_name, 0, 0, 0, 1, 0, 1,0);
+        users[msg.sender] = User(_name, 0, 0, 0, 1, 0, 1, 0);
         if(users[msg.sender].level == 0)
         {   
             numUsers.add(1);

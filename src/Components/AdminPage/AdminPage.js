@@ -285,29 +285,6 @@ class AdminPage extends Component {
                             </tbody>
                         </Table>
                     </div>
-                    <div className="admin-segment" style={{width: '220px'}}>
-                        <p className="admin-segment-title">~ 요구 경험치 ~</p>
-                        <Row>
-                            <Input s={12} label="EXP" />
-                        </Row>
-                        <Row>
-                            <Input s={3} placeholder="몇" />
-                            레벨을
-                            <Button floating flat className='amber' waves='light' icon='edit' />
-                            or
-                            <Button floating flat className='light-green' waves='light' icon='add' />
-                        </Row>
-                        <Table striped bordered>
-                            <thead>
-                                <tr>
-                                    <th>LEV</th><th>EXP</th>
-                                </tr>
-                            </thead>
-                            <tbody>
-                                {requiredExpList.map((unit, i) => <tr key={i}><th>{i+1}</th><td>{unit.c}</td></tr>)}
-                            </tbody>
-                        </Table>
-                    </div>
                 </div>
                 :null}
             </Fragment>

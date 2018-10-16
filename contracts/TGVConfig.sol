@@ -47,24 +47,6 @@ contract TGVConfig is TGVBase {
         // stageInfoList[9] = [uint8(2),3,4,0,0,2,2,3,4,0,2,2,3,4,0];
         // stageInfoList[10] = [uint8(3),3,3,0,0,3,3,3,4,0,1,2,2,3,3];
         numStageInfo = 5;
-
-        // 레벨 업 마다 필요한 경험치 정보
-        requiredExp[1] = 0;
-        requiredExp[2] = 1000;
-        requiredExp[3] = 3000;
-        requiredExp[4] = 6000;
-        requiredExp[5] = 10000;
-        // requiredExp[6] = 15000;
-        // requiredExp[7] = 21000;
-        // requiredExp[8] = 28000;
-        // requiredExp[9] = 36000;
-        // requiredExp[10] = 45000;
-        // requiredExp[11] = 55000;
-        // requiredExp[12] = 65000;
-        // requiredExp[13] = 75000;
-        // requiredExp[14] = 85000;
-        // requiredExp[15] = 100000;
-        numRequiredExp = 5; 
     }
 
     function addStageInfo() external onlyOwner returns(uint8) {
