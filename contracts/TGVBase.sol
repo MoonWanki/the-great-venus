@@ -96,4 +96,28 @@ contract TGVBase is Ownable {
         );
     }
 
+    //레벨업 시 필요 능력치.
+    function getRequiredExp(uint level) public returns(uint)
+    {
+        if(level<=10 && level>=1)
+        {
+            uint sum = 0;
+            for(uint8 i = 1;i<=level;i++)
+            {
+                sum += (1000*i);
+            }
+            return sum;
+        } 
+
+        if(level > 10)
+        {
+            return 45000 + 10000*(level-10)*(level/10);
+        }
+    }
+
+    //몬스터 당 획득 경험치.
+    function getMobExp(uint level) public returns (uint)
+    {
+        return 200 + 100 * (level-1);
+    }
 }

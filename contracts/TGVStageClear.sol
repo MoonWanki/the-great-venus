@@ -68,36 +68,7 @@ contract TGVStageClear is TGVItemShop
         return (roundResult);
     }
 
-    function getRequiredExp(uint level) internal returns(uint)
-    {
-        if(level == 1)
-            return 0;
-        if(level<=10 && level>=2)
-        {
-            uint sum = 0;
-            for(uint8 i = 1;i<=level-1;i++)
-            {
-                sum += (1000*i);
-            }
-            return sum;
-        } 
 
-        if(level > 10)
-        {
-            return 45000 + 10000*(level-10)*(level/10);
-        }
-
-        // 1: 0     2: 1000  3: 3000  4: 6000
-        // 5: 10000 6: 15000 7: 21000 8: 28000
-        // 9: 35000 10: 45000 11: 55000
-
-    }
-
-    // 몬스터 레벨에 따라 얻는 경험치 계산 함수 - 수정 필요
-    function getMobExp(uint level) public returns (uint)
-    {
-        return 200 + 100 * (level-1);
-    }
 
     // 석상 기본 능력치와 장비 능력치 추가 함수
     function setUnitData(uint8 unit_num) public view returns(UnitInfo)
