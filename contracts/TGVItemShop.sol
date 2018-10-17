@@ -41,4 +41,5 @@ contract TGVItemShop is TGVConfig {
         if(equip_part==3)
             equipList[msg.sender][unit_num].defEquipLevel += 1;
     }
+
 }

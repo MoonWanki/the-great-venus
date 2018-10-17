@@ -120,4 +120,28 @@ contract TGVBase is Ownable {
     {
         return 200 + 100 * (level-1);
     }
+
+    //추가 장비 능력치.
+    function getAddEquipValue(uint16 EquipLevel, uint16 EquipType) public returns (uint16)
+    {
+        uint16 const = 0;
+        if(EquipType == 1)  //hp 장비
+            const = 20;
+        if(EquipType == 2)  //atk 장비
+            const = 10;
+        if(EquipType == 3)  //def 장비
+            const = 8;
+                
+        if(EquipLevel<=10 && EquipLevel>=1)
+        {
+            uint16 sum = 0;
+            for(uint8 i = 1;i<=EquipLevel;i++)
+            {
+                sum += const;
+            }
+            return sum;
+        } 
+        if(EquipLevel > 10)
+            return const*10 + const*(EquipLevel-10)*(EquipLevel/10);
+    }
 }

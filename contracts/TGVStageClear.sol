@@ -71,27 +71,21 @@ contract TGVStageClear is TGVItemShop
 
 
     // 석상 기본 능력치와 장비 능력치 추가 함수
-    function setUnitData(uint8 unit_num) public view returns(UnitInfo)
+    function setUnitData(uint8 unit_num) public returns(UnitInfo)
     {
         UnitInfo memory unit = statueInfoList[unit_num];
         Equip memory equip = equipList[msg.sender][unit_num];
-        uint8 k = 2;
         uint level = users[msg.sender].level;
-        unit.hp += uint16(level*3*k);
-        unit.hp += (getELevel(equip.hpEquipLevel,k));
-        unit.atk += (uint16(level*2*k));
-        unit.atk += (getELevel(equip.atkEquipLevel,k));
-        unit.def += (uint16(level*k));
-        unit.def += (getELevel(equip.defEquipLevel,k));
-
+        unit.hp += uint16(level*3*2);
+        unit.hp += getAddEquipValue(equip.hpEquipLevel, 1);
+        unit.atk += (uint16(level*2*2));
+        unit.atk += getAddEquipValue(equip.atkEquipLevel, 2);
+        unit.def += (uint16(level*2));
+        unit.def += getAddEquipValue(equip.defEquipLevel, 3);
         return unit;
     }
 
-    //장비 레벨 당 추가되는 능력치 계산
-    function getELevel(uint level,uint8 k)  public pure  returns (uint16)
-    {
-        return uint16((level/10+1)*10+(level-1)*k);
-    }
+
 
     // 한 라운드 진행 함수
     function roundProgress(uint8 stagenum, uint8 roundnum, UnitInfo[] memory Units) internal view returns (uint, uint)
