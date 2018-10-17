@@ -1,6 +1,6 @@
 import React, { Component, Fragment } from 'react';
 
-class GameBattle extends Component {
+class Field extends Component {
     render() {
         return (
             <Fragment>
@@ -10,4 +10,4 @@ class GameBattle extends Component {
     }
 }
 
-export default GameBattle;
+export default Field;

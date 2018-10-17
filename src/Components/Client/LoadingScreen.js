@@ -7,11 +7,11 @@ import * as appActions from 'store/modules/appModule';
 import * as gameActions from 'store/modules/gameModule';
 import PropTypes from 'prop-types';
 import Animated from "animated";
-import Box from './Box';
+import Box from './Components/Box';
 
 const AnimatedContainer = Animated.createAnimatedComponent(Container);
 
-class GameIntroScreen extends Component {
+class LoadingScreen extends Component {
 
     state = {
         isLoading: false,
@@ -59,6 +59,8 @@ class GameIntroScreen extends Component {
         .add("statue1", require("../../images/statue/1.png"))
         .add("statue2", require("../../images/statue/2.png"))
         .add("statue3", require("../../images/statue/3.png"))
+        .add("middle_cloud", require("../../images/background/middle_cloud.png"))
+        .add("bg_main1_sky", require("../../images/background/main/1/sky.png"))
         .add("bg_main1_1", require("../../images/background/main/1/1.png"))
         .add("bg_main1_2", require("../../images/background/main/1/2.png"))
         .add("bg_main1_3", require("../../images/background/main/1/3.png"))
@@ -88,6 +90,7 @@ class GameIntroScreen extends Component {
         .add("bg_main4_3", require("../../images/background/main/4/3.png"))
         .add("bg_main4_4", require("../../images/background/main/4/4.png"))
         .add("bg_main4_5", require("../../images/background/main/4/5.png"))
+        .add("bg_showroom", require("../../images/background/showroom/1.png"))
         .add("bg_forge1", require("../../images/background/forge/1.jpg"))
         .add("bg_colosseum_lobby", require("../../images/background/colosseum/lobby/1.jpg"))
         .add("bg_field1_1_1", require("../../images/background/field/1/1/1.png"))
@@ -180,8 +183,8 @@ export default connect(
         GameActions: bindActionCreators(gameActions, dispatch),
         AppActions: bindActionCreators(appActions, dispatch),
     })
-)(GameIntroScreen);
+)(LoadingScreen);
 
-GameIntroScreen.contextTypes = {
+LoadingScreen.contextTypes = {
     app: PropTypes.object,
 };

@@ -1,5 +1,5 @@
 import React, { Component, Fragment } from 'react';
-import FlatButton from '../../FlatButton';
+import FlatButton from 'Components/Client/Components/FlatButton';
 import Animated from 'animated';
 
 const AnimatedFlatButton = Animated.createAnimatedComponent(FlatButton);
@@ -11,12 +11,12 @@ class ForgeUI extends Component {
         return (
             <Fragment>
                 <AnimatedFlatButton
-                    x={stageWidth - 280}
-                    y={offset.interpolate({ inputRange: [0, 1], outputRange: [stageHeight, stageHeight - 86] })}
+                    x={offset.interpolate({ inputRange: [0, 1], outputRange: [stageWidth, stageWidth - 280] })}
+                    y={stageHeight - 86}
                     alpha={offset}
                     width={180}
                     height={36}
-                    text={'BACK TO MENU'}
+                    text={'BACK TO SHOWROOM'}
                     onClick={this.props.onBackButtonClick} />
             </Fragment>
         );

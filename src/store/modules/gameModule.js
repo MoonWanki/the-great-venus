@@ -5,47 +5,42 @@ const contract = require('truffle-contract');
 
 const initialState = {
     isLoaded: false,
-    statueInfoList: null,
-    mobInfoList: null,
-    stageInfoList: null,
-    requiredExpList: null,
+    gameData: null,
 };
 
 const SET_LOADED = 'game/SET_LOADED';
-const SET_STATUE = 'game/SET_STATUE';
-const SET_MOB = 'game/SET_MOB';
-const SET_STAGE = 'game/SET_STAGE';
-const SET_REQUIRED_EXP = 'game/SET_REQUIRED_EXP';
+const SET_GAME_DATA = 'game/SET_GAME_DATA';
 
 export const loadConfig = web3Instance => dispatch => {
 
     const TGV = contract(abi);
     TGV.setProvider(web3Instance.currentProvider);
-    let TGVInstance, promises;
+    let TGVInstance, promises, gameData;
     TGV.deployed()
     .then(instance => {
         TGVInstance = instance;
         promises = [];
         for(var i=1 ; i<=20 ; i++) {
-            promises.push(TGVInstance.statueInfoList(i));
+            promises.push(TGVInstance.statueInfoList.call(i));
         }
         return Promise.all(promises);
-    }).then(statueInfoList => {
-        dispatch({ type: SET_STATUE, payload: statueInfoList });
+    }).then(res => {
+        gameData = { ...gameData, statueInfoList: res };
         promises = [];
         for(var i=1 ; i<=20 ; i++) {
-            promises.push(TGVInstance.mobInfoList(i));
+            promises.push(TGVInstance.mobInfoList.call(i));
         }
         return Promise.all(promises);
-    }).then(mobInfoList => {
-        dispatch({ type: SET_MOB, payload: mobInfoList });
+    }).then(res => {
+        gameData = { ...gameData, mobInfoList: res };
         promises = [];
         for(var i=1 ; i<=20 ; i++) {
-            promises.push(TGVInstance.requiredExp(i));
+            promises.push(TGVInstance.getRequiredExp.call(i));
         }
         return Promise.all(promises);
-    }).then(requiredExpList => {
-        dispatch({ type: SET_REQUIRED_EXP, payload: requiredExpList });
+    }).then(res => {
+        gameData = { ...gameData, mobInfoList: res };
+        dispatch({ type: SET_GAME_DATA, payload: gameData });
         dispatch({ type: SET_LOADED, payload: true });
     }).catch(err => {
         dispatch({ type: SET_LOADED, payload: false });
@@ -57,16 +52,7 @@ export default handleActions({
     [SET_LOADED]: (state, { payload }) => {
         return { ...state, isLoaded: payload };
     },
-    [SET_STATUE]: (state, { payload }) => {
-        return { ...state, statueInfoList: payload };
-    },
-    [SET_MOB]: (state, { payload }) => {
-        return { ...state, mobInfoList: payload };
-    },
-    [SET_STAGE]: (state, { payload }) => {
-        return { ...state, stageInfoList: payload };
-    },
-    [SET_REQUIRED_EXP]: (state, { payload }) => {
-        return { ...state, requiredExpList: payload };
+    [SET_GAME_DATA]: (state, { payload }) => {
+        return { ...state, gameData: payload };
     },
 }, initialState);

@@ -1,6 +1,6 @@
 import React, { Component } from 'react';
 import { Container } from 'react-pixi-fiber';
-import Statue from 'Components/Client/Statue';
+import Statue from 'Components/Client/Components/Statue';
 import Animated from 'animated';
 
 const AnimatedContainer = Animated.createAnimatedComponent(Container);
@@ -20,7 +20,7 @@ class StatueSpriteRoller extends Component {
                         x={i * this.props.width/3 + 250}
                         y={this.props.height/3}
                         anchor={[0.5, 0.5]}
-                        scale={0.2 - 0.05* Math.abs(this.props.currentSelected - i) }
+                        scale={1 - 0.05* Math.abs(this.props.currentSelected - i) }
                         click={()=>this.props.onClickItem(i)} />
                 )}
             </AnimatedContainer>

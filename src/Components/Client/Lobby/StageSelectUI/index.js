@@ -1,10 +1,10 @@
 import React, { Component, Fragment } from 'react';
-import FlatButton from '../../FlatButton';
+import FlatButton from '../../Components/FlatButton';
 import Animated from 'animated';
 
 const AnimatedFlatButton = Animated.createAnimatedComponent(FlatButton);
 
-class ColosseumUI extends Component {
+class StageSelectUI extends Component {
 
     render() {
         const { offset, stageHeight } = this.props;
@@ -16,11 +16,11 @@ class ColosseumUI extends Component {
                     alpha={offset}
                     width={180}
                     height={36}
-                    text={'BACK TO MENU'}
+                    text={'BACK TO SHOWROOM'}
                     onClick={this.props.onBackButtonClick} />
             </Fragment>
         );
     }
 }
 
-export default ColosseumUI;
+export default StageSelectUI;

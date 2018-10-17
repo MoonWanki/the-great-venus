@@ -4,15 +4,17 @@
 [![PixiJS](https://img.shields.io/badge/PixiJS-v4.8.2-e5405b.svg)](http://www.pixijs.com/)
 [![Solidity](https://img.shields.io/badge/Solidity-v0.4.22-6f7f8e.svg)](https://solidity.readthedocs.io)  
 
+![titleimg](/src/images/title_img.png)
+
 This project is for ***2018-2 Media Project*** class of [*Dept. of Digital Media*](http://media.ajou.ac.kr) in [*Ajou Univ*](http://www.ajou.ac.kr).  
 
 Our members and roles are like below.
 
 Name | Position | Roles
 ---|---|---
-:alien: Moon Wanki (Media 13) | PM / Main Developer / Sound Director | Creator of this game. Front-end & Back-end development. Composing BGMs for the game.
-:boy: Jamlee Kim (Media 13) | Developer / QA | Back-end development. Design algorithms for game logics.
-:woman: Han Jisoo (Media 14) | UI·UX Designer / Art Designer | Image resource creator by 2D graphic Illustration.
+:alien: Moon Wanki (Media 13) | PM / Front-End / Back-End | The Creator & Director of this game. Main developer.
+:boy: Jamlee Kim (Media 13) | Back-End / QA | Back-end developer. Designs algorithms for game logics.
+:woman: Han Jisoo (Media 14) | Art Design / UI·UX Design | Designs game resources by 2D graphic illustration.
 
 
 ## Synopsys
@@ -47,7 +49,7 @@ If you are in luck, it can be more than you invested - means that **you can earn
 ## All systems are decentralized
 
 We don't need any server for running TGV! <del>We have no server in fact.</del>  
-TGV is a **DApp**(Decentralized Application) based on the **blockchain** technology.  
+TGV is a **DApp**(Decentralized Application) based on the **Blockchain** technology.  
 Thus, all of your data, which includes armies, items, golds and battle records, will be in the public blockchain network whenever and *forever*.
 
 
@@ -75,14 +77,17 @@ For state management in react.
 - **PixiJS** | http://www.pixijs.com/  
 Fast, flexible 2D WebGL Renderer engine.  
 
-- **Materialize CSS** | https://materializecss.com/  
-Provides a lot of well-designed components.
+- **React Pixi Fiber** | https://github.com/michalochman/react-pixi-fiber/ | by Michal Ochman  
+For writing PixiJS using React declarative style in React 16.  
 
-- **Semantic UI** | https://react.semantic-ui.com/  
-Partially used for some javascript UI components.
+- **Materialize CSS** | https://materializecss.com/  
+Provides material components.
 
 - **Redux-Thunk** | https://github.com/reduxjs/redux-thunk  
 Middleware that makes redux actions asynchronous.  
 
 - **Sass Loader** | https://github.com/webpack-contrib/sass-loader  
-Enables compile [SASS(Syntactically Awesome Style Sheets)](https://sass-lang.com/) language.
+Enables compile [SASS(Syntactically Awesome Style Sheets)](https://sass-lang.com/) language.  
+
+- **Animated** | https://github.com/animatedjs/animated/  
+Declarative Animations Library for React and React Native.

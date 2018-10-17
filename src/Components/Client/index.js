@@ -1,7 +1,7 @@
 import React, { Component } from 'react';
 import { Stage } from "react-pixi-fiber";
-import GameIntroScreen from './GameIntroScreen';
-import GameBase from './GameBase';
+import LoadingScreen from './LoadingScreen';
+import Base from './Base';
 import Animated from 'animated';
 import './index.scss';
 
@@ -44,13 +44,13 @@ export default class Client extends Component {
             <div className='canvas-wrapper'>
                 <Stage options={{ backgroundColor: 0x0 }} width={stageWidth} height={stageHeight} >
                     {this.state.isGameReady
-                        ? <GameBase
+                        ? <Base
                             stageWidth={stageWidth}
                             stageHeight={stageHeight}
                             contentWidth={contentWidth}
                             contentHeight={contentHeight} />
                         : null}
-                    <GameIntroScreen width={stageWidth} height={stageHeight} onReady={this.onReady}/>
+                    <LoadingScreen width={stageWidth} height={stageHeight} onReady={this.onReady}/>
                 </Stage>
             </div>
         );

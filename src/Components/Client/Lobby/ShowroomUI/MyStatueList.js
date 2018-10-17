@@ -9,10 +9,8 @@ import $ from 'jquery';
 class MyStatueList extends Component {
 
     state = {
-        currentSelected: 0,
+        currentSelected: this.props.highlightedStatue,
         currentSelectedOffset: new Animated.Value(0),
-        // editorOn: false,
-        // editorOffset: new Animated.Value(0),
         statues: [
             {
                 name: "Me",
@@ -74,6 +72,7 @@ class MyStatueList extends Component {
 
     toNthStatue = (N) => {
         this.setState({ currentSelected: N });
+        this.props.onStatueHighlighted(N);
         Animated.timing(this.state.currentSelectedOffset, { toValue: N, duration: 1000, easing: Easing.bezier(0.1, 0.8, 0.3, 1) }).start();
     }
 
