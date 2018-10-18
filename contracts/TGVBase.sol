@@ -14,6 +14,9 @@ contract TGVBase is Ownable {
     uint public numUsers; // 총 유저 수
     mapping (address => User) public users;
 
+    // 유저 석고상 DB
+    mapping (address => UserAppearance) public UserAppearanceList;
+
     // 장비 DB
     uint public numEquips; // 총 장비명세서  수 - 총 유저수와 동일
     mapping (address => mapping (uint => Equip)) public equipList;
@@ -29,6 +32,15 @@ contract TGVBase is Ownable {
     // 몬스터 DB
     uint8 public numMobInfo; // 구현된 몬스터 수
     mapping (uint => UnitInfo) public mobInfoList;
+
+    uint8 numConstForUnit;   
+    mapping (uint8 => uint8) public constForUnit;   // 석고상 추가 능력치 계산 상수
+    
+    uint8 numConstForEquip;  
+    mapping (uint8 => uint8) public constForEquip;  // 장비 추가 능력치 계산 상수
+
+    uint8 numGetStatueNumList;
+    mapping (uint8 => uint8) public GetStatueNumList;  // 석상 획득 가능한 스테이지 번호
 
     // 구현된 스테이지인지
     modifier onlyValidStageNo(uint _no) {
@@ -63,8 +75,14 @@ contract TGVBase is Ownable {
         uint16 randnance;
     }
 
+    // 유저 석고상 정보
+    struct UserAppearance{
+        uint8 hairStyle;
+        uint8 skinColor;
+        uint8 eyeType;
+    }
 
-
+    // 석고상 장비 정보
     struct Equip {
         uint16 hpEquipType;     // HP 장비 종류
         uint16 hpEquipLevel;    // HP 장비 레벨
@@ -87,7 +105,6 @@ contract TGVBase is Ownable {
         uint16 avd;     // 기본 회피율
     }
 
-
     // 신규 유저 생성.
     function createUser(string _name) public returns (string) {
         users[msg.sender] = User(_name, 0, 0, 0, 1, 0, 1, 0);
@@ -100,7 +117,7 @@ contract TGVBase is Ownable {
         );
     }
 
-    //레벨업 시 필요 능력치.
+    //레벨업 시 필요 경험치.
     function getRequiredExp(uint level) public pure returns(uint)
     {
         uint sum = 0;
@@ -117,59 +134,26 @@ contract TGVBase is Ownable {
         return 200 + 100 * (level-1);
     }
 
-
-    function getExtraUnitValue(uint unitlevel, uint16 UnitValueType) public pure returns (uint16)
+    // 레벨 당 추가 능력치
+    function getExtraUnitValue(uint8 unitValueType, uint unitlevel) public view returns (uint16)
     {
-        uint16 const = 1;
-        if(UnitValueType == 1)
-        {
-            const = 3;
-            return uint16(unitlevel * const * 2);
-        }
-        if(UnitValueType == 2)
-        {
-            const = 2;
-            return uint16(unitlevel * const * 2);
-        }
-        if(UnitValueType == 3)
-        {
-            return uint16(unitlevel * const * 2);
-        }
+        return uint16(unitlevel * constForUnit[unitValueType] * 2);
     }
 
-
-    //추가 장비 능력치.
-    function getExtraEquipValue(uint16 EquipLevel, uint16 EquipType) public pure returns (uint16)
+    // 추가 장비 능력치.
+    function getExtraEquipValue(uint8 Part, uint16 EquipLevel) public view returns (uint16)
     {
-        uint16 const = 0;
-        if(EquipType == 1)  //hp 장비
-            const = 20;
-        if(EquipType == 2)  //atk 장비
-            const = 10;
-        if(EquipType == 3)  //def 장비
-            const = 8;
-        if(EquipType == 4)  //crt 장비
-            const = 1;
-        if(EquipType == 5)  //avd 장비
-            const = 1;
-
-        if(EquipType >= 1 && EquipType <= 3)
+        uint8 const = constForEquip[0];
+        if(Part >= 1 && Part <= 3)
         {
-            if(EquipLevel<=10 && EquipLevel>=1)
-            {
-                uint16 sum = 0;
-                for(uint8 i = 1;i<=EquipLevel;i++)
-                {
-                    sum += const;
-                }
-                return sum;
-            } 
-            if(EquipLevel > 10)
-                return const*10 + const*(EquipLevel-10)*(EquipLevel/10);
+            if(EquipLevel%10 == 0)
+                const += 1;
+            return constForEquip[Part]*EquipLevel + const;
         }
-        if(EquipType >= 4 && EquipType <= 5)
+
+        if(Part >= 4 && Part <= 5)
         {
-            return EquipLevel * const;
+            return constForEquip[Part]*EquipLevel;
         }
     }
 }

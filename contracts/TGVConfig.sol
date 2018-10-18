@@ -8,8 +8,8 @@ contract TGVConfig is TGVBase {
     using SafeMath for uint256;
 
     function setToDefault() public onlyOwner {
-
         // 석상                                             // 이름            얻는 스테이지
+        statueInfoList[0] = UnitInfo(20, 11, 10, 10, 5);    // 유저 석고상      
         statueInfoList[1] = UnitInfo(20, 11, 10, 10, 5);    // Guiliano        - 
         statueInfoList[2] = UnitInfo(20, 11, 10, 10, 5);    // Haetae          1 
         statueInfoList[3] = UnitInfo(20, 11, 10, 10, 5);    // Moai            10 
@@ -20,7 +20,7 @@ contract TGVConfig is TGVBase {
         // statueInfoList[8] = UnitInfo(20, 11, 10, 10, 5);    // Liberty Queen   85 
         // statueInfoList[9] = UnitInfo(20, 11, 10, 10, 5);    // Master Yee     100            
         // statueInfoList[10] = UnitInfo(20, 11, 10, 10, 5);   // Venus          120 
-        numStatueInfo = 5;
+        numStatueInfo = 6;
 
         // 레벨별 몬스터 능력치
         mobInfoList[1] = UnitInfo(10, 6, 5, 4, 4);
@@ -47,6 +47,31 @@ contract TGVConfig is TGVBase {
         // stageInfoList[9] = [uint8(2),3,4,0,0,2,2,3,4,0,2,2,3,4,0];
         // stageInfoList[10] = [uint8(3),3,3,0,0,3,3,3,4,0,1,2,2,3,3];
         numStageInfo = 5;
+
+        constForUnit[1] = 3;
+        constForUnit[2] = 2;
+        constForUnit[3] = 1;
+        numConstForUnit = 3;
+
+        constForEquip[0] = 10;
+        constForEquip[1] = 20;
+        constForEquip[2] = 10;
+        constForEquip[3] = 8;
+        constForEquip[4] = 1;
+        constForEquip[5] = 1;
+        numConstForEquip = 6;
+
+        GetStatueNumList[1] = 2;
+        GetStatueNumList[2] = 10;
+        GetStatueNumList[3] = 20;   
+        GetStatueNumList[4] = 30;
+        GetStatueNumList[5] = 45;
+        GetStatueNumList[6] = 60;
+        GetStatueNumList[7] = 75;
+        GetStatueNumList[8] = 90;
+        GetStatueNumList[9] = 105;
+        GetStatueNumList[10] = 120;
+        numGetStatueNumList = 10;
     }
 
     function addStageInfo() external onlyOwner returns(uint8) {
@@ -80,8 +105,6 @@ contract TGVConfig is TGVBase {
         mobInfoList[numMobInfo] = UnitInfo(_hp, _atk, _def, _crt, _avd);
         return numMobInfo;
     }
-
-
 
     function editStatueInfo(
         uint _no,

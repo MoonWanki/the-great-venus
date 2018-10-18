@@ -8,15 +8,17 @@ contract TGVStageClear is TGVItemShop
 
     event attackResult(uint8 way, uint8 unit, uint8 mob, uint damamge, uint8 isCrk);
 
-    function setFirstStage(string _name,uint8[] units) public returns(uint[6])
+    function clearFirstStage(string _name) public returns(uint[6])
     {
         createUser(_name);
         uint[6] memory roundResult;     //각 라운드 승리 유무, 획득 경험치 저장 배열
+        uint8[] memory units = new uint8[](1);
+        units[0] = 0;
         roundResult = setStageMain(1, units);
         return roundResult;
     }
 
-    function setStageMain(uint8 stagenum,uint8[] units) public returns(uint[6])
+    function clearStage(uint8 stagenum,uint8[] units) public returns(uint[6])
     {
         if(users[msg.sender].randnance == 65535)
             users[msg.sender].randnance = 0;
@@ -66,36 +68,30 @@ contract TGVStageClear is TGVItemShop
             if(users[msg.sender].lastStage<stagenum) //처음 스테이지 클리어 할 때
             {
                 users[msg.sender].lastStage += 1;
-                if(users[msg.sender].lastStage == 1 || users[msg.sender].lastStage == 10 || users[msg.sender].lastStage == 25 ||
-                   users[msg.sender].lastStage == 40 || users[msg.sender].lastStage == 55 || users[msg.sender].lastStage == 70 ||
-                   users[msg.sender].lastStage == 85 || users[msg.sender].lastStage == 100 || users[msg.sender].lastStage == 120)
-                   users[msg.sender].numStatues += 1;
+                if(users[msg.sender].lastStage == GetStatueNumList[users[msg.sender].numStatues])
+                    users[msg.sender].numStatues += 1;
             }         
         }
 
         return (roundResult);
     }
 
-
-
     // 석상 기본 능력치와 장비 능력치 추가 함수
-    function setUnitData(uint8 unit_num) public returns(UnitInfo)
+    function setUnitData(uint8 unit_num) public view returns(UnitInfo)
     {
         UnitInfo memory unit = statueInfoList[unit_num];
         Equip memory equip = equipList[msg.sender][unit_num];
         uint level = users[msg.sender].level;
-        unit.hp += getExtraUnitValue(level, 1);
-        unit.hp += getExtraEquipValue(equip.hpEquipLevel, 1);
-        unit.atk += getExtraUnitValue(level, 2);
-        unit.atk += getExtraEquipValue(equip.atkEquipLevel, 2);
-        unit.def += getExtraUnitValue(level, 3);
-        unit.def += getExtraEquipValue(equip.defEquipLevel, 3);
-        unit.crt += getExtraEquipValue(equip.crtEquipLevel, 4);
-        unit.avd += getExtraEquipValue(equip.avdEquipLevel, 5);
+        unit.hp += getExtraUnitValue(1, level);
+        unit.hp += getExtraEquipValue(1, equip.hpEquipLevel);
+        unit.atk += getExtraUnitValue(2, level);
+        unit.atk += getExtraEquipValue(2, equip.atkEquipLevel);
+        unit.def += getExtraUnitValue(3, level);
+        unit.def += getExtraEquipValue(3, equip.defEquipLevel);
+        unit.crt += getExtraEquipValue(4, equip.crtEquipLevel);
+        unit.avd += getExtraEquipValue(5, equip.avdEquipLevel);
         return unit;
     }
-
-
 
     // 한 라운드 진행 함수
     function roundProgress(uint8 stagenum, uint8 roundnum, UnitInfo[] memory Units) internal returns (uint, uint)
@@ -200,6 +196,7 @@ contract TGVStageClear is TGVItemShop
             (damage, isCrk) = getDamage(units[u],mobs[m]);
             applyDamage(mobs[m], damage);
         }
+
         //direction 2 : 몬스터 -> 석고상 방향 공격
         if(direction == 2)
         {
