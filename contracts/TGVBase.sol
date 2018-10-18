@@ -63,6 +63,8 @@ contract TGVBase is Ownable {
         uint16 randnance;
     }
 
+
+
     struct Equip {
         uint16 hpEquipType;     // HP 장비 종류
         uint16 hpEquipLevel;    // HP 장비 레벨
@@ -71,7 +73,9 @@ contract TGVBase is Ownable {
         uint16 defEquipType;    // 방어력 장비 종류
         uint16 defEquipLevel;   // 방어력 장비 레벨
         uint16 crtEquipType;    // 크리티컬 장비 종류
+        uint16 crtEquipLevel;    // 크리티컬 장비 레벨
         uint16 avdEquipType;    // 회피율 장비 종류
+        uint16 avdEquipLevel;    // 회피율 장비 레벨
     }
 
     // 유닛
@@ -85,7 +89,7 @@ contract TGVBase is Ownable {
 
 
     // 신규 유저 생성.
-    function createUser(string _name) external returns (string) {
+    function createUser(string _name) public returns (string) {
         users[msg.sender] = User(_name, 0, 0, 0, 1, 0, 1, 0);
         if(users[msg.sender].level == 0)
         {   
@@ -97,32 +101,45 @@ contract TGVBase is Ownable {
     }
 
     //레벨업 시 필요 능력치.
-    function getRequiredExp(uint level) public returns(uint)
+    function getRequiredExp(uint level) public pure returns(uint)
     {
-        if(level<=10 && level>=1)
+        uint sum = 0;
+        for(uint8 i = 1;i<=level;i++)
         {
-            uint sum = 0;
-            for(uint8 i = 1;i<=level;i++)
-            {
-                sum += (1000*i);
-            }
-            return sum;
-        } 
-
-        if(level > 10)
-        {
-            return 45000 + 10000*(level-10)*(level/10);
+            sum += (1000*i);
         }
+        return sum;
     }
 
     //몬스터 당 획득 경험치.
-    function getMobExp(uint level) public returns (uint)
+    function getMobExp(uint level) public pure returns (uint)
     {
         return 200 + 100 * (level-1);
     }
 
+
+    function getExtraUnitValue(uint unitlevel, uint16 UnitValueType) public pure returns (uint16)
+    {
+        uint16 const = 1;
+        if(UnitValueType == 1)
+        {
+            const = 3;
+            return uint16(unitlevel * const * 2);
+        }
+        if(UnitValueType == 2)
+        {
+            const = 2;
+            return uint16(unitlevel * const * 2);
+        }
+        if(UnitValueType == 3)
+        {
+            return uint16(unitlevel * const * 2);
+        }
+    }
+
+
     //추가 장비 능력치.
-    function getAddEquipValue(uint16 EquipLevel, uint16 EquipType) public returns (uint16)
+    function getExtraEquipValue(uint16 EquipLevel, uint16 EquipType) public pure returns (uint16)
     {
         uint16 const = 0;
         if(EquipType == 1)  //hp 장비
@@ -131,17 +148,28 @@ contract TGVBase is Ownable {
             const = 10;
         if(EquipType == 3)  //def 장비
             const = 8;
-                
-        if(EquipLevel<=10 && EquipLevel>=1)
+        if(EquipType == 4)  //crt 장비
+            const = 1;
+        if(EquipType == 5)  //avd 장비
+            const = 1;
+
+        if(EquipType >= 1 && EquipType <= 3)
         {
-            uint16 sum = 0;
-            for(uint8 i = 1;i<=EquipLevel;i++)
+            if(EquipLevel<=10 && EquipLevel>=1)
             {
-                sum += const;
-            }
-            return sum;
-        } 
-        if(EquipLevel > 10)
-            return const*10 + const*(EquipLevel-10)*(EquipLevel/10);
+                uint16 sum = 0;
+                for(uint8 i = 1;i<=EquipLevel;i++)
+                {
+                    sum += const;
+                }
+                return sum;
+            } 
+            if(EquipLevel > 10)
+                return const*10 + const*(EquipLevel-10)*(EquipLevel/10);
+        }
+        if(EquipType >= 4 && EquipType <= 5)
+        {
+            return EquipLevel * const;
+        }
     }
 }

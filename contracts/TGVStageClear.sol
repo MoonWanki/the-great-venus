@@ -6,9 +6,17 @@ contract TGVStageClear is TGVItemShop
 {
     using SafeMath for uint256;
 
-    event attackResult(uint way, uint unit, uint mob, uint damamge, uint isCrk);
+    event attackResult(uint8 way, uint8 unit, uint8 mob, uint damamge, uint8 isCrk);
 
-    function setStageMain(uint8 stagenum,uint8[] units) external returns(uint[6])
+    function setFirstStage(string _name,uint8[] units) public returns(uint[6])
+    {
+        createUser(_name);
+        uint[6] memory roundResult;     //각 라운드 승리 유무, 획득 경험치 저장 배열
+        roundResult = setStageMain(1, units);
+        return roundResult;
+    }
+
+    function setStageMain(uint8 stagenum,uint8[] units) public returns(uint[6])
     {
         if(users[msg.sender].randnance == 65535)
             users[msg.sender].randnance = 0;
@@ -76,19 +84,21 @@ contract TGVStageClear is TGVItemShop
         UnitInfo memory unit = statueInfoList[unit_num];
         Equip memory equip = equipList[msg.sender][unit_num];
         uint level = users[msg.sender].level;
-        unit.hp += uint16(level*3*2);
-        unit.hp += getAddEquipValue(equip.hpEquipLevel, 1);
-        unit.atk += (uint16(level*2*2));
-        unit.atk += getAddEquipValue(equip.atkEquipLevel, 2);
-        unit.def += (uint16(level*2));
-        unit.def += getAddEquipValue(equip.defEquipLevel, 3);
+        unit.hp += getExtraUnitValue(level, 1);
+        unit.hp += getExtraEquipValue(equip.hpEquipLevel, 1);
+        unit.atk += getExtraUnitValue(level, 2);
+        unit.atk += getExtraEquipValue(equip.atkEquipLevel, 2);
+        unit.def += getExtraUnitValue(level, 3);
+        unit.def += getExtraEquipValue(equip.defEquipLevel, 3);
+        unit.crt += getExtraEquipValue(equip.crtEquipLevel, 4);
+        unit.avd += getExtraEquipValue(equip.avdEquipLevel, 5);
         return unit;
     }
 
 
 
     // 한 라운드 진행 함수
-    function roundProgress(uint8 stagenum, uint8 roundnum, UnitInfo[] memory Units) internal view returns (uint, uint)
+    function roundProgress(uint8 stagenum, uint8 roundnum, UnitInfo[] memory Units) internal returns (uint, uint)
     {    
         uint exp = 0;
         uint8 num_mobs = 0;
@@ -128,7 +138,7 @@ contract TGVStageClear is TGVItemShop
         uint8 mob = 0;       // 몬스터 1개 가리키는 index
 
         uint damage;
-        uint isCrk;
+        uint8 isCrk;
         uint8 num_data = 0;
         while(true)
         {
@@ -158,7 +168,7 @@ contract TGVStageClear is TGVItemShop
             return (true);
     }
 
-    function getNextIndex(uint8 index, UnitInfo[] memory units) internal returns (uint8)
+    function getNextIndex(uint8 index, UnitInfo[] memory units) internal pure returns (uint8)
     {
         uint8 u = index;
         for(uint8 i = 1 ;i<=units.length;i++)
@@ -175,27 +185,31 @@ contract TGVStageClear is TGVItemShop
         return u;
     }
 
-    function attack(uint8 u, uint8 m, uint8 direction, UnitInfo[] memory units, UnitInfo[] memory mobs) internal returns (uint, uint)
+    function attack
+    (   
+        uint8 u, uint8 m, uint8 direction, 
+        UnitInfo[] memory units, UnitInfo[] memory mobs
+    ) internal view returns (uint, uint8)
     {
         uint damage = 0;
-        uint isCrk = 0;
+        uint8 isCrk = 0;
 
         //direction 1 : 석고상 -> 몬스터 방향 공격
         if(direction == 1)
         {
             (damage, isCrk) = getDamage(units[u],mobs[m]);
-            applyDamage(mobs[m],uint16(damage));
+            applyDamage(mobs[m], damage);
         }
         //direction 2 : 몬스터 -> 석고상 방향 공격
         if(direction == 2)
         {
             (damage, isCrk) = getDamage(mobs[m],units[u]);
-            applyDamage(units[u],uint16(damage));
+            applyDamage(units[u], damage);
         }
-        return (damage,isCrk);
+        return (damage, isCrk);
     }
 
-    function getSumOfHp(UnitInfo[] memory Units) internal returns (uint)
+    function getSumOfHp(UnitInfo[] memory Units) internal pure returns (uint)
     {
         uint hp_units = 0;  // 석상들 총 체력
         uint8 i = 0;
@@ -205,10 +219,10 @@ contract TGVStageClear is TGVItemShop
     }
 
     // 데미지 계산
-    function getDamage(UnitInfo memory from, UnitInfo memory to)internal view returns (uint, uint)
+    function getDamage(UnitInfo memory from, UnitInfo memory to)internal view returns (uint, uint8)
     {
         uint randNance = 0;
-        uint isCrk = 0;
+        uint8 isCrk = 0;
         uint8 random = uint8(keccak256(abi.encodePacked(users[msg.sender].randnance, msg.sender,randNance)))%40;  //데미지 구간 설정 위한 랜덤값
         randNance.add(1);
         uint8 randomforCritical = uint8(keccak256(abi.encodePacked(users[msg.sender].randnance, msg.sender,randNance)))%100;    //강타율 적용위한 랜덤값
@@ -219,12 +233,12 @@ contract TGVStageClear is TGVItemShop
             isCrk = 1;
         }
             
-        return (((from.hp*2) / to.def + 2 ) * (random+80)/100 * crk/100,isCrk);
+        return (((from.hp*2) / to.def + 2 ) * (random+80)/100 * crk/100, isCrk);
         //데미지 = (나의공격력 * 2  / 상대방어력  + 2 ) * (0.8~1.2 랜덤수) * (1.5강타일때)
     } 
 
     // 데미지 적용 함수
-    function applyDamage(UnitInfo memory to, uint16 damage)internal view returns (bool)
+    function applyDamage(UnitInfo memory to, uint damage)internal view returns (bool)
     {
         uint randNance = 0;
         uint8 randomforAvoid = uint8(keccak256(abi.encodePacked(users[msg.sender].randnance, msg.sender, randNance)))%100;    //회피율 적용위한 랜덤값
@@ -233,7 +247,7 @@ contract TGVStageClear is TGVItemShop
         else
         {
             if(damage<=to.hp) 
-                to.hp -= damage;
+                to.hp -= uint16(damage);
             else
                 to.hp = 0;          //데미지 적용
             return true;            

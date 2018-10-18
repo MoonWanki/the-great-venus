@@ -50,7 +50,6 @@ contract TGVConfig is TGVBase {
     }
 
     function addStageInfo() external onlyOwner returns(uint8) {
-
         numStageInfo = numStageInfo+1;
         stageInfoList[numStageInfo] = [0,0,0,0,0,0,0,0,0,0,0,0,0,0,0];
         return numStageInfo;

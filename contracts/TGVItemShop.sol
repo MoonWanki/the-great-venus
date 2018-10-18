@@ -24,12 +24,13 @@ contract TGVItemShop is TGVConfig {
         if(equip_part==4)
         {
             equipList[msg.sender][unit_num].crtEquipType = equip_type;
+            equipList[msg.sender][unit_num].crtEquipLevel = 1;
         }
         if(equip_part==5)
         {
             equipList[msg.sender][unit_num].avdEquipType = equip_type;
+            equipList[msg.sender][unit_num].avdEquipLevel = 1;
         }
-            
 
     }
     function upgradeEquip(uint8 unit_num, uint8 equip_part) public
@@ -40,6 +41,10 @@ contract TGVItemShop is TGVConfig {
             equipList[msg.sender][unit_num].atkEquipLevel += 1;
         if(equip_part==3)
             equipList[msg.sender][unit_num].defEquipLevel += 1;
+        if(equip_part==4)
+            equipList[msg.sender][unit_num].crtEquipLevel += 1;
+        if(equip_part==5)
+            equipList[msg.sender][unit_num].avdEquipLevel += 1;
     }
 
 }
