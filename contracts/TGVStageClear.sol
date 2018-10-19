@@ -8,16 +8,6 @@ contract TGVStageClear is TGVItemShop
 
     event attackResult(uint8 way, uint8 unit, uint8 mob, uint damamge, uint8 isCrk);
 
-    function clearFirstStage(string _name) public returns(uint[6])
-    {
-        createUser(_name);
-        uint[6] memory roundResult;     //각 라운드 승리 유무, 획득 경험치 저장 배열
-        uint8[] memory units = new uint8[](1);
-        units[0] = 0;
-        roundResult = setStageMain(1, units);
-        return roundResult;
-    }
-
     function clearStage(uint8 stagenum,uint8[] units) public returns(uint[6])
     {
         if(users[msg.sender].randnance == 65535)

@@ -4,7 +4,8 @@ import { connect } from 'react-redux';
 import { bindActionCreators } from 'redux';
 import * as adminActions from 'store/modules/adminModule';
 import * as userActions from 'store/modules/userModule';
-import { Table, Navbar, NavItem, Input, Row, Button, Dropdown } from 'react-materialize';
+import * as gameActions from 'store/modules/gameModule';
+import { Table, Navbar, NavItem, Input, Row, Button, Dropdown, Icon } from 'react-materialize';
 import './AdminPage.scss';
 
 class AdminPage extends Component {
@@ -32,26 +33,41 @@ class AdminPage extends Component {
         },
     }
 
-
     componentDidMount() {
         setInterval(()=>{
             if(this.props.web3Instance) {
-                this.props.UserActions.loadUserData(this.props.web3Instance);
-                this.props.AdminActions.loadConfig(this.props.web3Instance);
+                this.load();
             }
-        }, 2000);
+        }, 5000);
+    }
+
+    load = () => {
+        this.props.UserActions.loadUserData(this.props.web3Instance);
+        this.props.GameActions.loadGameData(this.props.web3Instance);
+    }
+
+    buyEquip = (unit, part, type) => {
+        this.props.UserActions.buyEquip(this.props.web3Instance, unit, part, type);
+    }
+
+    upgradeEquip = (unit, part) => {
+        this.props.UserActions.upgradeEquip(this.props.web3Instance, unit, part);
     }
 
     render() {
-        const { web3Instance, AdminActions, UserActions, statueInfoList, mobInfoList, userData, isLoaded } = this.props;
+        const { web3Instance, AdminActions, UserActions, gameData, userData, isUserLoaded, isGameLoaded } = this.props;
         const { statueInfoForm, mobInfoForm } = this.state;
         return (
             <Fragment>
+                
                 <Navbar brand='Test page' right className='blue-grey darken-3'>
                     <NavItem onClick={() => AdminActions.setConfigToDefault(web3Instance)}>Set to default</NavItem>
+                    <NavItem onClick={this.load}><Icon>refresh</Icon></NavItem>
                 </Navbar>
-                <div className='admin-simulation'>
-                    <div className='admin-simulation-segment'>
+                
+                {isUserLoaded ?
+                <div className='admin-userdata'>
+                    <div className='admin-userdata-segment'>
                         <Table>
                             <thead>
                                 <tr>
@@ -61,27 +77,27 @@ class AdminPage extends Component {
                             <tbody>
                                 <tr>
                                     <td>닉네임</td>
-                                    <td>{userData.name ? userData.name : null}</td>
+                                    <td>{userData.name}</td>
                                 </tr>
                                 <tr>
                                     <td>레벨</td>
-                                    <td>{userData.level ? userData.level.c : null}</td>
+                                    <td>{userData.level}</td>
                                 </tr>
                                 <tr>
                                     <td>경험치</td>
-                                    <td>{userData.exp ? userData.exp.c : null}</td>
+                                    <td>{userData.exp}</td>
                                 </tr>
                                 <tr>
                                     <td>골드</td>
-                                    <td>{userData.gold ? userData.gold.c : null}</td>
+                                    <td>{userData.gold}</td>
                                 </tr>
                                 <tr>
                                     <td>석상 개수</td>
-                                    <td>{userData.lastStage ? userData.numStatue.c : null}</td>
+                                    <td>{userData.numStatue}</td>
                                 </tr>
                                 <tr>
                                     <td>완료 스테이지</td>
-                                    <td>{userData.lastStage ? userData.lastStage.c : null}</td>
+                                    <td>{userData.lastStage}</td>
                                 </tr>
                                 <tr>
                                     <td>초기화</td>
@@ -92,9 +108,9 @@ class AdminPage extends Component {
                             </tbody>
                         </Table>
                     </div>
-                    {userData.equipList ? userData.equipList.map((unit, i)=>{
+                    {userData.equipList.map((unit, i)=>{
                         return (
-                            <div className='admin-simulation-segment' key={i}>
+                            <div className='admin-userdata-segment' key={i}>
                                 <Table>
                                     <thead>
                                         <tr>
@@ -110,15 +126,15 @@ class AdminPage extends Component {
                                             <td>{unit.hpEquipLevel ? unit.hpEquipLevel : null}</td>
                                             <td>{unit.hpEquipLevel ?
                                                 <Button floating flat className='teal accent-4' waves='light' icon='gavel' onClick={()=>{
-                                                    UserActions.upgradeEquip(web3Instance, i, 1);
+                                                    this.upgradeEquip(i, 1);
                                                 }} />
                                                 :
                                                 <Dropdown trigger={
                                                     <Button floating flat className='lime accent-4' waves='light' icon='add_shopping_cart' />
                                                   }>
-                                                  <NavItem onClick={() => UserActions.buyEquip(web3Instance, i, 1, 1)}>중절모</NavItem>
-                                                  <NavItem onClick={() => UserActions.buyEquip(web3Instance, i, 1, 2)}>텍사스카우보이모자</NavItem>
-                                                  <NavItem onClick={() => UserActions.buyEquip(web3Instance, i, 1, 3)}>힙합 스냅백</NavItem>
+                                                  <NavItem onClick={() => this.buyEquip(i, 1, 1)}>중절모</NavItem>
+                                                  <NavItem onClick={() => this.buyEquip(i, 1, 2)}>텍사스카우보이모자</NavItem>
+                                                  <NavItem onClick={() => this.buyEquip(i, 1, 3)}>힙합 스냅백</NavItem>
                                                 </Dropdown>
                                             }</td>
                                         </tr>
@@ -128,15 +144,15 @@ class AdminPage extends Component {
                                             <td>{unit.atkEquipLevel ? unit.atkEquipLevel : null}</td>
                                             <td>{unit.atkEquipLevel ?
                                                 <Button floating flat className='teal accent-4' waves='light' icon='gavel' onClick={()=>{
-                                                    UserActions.upgradeEquip(web3Instance, i, 2);
+                                                    this.upgradeEquip(i, 2);
                                                 }} />
                                                 :
                                                 <Dropdown trigger={
                                                     <Button floating flat className='lime accent-4' waves='light' icon='add_shopping_cart' />
                                                   }>
-                                                  <NavItem onClick={() => UserActions.buyEquip(web3Instance, i, 2, 1)}>루비 펜던트</NavItem>
-                                                  <NavItem onClick={() => UserActions.buyEquip(web3Instance, i, 2, 2)}>사파이어 펜던트</NavItem>
-                                                  <NavItem onClick={() => UserActions.buyEquip(web3Instance, i, 2, 3)}>해골 펜던트</NavItem>
+                                                  <NavItem onClick={() => this.buyEquip(i, 2, 1)}>루비 펜던트</NavItem>
+                                                  <NavItem onClick={() => this.buyEquip(i, 2, 2)}>사파이어 펜던트</NavItem>
+                                                  <NavItem onClick={() => this.buyEquip(i, 2, 3)}>해골 펜던트</NavItem>
                                                 </Dropdown>
                                             }</td>
                                         </tr>
@@ -146,15 +162,15 @@ class AdminPage extends Component {
                                             <td>{unit.defEquipLevel ? unit.defEquipLevel : null}</td>
                                             <td>{unit.defEquipLevel ?
                                                 <Button floating flat className='teal accent-4' waves='light' icon='gavel' onClick={()=>{
-                                                    UserActions.upgradeEquip(web3Instance, i, 3);
+                                                    this.upgradeEquip(i, 3);
                                                 }} />
                                                 :
                                                 <Dropdown trigger={
                                                     <Button floating flat className='lime accent-4' waves='light' icon='add_shopping_cart' />
                                                   }>
-                                                  <NavItem onClick={() => UserActions.buyEquip(web3Instance, i, 3, 1)}>불멸의 오라</NavItem>
-                                                  <NavItem onClick={() => UserActions.buyEquip(web3Instance, i, 3, 2)}>냉기의 오라</NavItem>
-                                                  <NavItem onClick={() => UserActions.buyEquip(web3Instance, i, 3, 3)}>잿빛 오라</NavItem>
+                                                  <NavItem onClick={() => this.buyEquip(i, 3, 1)}>불멸의 오라</NavItem>
+                                                  <NavItem onClick={() => this.buyEquip(i, 3, 2)}>냉기의 오라</NavItem>
+                                                  <NavItem onClick={() => this.buyEquip(i, 3, 3)}>잿빛 오라</NavItem>
                                                 </Dropdown>
                                             }</td>
                                         </tr>
@@ -168,9 +184,9 @@ class AdminPage extends Component {
                                                 <Dropdown trigger={
                                                     <Button floating flat className='lime accent-4' waves='light' icon='add_shopping_cart' />
                                                   }>
-                                                  <NavItem onClick={() => UserActions.buyEquip(web3Instance, i, 4, 1)}>블루문 이어링</NavItem>
-                                                  <NavItem onClick={() => UserActions.buyEquip(web3Instance, i, 4, 2)}>실버 이어링</NavItem>
-                                                  <NavItem onClick={() => UserActions.buyEquip(web3Instance, i, 4, 3)}>합금도금 이어링</NavItem>
+                                                  <NavItem onClick={() => this.buyEquip(i, 4, 1)}>블루문 이어링</NavItem>
+                                                  <NavItem onClick={() => this.buyEquip(i, 4, 2)}>실버 이어링</NavItem>
+                                                  <NavItem onClick={() => this.buyEquip(i, 4, 3)}>합금도금 이어링</NavItem>
                                                 </Dropdown>
                                             }</td>
                                         </tr>
@@ -184,9 +200,9 @@ class AdminPage extends Component {
                                                 <Dropdown trigger={
                                                     <Button floating flat className='lime accent-4' waves='light' icon='add_shopping_cart' />
                                                   }>
-                                                  <NavItem onClick={() => UserActions.buyEquip(web3Instance, i, 5, 1)}>네이비 페인트</NavItem>
-                                                  <NavItem onClick={() => UserActions.buyEquip(web3Instance, i, 5, 2)}>블루 페인트</NavItem>
-                                                  <NavItem onClick={() => UserActions.buyEquip(web3Instance, i, 5, 3)}>얼룩무늬 페인트</NavItem>
+                                                  <NavItem onClick={() => this.buyEquip(i, 5, 1)}>네이비 페인트</NavItem>
+                                                  <NavItem onClick={() => this.buyEquip(i, 5, 2)}>블루 페인트</NavItem>
+                                                  <NavItem onClick={() => this.buyEquip(i, 5, 3)}>얼룩무늬 페인트</NavItem>
                                                 </Dropdown>
                                             }</td>
                                         </tr>
@@ -194,25 +210,24 @@ class AdminPage extends Component {
                                 </Table>
                             </div>
                         );
-                    }) : null}
+                    })}
                     
                 </div>
+                : '유저 정보를 불러오고 있습니다.'}
+                
                 <div className='admin-stage-list'>
                 <h5>스테이지 입장 </h5>
-                    {/* {userData.lastStage ?
-                        (userData.lastStage.c[0] > 1 ?
-                        <div className='admin-stage-item' style={{ background: '#cc6c18', cursor: 'pointer', fontWeight: '700' }} onClick={()=>UserActions.clearStage(web3Instance, "Administrator")}>{1}</div>
-                         : <div className='admin-stage-item' style={{ background: '#d19159', cursor: 'pointer' }} onClick={()=>UserActions.clearStage(web3Instance, "Administrator")}>{1}</div>):null} */}
                     {userData.lastStage ? [1,2,3,4,5,6,7,8,9,10].map(i=>{
-                        if(i <= userData.lastStage.c[0]) return(<div key={i} className='admin-stage-item' style={{ background: '#d19159', cursor: 'pointer' }} onClick={()=>UserActions.clearStage(web3Instance, i)}>{i}</div>)
-                        else if(i === userData.lastStage.c[0] + 1) return(<div key={i} className='admin-stage-item' style={{ background: '#cc6c18', cursor: 'pointer', fontWeight: '700'}} onClick={()=>UserActions.clearStage(web3Instance, i)}>{i}</div>)
+                        if(i <= userData.lastStage) return(<div key={i} className='admin-stage-item' style={{ background: '#d19159', cursor: 'pointer' }} onClick={()=>UserActions.clearStage(web3Instance, i, [0])}>{i}</div>)
+                        else if(i === userData.lastStage + 1) return(<div key={i} className='admin-stage-item' style={{ background: '#cc6c18', cursor: 'pointer', fontWeight: '700'}} onClick={()=>UserActions.clearStage(web3Instance, i, [0])}>{i}</div>)
                         else return (<div key={i} className='admin-stage-item' style={{ background: '#777', color: '#999'}}>{i}</div>)
                     }) : null}
                 </div>
-                {isLoaded?
+
+                {isGameLoaded?
                 <div>
-                    <div className="admin-segment">
-                        <p className="admin-segment-title">~ 석상 ~</p>
+                    <div className="admin-gamedata-segment">
+                        <p className="admin-gamedata-segment-title">~ 석상 ~</p>
                         <Row>
                             <Input s={4} label="HP" onChange={(e, v)=>this.setState({ statueInfoForm: {...statueInfoForm, hp: v}})} />
                             <Input s={2} label="ATK" onChange={(e, v)=>this.setState({ statueInfoForm: {...statueInfoForm, atk: v}})} />
@@ -244,12 +259,12 @@ class AdminPage extends Component {
                                 </tr>
                             </thead>
                             <tbody>
-                                {statueInfoList.map((unit, i) => <tr key={i}><th>{i+1}</th><td>{unit[0].c}</td><td>{unit[1].c}</td><td>{unit[2].c}</td><td>{unit[3].c}%</td><td>{unit[4].c}%</td></tr>)}
+                                {gameData.statueInfoList.map((unit, i) => <tr key={i}><th>{i}</th><td>{unit.hp}</td><td>{unit.atk}</td><td>{unit.def}</td><td>{unit.crt}%</td><td>{unit.avd}%</td></tr>)}
                             </tbody>
                         </Table>
                     </div>
-                    <div className="admin-segment">
-                        <p className="admin-segment-title">~ 몬스터 ~</p>
+                    <div className="admin-gamedata-segment">
+                        <p className="admin-gamedata-segment-title">~ 몬스터 ~</p>
                         <Row>
                             <Input s={4} label="HP" onChange={(e, v)=>this.setState({ mobInfoForm: {...mobInfoForm, hp: v}})} />
                             <Input s={2} label="ATK" onChange={(e, v)=>this.setState({ mobInfoForm: {...mobInfoForm, atk: v}})} />
@@ -281,12 +296,30 @@ class AdminPage extends Component {
                                 </tr>
                             </thead>
                             <tbody>
-                                {mobInfoList.map((unit, i) => <tr key={i}><th>{i+1}</th><td>{unit[0].c}</td><td>{unit[1].c}</td><td>{unit[2].c}</td><td>{unit[3].c}%</td><td>{unit[4].c}%</td></tr>)}
+                                {gameData.mobInfoList.map((unit, i) => <tr key={i}><th>{i+1}</th><td>{unit.hp}</td><td>{unit.atk}</td><td>{unit.def}</td><td>{unit.crt}%</td><td>{unit.avd}%</td></tr>)}
+                            </tbody>
+                        </Table>
+                    </div>
+                    <div className="admin-gamedata-segment">
+                        <p className="admin-gamedata-segment-title">~ 스테이지 ~</p>
+                        <Table striped bordered>
+                            <thead>
+                                <tr>
+                                    <th>No.</th><th>Round 1</th><th>Round 2</th><th>Round 3</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                {gameData.stageInfoList.map((stage, i) =>
+                                <tr key={i}>
+                                <th>{i+1}</th>
+                                <td>{stage[0].map(no => (no!==0 ? no : '　') + ' ')}</td>
+                                <td>{stage[1].map(no => (no!==0 ? no : '　') + ' ')}</td>
+                                <td>{stage[2].map(no => (no!==0 ? no : '　') + ' ')}</td></tr>)}
                             </tbody>
                         </Table>
                     </div>
                 </div>
-                :null}
+                : '게임 정보를 불러오고 있습니다.'}
             </Fragment>
         );
     }
@@ -295,16 +328,14 @@ class AdminPage extends Component {
 export default connect(
     (state) => ({
         web3Instance: state.web3Module.web3Instance,
-        isLoading: state.adminModule.isLoading,
-        isLoaded: state.adminModule.isLoaded,
-        statueInfoList: state.adminModule.statueInfoList,
-        mobInfoList: state.adminModule.mobInfoList,
-        stageInfoList: state.adminModule.stageInfoList,
-        requiredExpList: state.adminModule.requiredExpList,
         userData: state.userModule.userData,
+        gameData: state.gameModule.gameData,
+        isUserLoaded: state.userModule.isLoaded,
+        isGameLoaded: state.gameModule.isLoaded,
     }),
     (dispatch) => ({
         AdminActions: bindActionCreators(adminActions, dispatch),
-        UserActions: bindActionCreators(userActions, dispatch)
+        UserActions: bindActionCreators(userActions, dispatch),
+        GameActions: bindActionCreators(gameActions, dispatch),
     })
 )(AdminPage);

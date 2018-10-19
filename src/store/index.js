@@ -1,9 +1,11 @@
 import { createStore, applyMiddleware } from 'redux';
 import modules from './modules';
 import ReduxThunk from 'redux-thunk';
-import { createLogger } from 'redux-logger';
+// import { createLogger } from 'redux-logger';
 
-// const reduxDevTool = window.__REDUX_DEVTOOLS_EXTENSION__ && window.__REDUX_DEVTOOLS_EXTENSION__();
-const logger = createLogger(); 
+//const isDevelopment = process.env.NODE_ENV === 'development';
 
-export default createStore(modules, applyMiddleware(logger, ReduxThunk));
+//const composeEnhancers = isDevelopment ? (window.__REDUX_DEVTOOLS_EXTENSION_COMPOSE__ || compose) : compose;
+// const logger = createLogger(); 
+
+export default createStore(modules, applyMiddleware(ReduxThunk));

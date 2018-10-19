@@ -14,7 +14,7 @@ const slideDuration = 1500;
 const skySlideDuration = 3000;
 const skySlideEasing = Easing.bezier(0.3, 0.7, 0.3, 1);
 const slideEasing = Easing.bezier(0.6, 0, 0.2, 1);
-const UIFadeInDuration = 800;
+const UIFadeInDuration = 600;
 const UIFadeOutDuration = 400;
 const UIFadeEasing = Easing.bezier(0, 0.7, 0.3, 1);
 
@@ -65,7 +65,7 @@ class Lobby extends Component {
                 break;
             case 'colosseum':
                 this.turnOffInnerUI(this.state.colosseumUIOffset);
-                this.slideHomeBG({ toValue: -1, duration: 0 });
+                this.setState({ homeBGOffset: new Animated.Value(-1) });
                 this.slideColosseumBG({ toValue: -1, duration: slideDuration, easing: slideEasing });
                 break;
             default: break;

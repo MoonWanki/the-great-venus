@@ -1,10 +1,10 @@
-.admin-simulation {
+.admin-userdata {
     width: 100%;
     border-bottom: 1px solid lightgray;
     display: flex;
     padding-bottom: 20px;
     
-    .admin-simulation-segment {
+    .admin-userdata-segment {
         display: flex;
         flex-direction: column;
         padding: 20px;
@@ -38,7 +38,7 @@
     }
 }
 
-.admin-segment {
+.admin-gamedata-segment {
     float: left;
     width: 360px;
     margin-right: 20px;
@@ -48,7 +48,7 @@
         margin: 0;
     }
 
-    .admin-segment-title {
+    .admin-gamedata-segment-title {
         text-align: center;
         font-size: 1.2rem;
         font-weight: 700;

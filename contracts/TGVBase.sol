@@ -33,13 +33,13 @@ contract TGVBase is Ownable {
     uint8 public numMobInfo; // 구현된 몬스터 수
     mapping (uint => UnitInfo) public mobInfoList;
 
-    uint8 numConstForUnit;   
+    uint8 public numConstForUnit;   
     mapping (uint8 => uint8) public constForUnit;   // 석고상 추가 능력치 계산 상수
     
-    uint8 numConstForEquip;  
+    uint8 public numConstForEquip;  
     mapping (uint8 => uint8) public constForEquip;  // 장비 추가 능력치 계산 상수
 
-    uint8 numGetStatueNumList;
+    uint8 public numGetStatueNumList;
     mapping (uint8 => uint8) public GetStatueNumList;  // 석상 획득 가능한 스테이지 번호
 
     // 구현된 스테이지인지
@@ -105,16 +105,9 @@ contract TGVBase is Ownable {
         uint16 avd;     // 기본 회피율
     }
 
-    // 신규 유저 생성.
-    function createUser(string _name) public returns (string) {
+    function createUser(string _name) external {
+        if(users[msg.sender].level == 0) numUsers.add(1);
         users[msg.sender] = User(_name, 0, 0, 0, 1, 0, 1, 0);
-        if(users[msg.sender].level == 0)
-        {   
-            numUsers.add(1);
-        }
-        return (
-            users[msg.sender].name
-        );
     }
 
     //레벨업 시 필요 경험치.

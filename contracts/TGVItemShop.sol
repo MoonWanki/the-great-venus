@@ -4,7 +4,7 @@ import "./TGVConfig.sol";
 
 contract TGVItemShop is TGVConfig {
 
-    function addEquipInfo(uint8 unit_num,uint8 equip_part,uint8 equip_type) public
+    function buyEquip(uint8 unit_num,uint8 equip_part,uint8 equip_type) public
     {
         if(equip_part==1)
         {

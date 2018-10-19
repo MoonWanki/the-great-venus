@@ -14,7 +14,7 @@ Name | Position | Roles
 ---|---|---
 :alien: Moon Wanki (Media 13) | PM / Front-End / Back-End | The Creator & Director of this game. Main developer.
 :boy: Jamlee Kim (Media 13) | Back-End / QA | Back-end developer. Designs algorithms for game logics.
-:woman: Han Jisoo (Media 14) | Art Design / UI·UX Design | Designs game resources by 2D graphic illustration.
+:woman: Jisoo Han (Media 14) | Art Design / UI·UX Design | Designs game resources by 2D graphic illustration.
 
 
 ## Synopsys
@@ -72,7 +72,7 @@ No.1 Front-end library in 2018, ReactJS.
 ### Third-party libraries
 
 - **Redux** | https://redux.js.org/  
-For state management in react.  
+For state management in React.  
 
 - **PixiJS** | http://www.pixijs.com/  
 Fast, flexible 2D WebGL Renderer engine.  
@@ -80,8 +80,8 @@ Fast, flexible 2D WebGL Renderer engine.
 - **React Pixi Fiber** | https://github.com/michalochman/react-pixi-fiber/ | by Michal Ochman  
 For writing PixiJS using React declarative style in React 16.  
 
-- **Materialize CSS** | https://materializecss.com/  
-Provides material components.
+- **React Materialize** | https://react-materialize.github.io/  
+Provides [Materialize](https://materializecss.com/) in React declarative style.  
 
 - **Redux-Thunk** | https://github.com/reduxjs/redux-thunk  
 Middleware that makes redux actions asynchronous.  

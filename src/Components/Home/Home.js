@@ -205,9 +205,9 @@ class Home extends Component {
                                 <a target='_blank' href='https://www.octopusfantasy.com'><div className='home-section-team-avatar' style={{ backgroundImage: `url(${crew1})` }} /></a>
                                 <h5>Moon Wanki</h5>
                                 <div style={{ width: '30px', height: '1px', background: 'white', margin: '5px 0 15px' }} />
-                                <p>Project Manager</p>
-                                <p>Full-Stack Developer</p>
-                                <p>Sound Director</p>
+                                <p>PM</p>
+                                <p>Front-End</p>
+                                <p>Back-End</p>
                             </div>
                         </Fade>
                         <Fade bottom distance='60px' duration={400} fraction={0.6} delay={100}>
@@ -215,7 +215,7 @@ class Home extends Component {
                                 <div className='home-section-team-avatar' style={{ backgroundImage: `url(${crew2})` }} />
                                 <h5>Jamlee</h5>
                                 <div style={{ width: '30px', height: '1px', background: 'white', margin: '5px 0 15px' }} />
-                                <p>Back-End Developer</p>
+                                <p>Back-End</p>
                                 <p>QA</p>
                             </div>
                         </Fade>
@@ -224,7 +224,8 @@ class Home extends Component {
                                 <div className='home-section-team-avatar' style={{ backgroundImage: `url(${crew3})` }} />
                                 <h5>Jisoo Han</h5>
                                 <div style={{ width: '30px', height: '1px', background: 'white', margin: '5px 0 15px' }} />
-                                <p>Art Designer</p>
+                                <p>Art Design</p>
+                                <p>UI·UX Design</p>
                             </div>
                         </Fade>
                     </div>
