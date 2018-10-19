@@ -125,25 +125,25 @@ contract TGVStageClear is TGVItemShop
 
         uint damage;
         uint8 isCrk;
-        uint8 num_data = 0;
+        uint8 num_attack = 0;
         while(true)
         {
             if(getSumOfHp(Units) == 0 || getSumOfHp(Mobs) == 0)
                 break;
             unit = getNextIndex(unit, Units);
             mob = getNextIndex(mob, Mobs);
-            if(num_data%2 == 0)
+            if(num_attack%2 == 0)
             {
-                (damage, isCrk) = attack(unit, mob, 1, Units, Mobs);
+                (damage, isCrk) = attack(unit, mob, 1, num_attack, Units, Mobs);
                 emit attackResult(1, unit, mob, damage, isCrk);
-                num_data += 1;
+                num_attack += 1;
                 continue;
             }
-            if(num_data%2 == 1)
+            if(num_attack%2 == 1)
             {                    
-                (damage, isCrk) = attack(unit, mob, 2, Units, Mobs);
+                (damage, isCrk) = attack(unit, mob, 2, num_attack, Units, Mobs);
                 emit attackResult(2, unit, mob, damage, isCrk);
-                num_data += 1;
+                num_attack += 1;
                 continue;
             }
         }
@@ -173,7 +173,7 @@ contract TGVStageClear is TGVItemShop
 
     function attack
     (   
-        uint8 u, uint8 m, uint8 direction, 
+        uint8 u, uint8 m, uint8 direction, uint8 num_attack,
         UnitInfo[] memory units, UnitInfo[] memory mobs
     ) internal view returns (uint, uint8)
     {
@@ -183,15 +183,15 @@ contract TGVStageClear is TGVItemShop
         //direction 1 : 석고상 -> 몬스터 방향 공격
         if(direction == 1)
         {
-            (damage, isCrk) = getDamage(units[u],mobs[m]);
-            applyDamage(mobs[m], damage);
+            (damage, isCrk) = getDamage(units[u],mobs[m], num_attack);
+            applyDamage(mobs[m], damage, num_attack);
         }
 
         //direction 2 : 몬스터 -> 석고상 방향 공격
         if(direction == 2)
         {
-            (damage, isCrk) = getDamage(mobs[m],units[u]);
-            applyDamage(units[u], damage);
+            (damage, isCrk) = getDamage(mobs[m],units[u], num_attack);
+            applyDamage(units[u], damage, num_attack);
         }
         return (damage, isCrk);
     }
@@ -206,12 +206,10 @@ contract TGVStageClear is TGVItemShop
     }
 
     // 데미지 계산
-    function getDamage(UnitInfo memory from, UnitInfo memory to)internal view returns (uint, uint8)
+    function getDamage(UnitInfo memory from, UnitInfo memory to, uint8 num_attack)internal view returns (uint, uint8)
     {
-        uint randNance = 0;
-        uint8 isCrk = 0;
-        uint8 random = uint8(keccak256(abi.encodePacked(users[msg.sender].randnance, msg.sender,randNance)))%40;  //데미지 구간 설정 위한 랜덤값
-        randNance.add(1);
+        uint randNance = num_attack;
+        uint8 isCrk = 0; 
         uint8 randomforCritical = uint8(keccak256(abi.encodePacked(users[msg.sender].randnance, msg.sender,randNance)))%100;    //강타율 적용위한 랜덤값
         uint8 crk = 100;
         if(randomforCritical<from.crt)  //강타 적용!
@@ -219,15 +217,15 @@ contract TGVStageClear is TGVItemShop
             crk = 150;
             isCrk = 1;
         }
-            
-        return (((from.hp*2) / to.def + 2 ) * (random+80)/100 * crk/100, isCrk);
+        randomforCritical = uint8(keccak256(abi.encodePacked(users[msg.sender].randnance, msg.sender,randNance+1)))%40; //데미지 구간 설정 위한 랜덤값
+        return (((from.hp*2) / to.def + 2 ) * (randomforCritical+80)/100 * crk/100, isCrk);
         //데미지 = (나의공격력 * 2  / 상대방어력  + 2 ) * (0.8~1.2 랜덤수) * (1.5강타일때)
     } 
 
     // 데미지 적용 함수
-    function applyDamage(UnitInfo memory to, uint damage)internal view returns (bool)
+    function applyDamage(UnitInfo memory to, uint damage, uint8 num_attack)internal view returns (bool)
     {
-        uint randNance = 0;
+        uint randNance = num_attack;
         uint8 randomforAvoid = uint8(keccak256(abi.encodePacked(users[msg.sender].randnance, msg.sender, randNance)))%100;    //회피율 적용위한 랜덤값
         if(randomforAvoid<to.avd)   //회피 적용!
             return false;           //데미지 미적용
