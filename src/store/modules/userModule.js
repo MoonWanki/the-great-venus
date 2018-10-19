@@ -1,4 +1,4 @@
-import { /* createAction, */handleActions } from 'redux-actions';
+import { createAction, handleActions } from 'redux-actions';
 import abi from '../../../build/contracts/TGV.json';
 
 const contract = require('truffle-contract');
@@ -17,11 +17,17 @@ const initialState = {
         equipList: null,
     },
     balance: 0,
+    stageResult: null,
+    isStageResultShowing: false,
 };
 
 const SET_BALANCE = 'user/SET_BALANCE';
 const SET_USER_DATA = 'user/SET_USER_DATA';
 const SET_LOADED = 'user/SET_LOADED';
+const START_SHOWING_STAGE_RESULT = 'user/START_SHOWING_STAGE_RESULT';
+const FINISH_SHOWING_STAGE_RESULT = 'user/FINISH_SHOWING_STAGE_RESULT';
+
+export const finishShowingStageResult = createAction(FINISH_SHOWING_STAGE_RESULT);
 
 export const loadUserData = web3Instance => dispatch => {
     TGV.setProvider(web3Instance.currentProvider);
@@ -44,12 +50,12 @@ export const loadUserData = web3Instance => dispatch => {
     }).then(data => {
         userData = {
             name: data[0],
-            rank: data[1].c,
-            gold: data[2].c,
-            exp: data[3].c,
-            level: data[4].c,
-            lastStage: data[5].c,
-            numStatue: data[6].c,
+            rank: data[1].c[0],
+            gold: data[2].c[0],
+            exp: data[3].c[0],
+            level: data[4].c[0],
+            lastStage: data[5].c[0],
+            numStatue: data[6].c[0],
         }
         let promises = [];
         for(let i=0 ; i<data[6] ; i++) {
@@ -119,7 +125,23 @@ export const clearStage = (web3Instance, stageNo, units) => dispatch => {
             .then(instance => {
                 return instance.clearStage(stageNo, units, { from: coinbase });
             }).then(res => {
-                console.log(res);
+                const stageResult = {
+                    stageNo: stageNo,
+                    units: units,
+                    logs: res.logs.map(({ args }) => {
+                        return {
+                            unit: args.unit.c[0],
+                            mob: args.mob.c[0],
+                            damage: args.damage.c[0],
+                            isCrt: args.isCrk.c[0],
+                            way: args.way.c[0],
+                        }
+                    })
+                };
+                dispatch({
+                    type: START_SHOWING_STAGE_RESULT,
+                    payload: stageResult
+                })
                 window.Materialize.toast(`${stageNo} 스테이지에 입장합니다.`, 1500);
             }).catch(err => {
                 console.error(err);
@@ -187,6 +209,20 @@ export default handleActions({
         return {
             ...state,
             balance: balance
+        };
+    },
+    [START_SHOWING_STAGE_RESULT]: (state, { payload }) => {
+        return {
+            ...state,
+            stageResult: payload,
+            isStageResultShowing: true,
+        };
+    },
+    [FINISH_SHOWING_STAGE_RESULT]: (state, { payload }) => {
+        return {
+            ...state,
+            stageResult: null,
+            isStageResultShowing: false,
         };
     },
 }, initialState);

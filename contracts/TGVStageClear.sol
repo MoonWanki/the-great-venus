@@ -6,7 +6,7 @@ contract TGVStageClear is TGVItemShop
 {
     using SafeMath for uint256;
 
-    event attackResult(uint8 way, uint8 unit, uint8 mob, uint damamge, uint8 isCrk);
+    event attackResult(uint8 way, uint8 unit, uint8 mob, uint damage, uint8 isCrk);
 
     function clearStage(uint8 stagenum,uint8[] units) public returns(uint[6])
     {

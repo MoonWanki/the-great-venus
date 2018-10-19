@@ -50,7 +50,7 @@ contract TGVBase is Ownable {
 
     // 구현된 석상인지
     modifier onlyValidStatueNo(uint _no) {
-        require(_no > 0 && _no <= numStatueInfo, "out of statue range");
+        require(_no >= 0 && _no <= numStatueInfo, "out of statue range");
         _;
     }
 

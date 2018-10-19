@@ -7,6 +7,7 @@ import * as userActions from 'store/modules/userModule';
 import * as gameActions from 'store/modules/gameModule';
 import { Table, Navbar, NavItem, Input, Row, Button, Dropdown, Icon } from 'react-materialize';
 import './AdminPage.scss';
+import StageResultModal from './StageResultModal';
 
 class AdminPage extends Component {
 
@@ -38,7 +39,7 @@ class AdminPage extends Component {
             if(this.props.web3Instance) {
                 this.load();
             }
-        }, 5000);
+        }, 2000);
     }
 
     load = () => {
@@ -54,12 +55,25 @@ class AdminPage extends Component {
         this.props.UserActions.upgradeEquip(this.props.web3Instance, unit, part);
     }
 
+    renderStageButtons = () => {
+        let stageButtons = [];
+        const { lastStage } = this.props.userData;
+        for(let i=1 ; i<=this.props.gameData.numStageInfo ; i++) {
+            if(i === lastStage + 1) stageButtons.push(<div key={i} className='admin-stage-item' onClick={()=>this.props.UserActions.clearStage(this.props.web3Instance, i, [0], this.showStageResultModal)} style={{ background: '#cc6c18', cursor: 'pointer', fontWeight: '700'}} >{i}</div>);
+            else if(i <= lastStage) stageButtons.push(<div key={i} className='admin-stage-item' onClick={()=>this.props.UserActions.clearStage(this.props.web3Instance, i, [0], this.showStageResultModal)} style={{ background: '#d19159', cursor: 'pointer' }} >{i}</div>);
+            else stageButtons.push(<div key={i} className='admin-stage-item' style={{ background: '#777', color: '#999'}}>{i}</div>);
+        }
+        return stageButtons;
+    }
+
     render() {
         const { web3Instance, AdminActions, UserActions, gameData, userData, isUserLoaded, isGameLoaded } = this.props;
         const { statueInfoForm, mobInfoForm } = this.state;
         return (
             <Fragment>
                 
+                <StageResultModal open={this.props.isStageResultShowing} />
+
                 <Navbar brand='Test page' right className='blue-grey darken-3'>
                     <NavItem onClick={() => AdminActions.setConfigToDefault(web3Instance)}>Set to default</NavItem>
                     <NavItem onClick={this.load}><Icon>refresh</Icon></NavItem>
@@ -69,40 +83,18 @@ class AdminPage extends Component {
                 <div className='admin-userdata'>
                     <div className='admin-userdata-segment'>
                         <Table>
-                            <thead>
-                                <tr>
-                                    <th style={{ fontSize: '1.4rem'}}>내 정보</th>
-                                </tr>
-                            </thead>
+                            <thead><tr><th style={{ fontSize: '1.4rem'}}>내 정보</th></tr></thead>
                             <tbody>
-                                <tr>
-                                    <td>닉네임</td>
-                                    <td>{userData.name}</td>
-                                </tr>
-                                <tr>
-                                    <td>레벨</td>
-                                    <td>{userData.level}</td>
-                                </tr>
-                                <tr>
-                                    <td>경험치</td>
-                                    <td>{userData.exp}</td>
-                                </tr>
-                                <tr>
-                                    <td>골드</td>
-                                    <td>{userData.gold}</td>
-                                </tr>
-                                <tr>
-                                    <td>석상 개수</td>
-                                    <td>{userData.numStatue}</td>
-                                </tr>
-                                <tr>
-                                    <td>완료 스테이지</td>
-                                    <td>{userData.lastStage}</td>
-                                </tr>
+                                <tr><td>닉네임</td><td>{userData.name}</td></tr>
+                                <tr><td>레벨</td><td>{userData.level}</td></tr>
+                                <tr><td>경험치</td><td>{userData.exp}</td></tr>
+                                <tr><td>골드</td><td>{userData.gold}</td></tr>
+                                <tr><td>석상 개수</td><td>{userData.numStatue}</td></tr>
+                                <tr><td>완료 스테이지</td><td>{userData.lastStage}</td></tr>
                                 <tr>
                                     <td>초기화</td>
                                     <th>
-                                        <Button floating flat large className='teal darken-2' waves='light' icon='refresh' onClick={() => UserActions.createUser(web3Instance, 'Administator')} />
+                                        <Button floating flat large className='teal darken-2' waves='light' icon='refresh' onClick={()=>UserActions.createUser(web3Instance, 'Administator')} />
                                     </th>
                                 </tr>
                             </tbody>
@@ -125,9 +117,7 @@ class AdminPage extends Component {
                                             <td>{unit.hpEquipType ? unit.hpEquipType : '-'}</td>
                                             <td>{unit.hpEquipLevel ? unit.hpEquipLevel : null}</td>
                                             <td>{unit.hpEquipLevel ?
-                                                <Button floating flat className='teal accent-4' waves='light' icon='gavel' onClick={()=>{
-                                                    this.upgradeEquip(i, 1);
-                                                }} />
+                                                <Button floating flat className='teal accent-4' waves='light' icon='gavel' onClick={()=>this.upgradeEquip(i, 1)} />
                                                 :
                                                 <Dropdown trigger={
                                                     <Button floating flat className='lime accent-4' waves='light' icon='add_shopping_cart' />
@@ -217,11 +207,7 @@ class AdminPage extends Component {
                 
                 <div className='admin-stage-list'>
                 <h5>스테이지 입장 </h5>
-                    {userData.lastStage ? [1,2,3,4,5,6,7,8,9,10].map(i=>{
-                        if(i <= userData.lastStage) return(<div key={i} className='admin-stage-item' style={{ background: '#d19159', cursor: 'pointer' }} onClick={()=>UserActions.clearStage(web3Instance, i, [0])}>{i}</div>)
-                        else if(i === userData.lastStage + 1) return(<div key={i} className='admin-stage-item' style={{ background: '#cc6c18', cursor: 'pointer', fontWeight: '700'}} onClick={()=>UserActions.clearStage(web3Instance, i, [0])}>{i}</div>)
-                        else return (<div key={i} className='admin-stage-item' style={{ background: '#777', color: '#999'}}>{i}</div>)
-                    }) : null}
+                    {isGameLoaded ? this.renderStageButtons() : null}
                 </div>
 
                 {isGameLoaded?
@@ -332,6 +318,8 @@ export default connect(
         gameData: state.gameModule.gameData,
         isUserLoaded: state.userModule.isLoaded,
         isGameLoaded: state.gameModule.isLoaded,
+        isStageResultShowing: state.userModule.isStageResultShowing,
+        stageResult: state.userModule.stageResult,
     }),
     (dispatch) => ({
         AdminActions: bindActionCreators(adminActions, dispatch),
