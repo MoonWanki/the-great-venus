@@ -1,13 +1,13 @@
 const getUser = async (TGVInstance, address) => {
-    const data = await TGVInstance.users.call(address);
+    const res = await TGVInstance.users.call(address);
     return {
-        name: data[0],
-        rank: data[1].c[0],
-        gold: data[2].c[0],
-        exp: data[3].c[0],
-        level: data[4].c[0],
-        lastStage: data[5].c[0],
-        numStatue: data[6].c[0],
+        name: res[0],
+        rank: res[1].c[0],
+        gold: res[2].c[0],
+        exp: res[3].c[0],
+        level: res[4].c[0],
+        lastStage: res[5].c[0],
+        numStatue: res[6].c[0],
     }
 }
 
@@ -92,7 +92,7 @@ const calcStatueData = async (TGVInstance, level, statueNo, equip) => {
 
 const getStatueInfoList = async (TGVInstance, numStatueInfo) => {
     let promises = [];
-    for(let i=0 ; i<numStatueInfo ; i++) {
+    for(let i=0 ; i<=numStatueInfo ; i++) {
         promises.push(TGVInstance.statueInfoList.call(i));
     }
     const res = await Promise.all(promises);
@@ -109,8 +109,8 @@ const getStatueInfoList = async (TGVInstance, numStatueInfo) => {
 
 const getMobInfoList = async (TGVInstance, numMobInfo) => {
     let promises = [];
-    for(let i=0 ; i<numMobInfo ; i++) {
-        promises.push(TGVInstance.mobInfoList.call(i+1));
+    for(let i=1 ; i<=numMobInfo ; i++) {
+        promises.push(TGVInstance.mobInfoList.call(i));
     }
     const res = await Promise.all(promises);
     return res.map(mobInfo => {
@@ -126,9 +126,9 @@ const getMobInfoList = async (TGVInstance, numMobInfo) => {
 
 const getStageInfoList = async (TGVInstance, numStageInfo) => {
     let promises = [];
-    for(let i=0 ; i<numStageInfo ; i++) {
+    for(let i=1 ; i<=numStageInfo ; i++) {
         for(let j=0 ; j<15 ; j++) {
-            promises.push(TGVInstance.stageInfoList.call(i+1, j));
+            promises.push(TGVInstance.stageInfoList.call(i, j));
         }
     }
     const res = await Promise.all(promises);
@@ -164,27 +164,53 @@ export const getGameData = async (TGVInstance) => {
     }
 }
 
+const getRequiredExp = async (TGVInstance, level) => {
+    const res = await TGVInstance.getRequiredExp.call(level);
+    return res.c[0];
+}
+
 export const getUserData = async (TGVInstance, address) => {
     const user = await getUser(TGVInstance, address);
     const equipList = await getEquipList(TGVInstance, address, user.numStatue);
     let promises = [];
     for(let i=0 ; i<user.numStatue ; i++) promises.push(calcStatueData(TGVInstance, user.level, i, equipList[i]));
     const statueList = await Promise.all(promises);
+    const requiredExp = await getRequiredExp(TGVInstance, user.level);
+    const preRequiredExp = await getRequiredExp(TGVInstance, user.level - 1);
+    const percentage = (user.exp - preRequiredExp) / (requiredExp - preRequiredExp) * 100;
     return {
         ...user,
         statue: statueList,
+        requiredExp: requiredExp,
+        expPercentage: percentage.toFixed(2),
     }
 }
 
 export const clearStage = async (TGVInstance, stageNo, units, coinbase) => {
     const res = await TGVInstance.clearStage(stageNo, units, { from: coinbase });
-    return res.logs.map(({ args }) => {
-        return {
-            way: args.way.c[0],
-            unit: args.unit.c[0],
-            mob: args.mob.c[0],
-            damage: args.damage.c[0],
-            isCrt: args.isCrk.c[0],
+    console.log(res);
+    let roundList = [];
+    let attackList = [];
+    res.logs.forEach(({ event, args }) => {
+        if(event === 'AttackEvent') {
+            attackList.push({
+                way: args.way,
+                unit: args.unit.c[0],
+                mob: args.mob.c[0],
+                damage: args.damage.c[0],
+                isCrt: args.isCrt,
+            })
+        }
+        else if(event === 'RoundEvent') {
+            roundList.push({
+                victory: args.victory,
+                gold: args.Gold.c[0],
+                exp: args.Exp.c[0],
+                attackList: attackList,
+            });
+            attackList = [];
         }
     });
+    return roundList;
+
 };

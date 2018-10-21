@@ -1,5 +1,5 @@
 import React, { Component, Fragment } from 'react';
-import FlatButton from 'Components/Client/Components/FlatButton';
+import FlatButton from 'Client/Components/FlatButton';
 import Animated from 'animated';
 import ProfileContainer from './ProfileContainer';
 

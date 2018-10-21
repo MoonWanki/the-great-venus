@@ -1,6 +1,6 @@
 import React, { Component, Fragment } from 'react';
-import Box from 'Components/Client/Components/Box';
-import FlatButton from 'Components/Client/Components/FlatButton';
+import Box from 'Client/Components/Box';
+import FlatButton from 'Client/Components/FlatButton';
 import Animated from 'animated';
 import MenuContainer from './MenuContainer';
 

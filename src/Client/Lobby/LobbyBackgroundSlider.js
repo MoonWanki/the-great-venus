@@ -1,5 +1,5 @@
 import React, { Component, Fragment } from 'react';
-import Background from 'Components/Client/Components/Background';
+import Background from 'Client/Components/Background';
 
 export default class LobbyBackgroundSlider extends Component {
 

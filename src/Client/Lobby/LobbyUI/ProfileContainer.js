@@ -1,7 +1,7 @@
 import React, { Component } from 'react';
 import { Container, Text } from 'react-pixi-fiber';
 import { connect } from 'react-redux';
-import Box from 'Components/Client/Components/Box';
+import Box from 'Client/Components/Box';
 
 class ProfileContainer extends Component {
     render() {

@@ -1,7 +1,7 @@
 import React, { Component } from 'react';
 import { Container } from 'react-pixi-fiber';
-import Box from 'Components/Client/Components/Box';
-import FlatButton from 'Components/Client/Components/FlatButton';
+import Box from 'Client/Components/Box';
+import FlatButton from 'Client/Components/FlatButton';
 import Animated from 'animated';
 
 const AnimatedBlackBox = Animated.createAnimatedComponent(Box);

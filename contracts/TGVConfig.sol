@@ -20,7 +20,7 @@ contract TGVConfig is TGVBase {
         // statueInfoList[8] = UnitInfo(20, 11, 10, 10, 5);    // Liberty Queen   85 
         // statueInfoList[9] = UnitInfo(20, 11, 10, 10, 5);    // Master Yee     100            
         // statueInfoList[10] = UnitInfo(20, 11, 10, 10, 5);   // Venus          120 
-        numStatueInfo = 6;
+        numStatueInfo = 5;
 
         // 레벨별 몬스터 능력치
         mobInfoList[1] = UnitInfo(10, 6, 5, 4, 4);
@@ -59,7 +59,7 @@ contract TGVConfig is TGVBase {
         constForEquip[3] = 8;
         constForEquip[4] = 1;
         constForEquip[5] = 1;
-        numConstForEquip = 6;
+        numConstForEquip = 5;
 
         GetStatueNumList[1] = 2;
         GetStatueNumList[2] = 10;

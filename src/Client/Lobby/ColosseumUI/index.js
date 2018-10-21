@@ -1,20 +1,20 @@
 import React, { Component, Fragment } from 'react';
-import FlatButton from 'Components/Client/Components/FlatButton';
+import FlatButton from 'Client/Components/FlatButton';
 import Animated from 'animated';
 
 const AnimatedFlatButton = Animated.createAnimatedComponent(FlatButton);
 
-class ForgeUI extends Component {
+class ColosseumUI extends Component {
 
     render() {
-        const { offset, stageWidth, stageHeight } = this.props;
+        const { offset, stageHeight } = this.props;
         return (
             <Fragment>
                 <AnimatedFlatButton
-                    x={offset.interpolate({ inputRange: [0, 1], outputRange: [stageWidth, stageWidth - 280] })}
-                    y={stageHeight - 86}
+                    x={100}
+                    y={offset.interpolate({ inputRange: [0, 1], outputRange: [stageHeight, stageHeight - 86] })}
                     alpha={offset}
-                    width={180}
+                    width={200}
                     height={36}
                     text={'BACK TO SHOWROOM'}
                     onClick={this.props.onBackButtonClick} />
@@ -23,4 +23,4 @@ class ForgeUI extends Component {
     }
 }
 
-export default ForgeUI;
+export default ColosseumUI;

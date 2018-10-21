@@ -1,6 +1,6 @@
 import React, { Component } from 'react';
 import { Container } from 'react-pixi-fiber';
-import FlatButton from 'Components/Client/Components/FlatButton';
+import FlatButton from 'Client/Components/FlatButton';
 import Animated from 'animated';
 
 const AnimatedFlatButton = Animated.createAnimatedComponent(FlatButton);

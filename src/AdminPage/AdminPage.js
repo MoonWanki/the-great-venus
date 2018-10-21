@@ -110,12 +110,11 @@ class AdminPage extends Component {
 
     clearStage = async (stageNo, units) => {
         try {
-            const logs = await TGVApi.clearStage(this.props.TGVInstance, stageNo, units, this.props.web3Instance.eth.coinbase);
+            const roundList = await TGVApi.clearStage(this.props.TGVInstance, stageNo, units, this.props.web3Instance.eth.coinbase);
             this.setState({
                 stageResult: {
                     stageNo: stageNo,
-                    units: units,
-                    logs: logs,
+                    roundList: roundList,
                 },
                 stageResultModalOn: true,
             })
@@ -191,16 +190,13 @@ class AdminPage extends Component {
                 
                 {isUserLoaded ?
                 <div className='admin-userdata'>
-                    <div className='admin-userdata-segment' style={{ width: '280px' }}>
+                    <div className='admin-userdata-segment' style={{ width: '260px' }}>
                         <Table>
-                            <thead><tr><th style={{ fontSize: '1.4rem'}}>내 정보</th></tr></thead>
+                            <thead><tr><th style={{ fontSize: '1.4rem'}}>My Info</th></tr></thead>
                             <tbody>
-                                <tr><td>닉네임</td><td>{userData.name}</td></tr>
-                                <tr><td>레벨</td><td>{userData.level}</td></tr>
-                                <tr><td>경험치</td><td>{userData.exp}</td></tr>
-                                <tr><td>골드</td><td>{userData.gold}</td></tr>
-                                <tr><td>석상 개수</td><td>{userData.numStatue}</td></tr>
-                                <tr><td>완료 스테이지</td><td>{userData.lastStage}</td></tr>
+                                <tr><td><h5>Lv.{userData.level} {userData.name}</h5></td></tr>
+                                <tr><td>경험치</td><td>{userData.exp}/{userData.requiredExp} ({userData.expPercentage}%)</td></tr>
+                                <tr><td>골드</td><td><b>{userData.gold}</b> Gold</td></tr>
                                 <tr>
                                     <td>초기화</td>
                                     <th>
@@ -223,8 +219,8 @@ class AdminPage extends Component {
                                     </thead>
                                     <tbody>
                                         <tr>
-                                            <td><b>HP</b></td>
-                                            <td>{`${statue.hp.default + statue.hp.extra} ${statue.hp.extra ? `(${statue.hp.default}+${statue.hp.extra})`:''}`}</td>
+                                            <td>HP</td>
+                                            <td><b>{`${statue.hp.default + statue.hp.extra} ${statue.hp.extra ? `(${statue.hp.default}+${statue.hp.extra})`:''}`}</b></td>
                                             <td>Lv. <b>{statue.hp.equipLevel}</b></td>
                                             <td>{statue.hp.equipLevel ?
                                                 <Button floating flat className='teal accent-4' waves='light' icon='gavel' onClick={()=>this.upgradeEquip(i, 1)} />
@@ -239,8 +235,8 @@ class AdminPage extends Component {
                                             }</td>
                                         </tr>
                                         <tr>
-                                            <td><b>ATK</b></td>
-                                            <td>{`${statue.atk.default + statue.atk.extra} ${statue.atk.extra ? `(${statue.atk.default}+${statue.atk.extra})`:''}`}</td>
+                                            <td>ATK</td>
+                                            <td><b>{`${statue.atk.default + statue.atk.extra} ${statue.atk.extra ? `(${statue.atk.default}+${statue.atk.extra})`:''}`}</b></td>
                                             <td>Lv. <b>{statue.atk.equipLevel}</b></td>
                                             <td>{statue.atk.equipLevel ?
                                                 <Button floating flat className='teal accent-4' waves='light' icon='gavel' onClick={()=>{
@@ -257,8 +253,8 @@ class AdminPage extends Component {
                                             }</td>
                                         </tr>
                                         <tr>
-                                            <td><b>DEF</b></td>
-                                            <td>{`${statue.def.default + statue.def.extra} ${statue.def.extra ? `(${statue.def.default}+${statue.def.extra})`:''}`}</td>
+                                            <td>DEF</td>
+                                            <td><b>{`${statue.def.default + statue.def.extra} ${statue.def.extra ? `(${statue.def.default}+${statue.def.extra})`:''}`}</b></td>
                                             <td>Lv. <b>{statue.def.equipLevel}</b></td>
                                             <td>{statue.def.equipLevel ?
                                                 <Button floating flat className='teal accent-4' waves='light' icon='gavel' onClick={()=>{
@@ -275,8 +271,8 @@ class AdminPage extends Component {
                                             }</td>
                                         </tr>
                                         <tr>
-                                            <td><b>CRT</b></td>
-                                            <td>{`${statue.crt.default + statue.crt.extra} ${statue.crt.extra ? `(${statue.crt.default}+${statue.crt.extra})`: ''}`}</td>
+                                            <td>CRT</td>
+                                            <td><b>{`${statue.crt.default + statue.crt.extra} ${statue.crt.extra ? `(${statue.crt.default}+${statue.crt.extra})`: ''}`}</b></td>
                                             <td>Lv. <b>{statue.crt.equipLevel}</b></td>
                                             <td>{statue.crt.equipLevel ?
                                                 <Button floating flat className='teal accent-4' waves='light' icon='gavel' onClick={()=>{
@@ -293,8 +289,8 @@ class AdminPage extends Component {
                                             }</td>
                                         </tr>
                                         <tr>
-                                            <td><b>AVD</b></td>
-                                            <td>{`${statue.avd.default + statue.avd.extra} ${statue.avd.extra ? `(${statue.avd.default}+${statue.avd.extra})`:''}`}</td>
+                                            <td>AVD</td>
+                                            <td><b>{`${statue.avd.default + statue.avd.extra} ${statue.avd.extra ? `(${statue.avd.default}+${statue.avd.extra})`:''}`}</b></td>
                                             <td>Lv. <b>{statue.avd.equipLevel}</b></td>
                                             <td>{statue.avd.equipLevel ?
                                                 <Button floating flat className='teal accent-4' waves='light' icon='gavel' onClick={()=>{

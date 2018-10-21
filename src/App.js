@@ -3,7 +3,9 @@ import { connect } from 'react-redux';
 import { bindActionCreators } from 'redux';
 import * as appActions from './store/modules/appModule';
 import { BrowserRouter, Route, Switch } from 'react-router-dom';
-import { Website, Client, AdminPage } from 'Components';
+import Main from './Main';
+import Client from './Client';
+import AdminPage from './AdminPage/AdminPage';
 
 class App extends Component {
 
@@ -26,7 +28,7 @@ class App extends Component {
 			<Switch>
 				<Route path="/client" component={Client} />
 				<Route path="/test" component={AdminPage} />
-				<Route component={Website} />
+				<Route component={Main} />
 			</Switch>
 		</BrowserRouter>
 		);

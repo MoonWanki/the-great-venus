@@ -4,9 +4,9 @@ import { connect } from 'react-redux';
 import { bindActionCreators } from 'redux';
 import * as web3Actions from 'store/modules/web3Module';
 import { getWeb3Instance } from 'utils/InstanceFactory';
-import Home from './Home';
+import { Home, PageNotFound } from './Pages';
 
-class Website extends Component {
+class Main extends Component {
 
     componentDidMount = () => {
         this.load();
@@ -26,6 +26,7 @@ class Website extends Component {
         return (
             <Switch>
                 <Route exact path='/' component={Home} />
+                <Route component={PageNotFound} />
             </Switch>
         )
     }
@@ -40,4 +41,4 @@ export default connect(
     (dispatch) => ({
         Web3Actions: bindActionCreators(web3Actions, dispatch),
     })
-)(Website);
+)(Main);

@@ -144,7 +144,7 @@ class Home extends Component {
                     </div>
                 </div>
                 {selectedAddress ?
-                    <Link to='/test'>
+                    <Link to='/test' target='_blank'>
                         <div style={{ position: "absolute", top: '5px', left: '5px', color: 'lightgrey' }}>
                             <Icon>settings</Icon>
                         </div>

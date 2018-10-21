@@ -1,6 +1,6 @@
 import React, { Component } from 'react';
 import { Container } from 'react-pixi-fiber';
-import Statue from 'Components/Client/Components/Statue';
+import Statue from 'Client/Components/Statue';
 import Animated from 'animated';
 
 const AnimatedContainer = Animated.createAnimatedComponent(Container);
