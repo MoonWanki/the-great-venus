@@ -25,7 +25,7 @@ contract TGVConfig is TGVBase {
         // 레벨별 몬스터 능력치
         mobInfoList[1] = UnitInfo(10, 6, 5, 4, 4);
         mobInfoList[2] = UnitInfo(16, 8, 6, 4, 4);
-        mobInfoList[3] = UnitInfo(22, 10, 7, 4, 4);
+        mobInfoList[3] = UnitInfo(50, 10, 7, 4, 4);
         mobInfoList[4] = UnitInfo(28, 12, 8, 5, 5);
         mobInfoList[5] = UnitInfo(34, 14, 9, 5, 5);
         // mobInfoList[6] = UnitInfo(40, 16, 10, 5, 5);
