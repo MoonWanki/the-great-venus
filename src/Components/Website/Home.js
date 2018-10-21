@@ -42,15 +42,19 @@ class Home extends Component {
             noMetamaskModal: {
                 title: {
                     'en': 'You need to have Metamask!',
-                    'ko': '메타마스크를 까셔야죠!',
+                    'ko': '정상적인 플레이를 위해 메타마스크를 설치해주세요!',
                 },
                 content: {
                     'en': 'Get Metamask and set your Ethereum account! Then you will be ready to enjoy!',
-                    'ko': '이더리움 게임을 하려면 메타마스크는 필수입니다. 지금 당장 설치하세요. 1분도 안 걸립니다.',
+                    'ko': '메타마스크는 크롬 또는 파이어폭스에서 이용할 수 있는 이더리움 지갑입니다. 설치하는 데 1분도 걸리지 않습니다!',
                 },
                 getMetamaskBtn: {
                     'en': 'GET METAMASK',
                     'ko': '메타마스크 설치하기',
+                },
+                startAnywayBtn: {
+                    'en': 'START ANYWAY',
+                    'ko': '일단 접속',
                 },
             },
             plzLogin: {
@@ -77,11 +81,12 @@ class Home extends Component {
                 this.setState({ openNoBrowserModal: true });
             }
         } else { // if metamask OK
-            if(!this.props.selectedAddress) {
-                window.Materialize.toast(this.state.text.plzLogin[this.props.language], 1500);
-            } else {
-                this.props.history.push('/client');
-            }
+            // if(!this.props.selectedAddress) {
+            //     window.Materialize.toast(this.state.text.plzLogin[this.props.language], 1500);
+            // } else {
+            //     this.props.history.push('/client');
+            // }
+            window.open('/client');
         }
     }
 
@@ -93,30 +98,35 @@ class Home extends Component {
             <Fragment>
 
                 <Modal open={openNoBrowserModal} onClose={() => this.setState({ openNoBrowserModal: false })} center>
-                        <h5>{text.noBrowserModal.title[language]}</h5>
-                        <p>{text.noBrowserModal.content[language]}</p>
-                        <a href='https://www.google.com/chrome/' target="_blank">
-                            <button className="btn btn-action" onClick={() => this.setState({ openNoBrowserModal: false })}>
-                                {text.noBrowserModal.getChromeBtn[language]}
-                            </button>
-                        </a>
-                        <a href='https://www.mozilla.org' target="_blank">
-                            <button className="btn btn-action" onClick={() => this.setState({ openNoBrowserModal: false })}>
-                                {text.noBrowserModal.getFirefoxBtn[language]}
-                            </button>
-                        </a>
+                    <h5>{text.noBrowserModal.title[language]}</h5>
+                    <p>{text.noBrowserModal.content[language]}</p>
+                    <a href='https://www.google.com/chrome/' target="_blank">
+                        <button className="btn btn-action" onClick={() => this.setState({ openNoBrowserModal: false })}>
+                            {text.noBrowserModal.getChromeBtn[language]}
+                        </button>
+                    </a>
+                    <a href='https://www.mozilla.org' target="_blank">
+                        <button className="btn btn-action" onClick={() => this.setState({ openNoBrowserModal: false })}>
+                            {text.noBrowserModal.getFirefoxBtn[language]}
+                        </button>
+                    </a>
                 </Modal>
 
                 <Modal open={openNoMetamaskModal} onClose={() => this.setState({ openNoMetamaskModal: false })} center>
-                        <h5>{text.noMetamaskModal.title[language]}</h5>
-                        <p>
-                            
-                        </p>
-                        <a href='https://metamask.io/' target="_black">
-                            <button className="btn btn-action" onClick={() => this.setState({ openNoMetamaskModal: false })}>
-                                {text.noMetamaskModal.getMetamaskBtn[language]}
-                            </button>
-                        </a>
+                    <h5>{text.noMetamaskModal.title[language]}</h5>
+                    <p>
+                        
+                    </p>
+                    <a href='https://metamask.io/' target="_black">
+                        <button className="btn btn-action" onClick={() => this.setState({ openNoMetamaskModal: false })}>
+                            {text.noMetamaskModal.getMetamaskBtn[language]}
+                        </button>
+                    </a>
+                    <a href='/client' target="_black">
+                        <button className="btn btn-action" onClick={() => this.setState({ openNoMetamaskModal: false })}>
+                            {text.noMetamaskModal.startAnywayBtn[language]}
+                        </button>
+                    </a>
                 </Modal>
 
                 <div className="home-banner">

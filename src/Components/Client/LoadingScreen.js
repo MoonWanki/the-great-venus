@@ -36,10 +36,6 @@ class LoadingScreen extends Component {
     }
 
     loadGame = async() => {
-        this.setState({ loadingText: '게임 정보를 불러오고 있습니다.' });
-        await this.props.GameActions.loadGameData(this.props.web3Instance);
-        this.setState({ loadingText: '유저 정보를 불러오고 있습니다.' });
-        await this.props.UserActions.loadUserData(this.props.web3Instance);
         this.setState({ loadingText: '리소스를 불러오고 있습니다.' });
         await this.loadImages();
     }
