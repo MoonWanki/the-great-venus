@@ -1,40 +1,39 @@
-import { handleActions } from 'redux-actions';
+import { createAction, handleActions } from 'redux-actions';
 import * as TGVApi from 'utils/TGVApi';
 
 const initialState = {
+    isPending: false,
     isLoaded: false,
     gameData: null,
 };
 
-const SET_LOADED = 'game/SET_LOADED';
-const SET_GAME_DATA = 'game/SET_GAME_DATA';
+const LOAD_GAME = 'game/LOAD_GAME';
+const LOAD_GAME_PENDING = 'game/LOAD_GAME_PENDING';
+const LOAD_GAME_FULFILLED = 'game/LOAD_GAME_FULFILLED';
+const LOAD_GAME_REJECTED = 'game/LOAD_GAME_REJECTED';
 
-export const loadGameData = TGVInstance => async dispatch => {
-
-    try {
-        const gameData = await TGVApi.getGameData(TGVInstance);
-        dispatch({
-            type: SET_GAME_DATA,
-            payload: gameData
-        });
-        dispatch({
-            type: SET_LOADED,
-            payload: true
-        });
-    } catch(err) {
-        dispatch({
-            type: SET_LOADED,
-            payload: false
-        });
-        console.error(err);
-    }
-}
+export const fetchGameData = createAction(LOAD_GAME, async (TGVInstance) => await TGVApi.getGameData(TGVInstance));
 
 export default handleActions({
-    [SET_LOADED]: (state, { payload }) => {
-        return { ...state, isLoaded: payload };
+    [LOAD_GAME_PENDING]: (state) => {
+        return {
+            ...state,
+            isPending: true,
+        };
     },
-    [SET_GAME_DATA]: (state, { payload }) => {
-        return { ...state, gameData: payload };
+    [LOAD_GAME_FULFILLED]: (state, { payload }) => {
+        return {
+            ...state,
+            isPending: false,
+            isLoaded: true,
+            gameData: payload,
+        };
+    },
+    [LOAD_GAME_REJECTED]: (state) => {
+        return {
+            ...state,
+            isPending: false,
+            isLoaded: false,
+        };
     },
 }, initialState);

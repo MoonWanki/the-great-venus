@@ -176,7 +176,7 @@ export const getUserData = async (TGVInstance, address) => {
     for(let i=0 ; i<user.numStatue ; i++) promises.push(calcStatueData(TGVInstance, user.level, i, equipList[i]));
     const statueList = await Promise.all(promises);
     const requiredExp = await getRequiredExp(TGVInstance, user.level);
-    const preRequiredExp = await getRequiredExp(TGVInstance, user.level - 1);
+    const preRequiredExp = user.level > 1 ? await getRequiredExp(TGVInstance, user.level - 1) : 0;
     const percentage = (user.exp - preRequiredExp) / (requiredExp - preRequiredExp) * 100;
     return {
         ...user,

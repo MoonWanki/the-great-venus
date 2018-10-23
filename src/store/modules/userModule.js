@@ -1,55 +1,41 @@
-import { handleActions } from 'redux-actions';
+import { createAction, handleActions } from 'redux-actions';
 import * as TGVApi from 'utils/TGVApi';
 
 const initialState = {
+    isPending: false,
     isLoaded: false,
     userData: null,
-    balance: 0,
 };
 
-const SET_BALANCE = 'user/SET_BALANCE';
-const SET_USER_DATA = 'user/SET_USER_DATA';
-const SET_LOADED = 'user/SET_LOADED';
+// const balance = payload.c[0]*(10**5) + payload.c[1]/(10**9);
 
-export const loadMyData = (TGVInstance, address) => async dispatch => {
+const LOAD_USER = 'user/LOAD_USER';
+const LOAD_USER_PENDING = 'user/LOAD_USER_PENDING';
+const LOAD_USER_FULFILLED = 'user/LOAD_USER_FULFILLED';
+const LOAD_USER_REJECTED = 'user/LOAD_USER_REJECTED';
 
-    try {
-        const userData = await TGVApi.getUserData(TGVInstance, address);
-        dispatch({
-            type: SET_USER_DATA,
-            payload: userData
-        });
-        dispatch({
-            type: SET_LOADED,
-            payload: true
-        });
-    } catch(err) {
-        dispatch({
-            type: SET_LOADED,
-            payload: false
-        });
-        console.error(err);
-    }
-}
+export const fetchMyData = createAction(LOAD_USER, async (TGVInstance, address) => await TGVApi.getUserData(TGVInstance, address));
 
 export default handleActions({
-    [SET_LOADED]: (state, { payload }) => {
+    [LOAD_USER_PENDING]: (state) => {
         return {
             ...state,
-            isLoaded: payload
+            isPending: true,
         };
     },
-    [SET_USER_DATA]: (state, { payload }) => {
+    [LOAD_USER_FULFILLED]: (state, { payload }) => {
         return {
             ...state,
-            userData: payload
+            isPending: false,
+            isLoaded: true,
+            userData: payload,
         };
     },
-    [SET_BALANCE]: (state, { payload }) => {
-        const balance = payload.c[0]*(10**5) + payload.c[1]/(10**9);
+    [LOAD_USER_REJECTED]: (state) => {
         return {
             ...state,
-            balance: balance
+            isPending: false,
+            isLoaded: false,
         };
     },
 }, initialState);
