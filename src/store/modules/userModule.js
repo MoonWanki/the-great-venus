@@ -14,10 +14,10 @@ const LOAD_USER_PENDING = 'user/LOAD_USER_PENDING';
 const LOAD_USER_FULFILLED = 'user/LOAD_USER_FULFILLED';
 const LOAD_USER_REJECTED = 'user/LOAD_USER_REJECTED';
 
-export const fetchMyData = createAction(LOAD_USER, async (TGVInstance, address) => await TGVApi.getUserData(TGVInstance, address));
+export const fetchUserData = createAction(LOAD_USER, async (TGVInstance, address) => await TGVApi.getUserData(TGVInstance, address));
 
 export default handleActions({
-    [LOAD_USER_PENDING]: (state) => {
+    [LOAD_USER_PENDING]: state => {
         return {
             ...state,
             isPending: true,
@@ -31,7 +31,7 @@ export default handleActions({
             userData: payload,
         };
     },
-    [LOAD_USER_REJECTED]: (state) => {
+    [LOAD_USER_REJECTED]: state => {
         return {
             ...state,
             isPending: false,

@@ -3,6 +3,7 @@ import { Container, TilingSprite } from 'react-pixi-fiber';
 import * as PIXI from 'pixi.js';
 import PropTypes from 'prop-types';
 import Animated from 'animated';
+import { connect } from 'react-redux';
 
 const AnimatedContainer = Animated.createAnimatedComponent(Container);
 const AnimatedTilingSprite = Animated.createAnimatedComponent(TilingSprite);
@@ -136,4 +137,8 @@ Background.contextTypes = {
     app: PropTypes.object,
 };
 
-export default Background;
+export default connect(
+    state => ({
+        resources: state.gameModule.resources,
+    })
+)(Background);

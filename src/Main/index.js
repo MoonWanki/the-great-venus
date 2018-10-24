@@ -3,7 +3,6 @@ import { Route, Switch } from 'react-router-dom';
 import { connect } from 'react-redux';
 import { bindActionCreators } from 'redux';
 import * as web3Actions from 'store/modules/web3Module';
-import { getWeb3Instance } from 'utils/InstanceFactory';
 import { Home, PageNotFound } from './Pages';
 
 class Main extends Component {
@@ -14,9 +13,10 @@ class Main extends Component {
 
     load = async() => {
 		try {
-            const { web3Instance } = await getWeb3Instance();
-            this.props.Web3Actions.fetchWeb3Instance(web3Instance);
-			// web3Instance.currentProvider.publicConfigStore.on('update', this.onPublicConfigUpdate);
+            let res = await this.props.Web3Actions.fetchWeb3();
+            const web3 = res.value;
+            await this.props.Web3Actions.fetchTGV(web3);
+			web3.currentProvider.publicConfigStore.on('update', this.onPublicConfigUpdate);
 		} catch (err) {
 			console.log(err);
 		}

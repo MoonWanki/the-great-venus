@@ -15,7 +15,7 @@ const LOAD_GAME_REJECTED = 'game/LOAD_GAME_REJECTED';
 export const fetchGameData = createAction(LOAD_GAME, async (TGVInstance) => await TGVApi.getGameData(TGVInstance));
 
 export default handleActions({
-    [LOAD_GAME_PENDING]: (state) => {
+    [LOAD_GAME_PENDING]: state => {
         return {
             ...state,
             isPending: true,
@@ -29,7 +29,7 @@ export default handleActions({
             gameData: payload,
         };
     },
-    [LOAD_GAME_REJECTED]: (state) => {
+    [LOAD_GAME_REJECTED]: state => {
         return {
             ...state,
             isPending: false,

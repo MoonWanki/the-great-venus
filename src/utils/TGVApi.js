@@ -1,38 +1,38 @@
-const getUser = async (TGVInstance, address) => {
-    const res = await TGVInstance.users.call(address);
+const getUser = async (TGV, address) => {
+    const res = await TGV.users.call(address);
     return {
         name: res[0],
-        rank: res[1].c[0],
-        gold: res[2].c[0],
-        exp: res[3].c[0],
-        level: res[4].c[0],
-        lastStage: res[5].c[0],
-        numStatue: res[6].c[0],
+        rank: Number(res[1].c[0]),
+        gold: Number(res[2].c[0]),
+        exp: Number(res[3].c[0]),
+        level: Number(res[4].c[0]),
+        lastStage: Number(res[5].c[0]),
+        numStatue: Number(res[6].c[0]),
     }
 }
 
-const getEquipList = async (TGVInstance, address, numstatue) => {
+const getEquipList = async (TGV, address, numstatue) => {
     let promises = [];
-    for(let i=0 ; i<numstatue ; i++) promises.push(TGVInstance.equipList.call(address, i));
+    for(let i=0 ; i<numstatue ; i++) promises.push(TGV.equipList.call(address, i));
     const equipList = await Promise.all(promises);
     return equipList.map(unit => {
         return {
-            hpEquipType: unit[0].c[0],
-            hpEquipLevel: unit[1].c[0],
-            atkEquipType: unit[2].c[0],
-            atkEquipLevel: unit[3].c[0],
-            defEquipType: unit[4].c[0],
-            defEquipLevel: unit[5].c[0],
-            crtEquipType: unit[6].c[0],
-            crtEquipLevel: unit[7].c[0],
-            avdEquipType: unit[8].c[0],
-            avdEquipLevel: unit[9].c[0],
+            hpEquipType: Number(unit[0].c[0]),
+            hpEquipLevel: Number(unit[1].c[0]),
+            atkEquipType: Number(unit[2].c[0]),
+            atkEquipLevel: Number(unit[3].c[0]),
+            defEquipType: Number(unit[4].c[0]),
+            defEquipLevel: Number(unit[5].c[0]),
+            crtEquipType: Number(unit[6].c[0]),
+            crtEquipLevel: Number(unit[7].c[0]),
+            avdEquipType: Number(unit[8].c[0]),
+            avdEquipLevel: Number(unit[9].c[0]),
         };
     });
 };
 
-export const getStatueDefaultValue = async (TGVInstance, StatueNo)  => {
-    const res = await TGVInstance.statueInfoList.call(StatueNo);
+export const getStatueDefaultValue = async (TGV, StatueNo)  => {
+    const res = await TGV.statueInfoList.call(StatueNo);
     return {
         hp: res[0].c[0],
         atk: res[1].c[0],
@@ -42,58 +42,75 @@ export const getStatueDefaultValue = async (TGVInstance, StatueNo)  => {
     }
 }
 
-const calcStatueData = async (TGVInstance, level, statueNo, equip) => {
+const calcStatueData = async (TGV, level, statueNo, equip) => {
 
-    const defaultValue = await getStatueDefaultValue(TGVInstance, statueNo);
+    const defaultValue = await getStatueDefaultValue(TGV, statueNo);
 
-    const extraHpByLevel = await TGVInstance.getExtraUnitValue(1, level);
-    const extraAtkByLevel = await TGVInstance.getExtraUnitValue(2, level);
-    const extraDefByLevel = await TGVInstance.getExtraUnitValue(3, level);
+    const extraHpByLevel = await TGV.getExtraUnitValue(1, level);
+    const extraAtkByLevel = await TGV.getExtraUnitValue(2, level);
+    const extraDefByLevel = await TGV.getExtraUnitValue(3, level);
 
-    const extraHpByEquip = await TGVInstance.getExtraUnitValue(1, equip.hpEquipLevel);
-    const extraAtkByEquip = await TGVInstance.getExtraUnitValue(2, equip.atkEquipLevel);
-    const extraDefByEquip = await TGVInstance.getExtraUnitValue(3, equip.defEquipLevel);
-    const extraCrtByEquip = await TGVInstance.getExtraUnitValue(4, equip.crtEquipLevel);
-    const extraAvdByEquip = await TGVInstance.getExtraUnitValue(5, equip.avdEquipLevel);
+    const extraHpByEquip = await TGV.getExtraEquipValue(1, equip.hpEquipLevel);
+    const extraAtkByEquip = await TGV.getExtraEquipValue(2, equip.atkEquipLevel);
+    const extraDefByEquip = await TGV.getExtraEquipValue(3, equip.defEquipLevel);
+    const extraCrtByEquip = await TGV.getExtraEquipValue(4, equip.crtEquipLevel);
+    const extraAvdByEquip = await TGV.getExtraEquipValue(5, equip.avdEquipLevel);
 
     return {
-        hp: {
-            default: Number(defaultValue.hp) + Number(extraHpByLevel),
-            extra: extraHpByEquip.c[0],
-            equipType: equip.hpEquipType,
-            equipLevel: equip.hpEquipLevel,
-        },
-        atk: {
-            default: Number(defaultValue.atk) + Number(extraAtkByLevel),
-            extra: extraAtkByEquip.c[0],
-            equipType: equip.atkEquipType,
-            equipLevel: equip.atkEquipLevel,
-        },
-        def: {
-            default: Number(defaultValue.def) + Number(extraDefByLevel),
-            extra: extraDefByEquip.c[0],
-            equipType: equip.defEquipType,
-            equipLevel: equip.defEquipLevel,
-        },
-        crt: {
-            default: defaultValue.crt,
-            extra: extraCrtByEquip.c[0],
-            equipType: equip.crtEquipType,
-            equipLevel: equip.crtEquipLevel,
-        },
-        avd: {
-            default: defaultValue.avd,
-            extra: extraAvdByEquip.c[0],
-            equipType: equip.avdEquipType,
-            equipLevel: equip.avdEquipLevel,
-        },
+        hp: Number(defaultValue.hp) + Number(extraHpByLevel) + Number(extraHpByEquip.c[0]),
+        hpDefault: Number(defaultValue.hp) + Number(extraHpByLevel),
+        hpExtra: Number(extraHpByEquip.c[0]),
+        atk: Number(defaultValue.atk) + Number(extraAtkByLevel) + Number(extraAtkByEquip.c[0]),
+        atkDefault: Number(defaultValue.atk) + Number(extraAtkByLevel),
+        atkExtra: Number(extraAtkByEquip.c[0]),
+        def: Number(defaultValue.def) + Number(extraDefByLevel) + Number(extraDefByEquip.c[0]),
+        defDefault: Number(defaultValue.def) + Number(extraDefByLevel),
+        defExtra: Number(extraDefByEquip.c[0]),
+        crt: Number(defaultValue.crt) + Number(extraCrtByEquip.c[0]),
+        crtDefault: Number(defaultValue.crt),
+        crtExtra: Number(extraCrtByEquip.c[0]),
+        avd: Number(defaultValue.avd) + Number(extraAvdByEquip.c[0]),
+        avdDefault: Number(defaultValue.avd),
+        avdExtra: Number(extraAvdByEquip.c[0]),
+        equip: {
+            hp: {
+                style: equip.hpEquipType,
+                level: equip.hpEquipLevel,
+                value: extraHpByEquip.c[0],
+                nextValue: await TGV.getExtraEquipValue(1, equip.hpEquipLevel + 1),
+            },
+            atk: {
+                style: equip.atkEquipType,
+                level: equip.atkEquipLevel,
+                value: extraAtkByEquip.c[0],
+                nextValue: await TGV.getExtraEquipValue(2, equip.atkEquipLevel + 1),
+            },
+            def: {
+                style: equip.defEquipType,
+                level: equip.defEquipLevel,
+                value: extraDefByEquip.c[0],
+                nextValue: await TGV.getExtraEquipValue(3, equip.defEquipLevel + 1),
+            },
+            crt: {
+                style: equip.crtEquipType,
+                level: equip.crtEquipLevel,
+                value: extraCrtByEquip.c[0],
+                nextValue: await TGV.getExtraEquipValue(4, equip.crtEquipLevel + 1),
+            },
+            avd: {
+                style: equip.avdEquipType,
+                level: equip.avdEquipLevel,
+                value: extraAvdByEquip.c[0],
+                nextValue: await TGV.getExtraEquipValue(5, equip.avdEquipLevel + 1),
+            },
+        }
     }
 }
 
-const getStatueInfoList = async (TGVInstance, numStatueInfo) => {
+const getStatueInfoList = async (TGV, numStatueInfo) => {
     let promises = [];
     for(let i=0 ; i<=numStatueInfo ; i++) {
-        promises.push(TGVInstance.statueInfoList.call(i));
+        promises.push(TGV.statueInfoList.call(i));
     }
     const res = await Promise.all(promises);
     return res.map(statueInfo => {
@@ -107,10 +124,10 @@ const getStatueInfoList = async (TGVInstance, numStatueInfo) => {
     });
 }
 
-const getMobInfoList = async (TGVInstance, numMobInfo) => {
+const getMobInfoList = async (TGV, numMobInfo) => {
     let promises = [];
     for(let i=1 ; i<=numMobInfo ; i++) {
-        promises.push(TGVInstance.mobInfoList.call(i));
+        promises.push(TGV.mobInfoList.call(i));
     }
     const res = await Promise.all(promises);
     return res.map(mobInfo => {
@@ -124,11 +141,11 @@ const getMobInfoList = async (TGVInstance, numMobInfo) => {
     });
 }
 
-const getStageInfoList = async (TGVInstance, numStageInfo) => {
+const getStageInfoList = async (TGV, numStageInfo) => {
     let promises = [];
     for(let i=1 ; i<=numStageInfo ; i++) {
         for(let j=0 ; j<15 ; j++) {
-            promises.push(TGVInstance.stageInfoList.call(i, j));
+            promises.push(TGV.stageInfoList.call(i, j));
         }
     }
     const res = await Promise.all(promises);
@@ -147,13 +164,13 @@ const getStageInfoList = async (TGVInstance, numStageInfo) => {
     return stageInfoList;
 }
 
-export const getGameData = async (TGVInstance) => {
-    const numStatueInfo = await TGVInstance.numStatueInfo.call();
-    const numMobInfo = await TGVInstance.numMobInfo.call();
-    const numStageInfo = await TGVInstance.numStageInfo.call();
-    const statueInfoList = await getStatueInfoList(TGVInstance, numStatueInfo);
-    const mobInfoList = await getMobInfoList(TGVInstance, numMobInfo);
-    const stageInfoList = await getStageInfoList(TGVInstance, numStageInfo);
+export const getGameData = async (TGV) => {
+    const numStatueInfo = await TGV.numStatueInfo.call();
+    const numMobInfo = await TGV.numMobInfo.call();
+    const numStageInfo = await TGV.numStageInfo.call();
+    const statueInfoList = await getStatueInfoList(TGV, numStatueInfo);
+    const mobInfoList = await getMobInfoList(TGV, numMobInfo);
+    const stageInfoList = await getStageInfoList(TGV, numStageInfo);
     return {
         numStatueInfo: numStatueInfo,
         numMobInfo: numMobInfo,
@@ -164,53 +181,55 @@ export const getGameData = async (TGVInstance) => {
     }
 }
 
-const getRequiredExp = async (TGVInstance, level) => {
-    const res = await TGVInstance.getRequiredExp.call(level);
+const getRequiredExp = async (TGV, level) => {
+    const res = await TGV.getRequiredExp.call(level);
     return res.c[0];
 }
 
-export const getUserData = async (TGVInstance, address) => {
-    const user = await getUser(TGVInstance, address);
-    const equipList = await getEquipList(TGVInstance, address, user.numStatue);
+export const getUserData = async (TGV, address) => {
+    const user = await getUser(TGV, address);
+    const equipList = await getEquipList(TGV, address, user.numStatue);
     let promises = [];
-    for(let i=0 ; i<user.numStatue ; i++) promises.push(calcStatueData(TGVInstance, user.level, i, equipList[i]));
+    for(let i=0 ; i<user.numStatue ; i++) promises.push(calcStatueData(TGV, user.level, i, equipList[i]));
     const statueList = await Promise.all(promises);
-    const requiredExp = await getRequiredExp(TGVInstance, user.level);
-    const preRequiredExp = user.level > 1 ? await getRequiredExp(TGVInstance, user.level - 1) : 0;
+    const requiredExp = await getRequiredExp(TGV, user.level);
+    const preRequiredExp = user.level > 1 ? await getRequiredExp(TGV, user.level - 1) : 0;
     const percentage = (user.exp - preRequiredExp) / (requiredExp - preRequiredExp) * 100;
     return {
         ...user,
-        statue: statueList,
+        statues: statueList,
         requiredExp: requiredExp,
         expPercentage: percentage.toFixed(2),
     }
 }
 
-export const clearStage = async (TGVInstance, stageNo, units, coinbase) => {
-    const res = await TGVInstance.clearStage(stageNo, units, { from: coinbase });
+export const clearStage = async (TGV, stageNo, units, coinbase) => {
+    const res = await TGV.clearStage(stageNo, units, { from: coinbase });
     console.log(res);
     let roundList = [];
     let attackList = [];
     res.logs.forEach(({ event, args }) => {
-        if(event === 'AttackEvent') {
-            attackList.push({
-                way: args.way,
-                unit: args.unit.c[0],
-                mob: args.mob.c[0],
-                damage: args.damage.c[0],
-                isCrt: args.isCrt,
-            })
-        }
-        else if(event === 'RoundEvent') {
-            roundList.push({
-                victory: args.victory,
-                gold: args.Gold.c[0],
-                exp: args.Exp.c[0],
-                attackList: attackList,
-            });
-            attackList = [];
+        switch(event) {
+            case 'AttackEvent':
+                attackList.push({
+                    way: args.way,
+                    unit: args.unit.c[0],
+                    mob: args.mob.c[0],
+                    damage: args.damage.c[0],
+                    isCrt: args.isCrt,
+                });
+                break;
+            case 'RoundEvent':
+                roundList.push({
+                    victory: args.victory,
+                    gold: args.Gold.c[0],
+                    exp: args.Exp.c[0],
+                    attackList: attackList,
+                });
+                attackList = [];
+                break;
+            default: break;
         }
     });
     return roundList;
-
 };

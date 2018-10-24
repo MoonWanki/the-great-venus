@@ -74,7 +74,7 @@ class Home extends Component {
 
 
     onStartButtonClick = () => {
-        if(!this.props.web3Instance) {
+        if(!this.props.web3) {
             if(typeof InstallTrigger !== 'undefined' || (!!window.chrome && !!window.chrome.webstore)) { // if cannot find metamask
                 this.setState({ openNoMetamaskModal: true });
             } else { // if neither chrome or firefox
@@ -261,7 +261,7 @@ class Home extends Component {
 
 export default connect(
     (state) => ({
-      web3Instance: state.web3Module.web3Instance,
+      web3: state.web3Module.web3,
       selectedAddress: state.web3Module.selectedAddress,
       language: state.appModule.language,
     })

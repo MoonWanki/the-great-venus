@@ -1,41 +1,67 @@
 import { createAction, handleActions } from 'redux-actions';
+import { getWeb3, getTGV } from 'utils/InstanceFactory';
 
 const initialState = {
-    web3Instance: null,
-    TGVInstance: null,
-    selectedAddress: null,
-    networkVersion: null,
+    isWeb3Pending: false,
+    isWeb3Error: false,
+    web3: null,
+    isTGVPending: false,
+    isTGVError: false,
+    TGV: null,
 };
 
-const FETCH_WEB3_INSTANCE = 'web3/FETCH_WEB3_INSTANCE';
-const FETCH_TGV_INSTANCE = 'web3/FETCH_TGV_INSTANCE';
-const SET_SELECTED_ADDRESS = 'web3/SET_SELECTED_ADDRESS';
+const LOAD_WEB3 = 'web3/LOAD_WEB3';
+const LOAD_WEB3_PENDING = 'web3/LOAD_WEB3_PENDING';
+const LOAD_WEB3_FULFILLED = 'web3/LOAD_WEB3_FULFILLED';
+const LOAD_WEB3_REJECTED = 'web3/LOAD_WEB3_REJECTED';
 
-export const fetchWeb3Instance = createAction(FETCH_WEB3_INSTANCE);
-export const setSelectedAddress = createAction(SET_SELECTED_ADDRESS);
-export const fetchTGVInstance = createAction(FETCH_TGV_INSTANCE);
+const LOAD_TGV = 'web3/LOAD_TGV';
+const LOAD_TGV_PENDING = 'web3/LOAD_TGV_PENDING';
+const LOAD_TGV_FULFILLED = 'web3/LOAD_TGV_FULFILLED';
+const LOAD_TGV_REJECTED = 'web3/LOAD_TGV_REJECTED';
+
+export const fetchWeb3 = createAction(LOAD_WEB3, async () => await getWeb3());
+export const fetchTGV = createAction(LOAD_TGV, async (web3) => await getTGV(web3));
 
 export default handleActions({
-    [FETCH_WEB3_INSTANCE]: (state, { payload }) => {
-        console.log("web3 fetched!");
+    [LOAD_WEB3_PENDING]: state => {
         return {
             ...state,
-            web3Instance: payload,
-            selectedAddress: payload.currentProvider.publicConfigStore._state.selectedAddress,
-            networkVersion: payload.currentProvider.publicConfigStore._state.networkVersion,
+            isWeb3Pending: true,
         };
     },
-    [FETCH_TGV_INSTANCE]: (state, { payload }) => {
+    [LOAD_WEB3_FULFILLED]: (state, { payload }) => {
         return {
             ...state,
-            TGVInstance: payload,
+            isWeb3Pending: false,
+            web3: payload,
         };
     },
-    [SET_SELECTED_ADDRESS]: (state, { payload }) => {
-        console.log(`${state.selectedAddress} -> ${payload}`);
+    [LOAD_WEB3_REJECTED]: state => {
         return {
             ...state,
-            selectedAddress: payload
+            isWeb3Pending: false,
+            isWeb3Error: true
+        };
+    },
+    [LOAD_TGV_PENDING]: state => {
+        return {
+            ...state,
+            isTGVPending: true,
+        };
+    },
+    [LOAD_TGV_FULFILLED]: (state, { payload }) => {
+        return {
+            ...state,
+            isTGVPending: false,
+            TGV: payload,
+        };
+    },
+    [LOAD_TGV_REJECTED]: state => {
+        return {
+            ...state,
+            isTGVPending: false,
+            isTGVError: true
         };
     },
 }, initialState);

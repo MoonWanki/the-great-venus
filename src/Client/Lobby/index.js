@@ -11,8 +11,8 @@ import StageSelectUI from './StageSelectUI';
 import ColosseumUI from './ColosseumUI';
 
 const slideDuration = 1500;
-const skySlideDuration = 3000;
-const skySlideEasing = Easing.bezier(0.3, 0.7, 0.3, 1);
+const skySlideDuration = 7000;
+const skySlideEasing = Easing.bezier(0.3, 1, 0.6, 1);
 const slideEasing = Easing.bezier(0.6, 0, 0.2, 1);
 const UIFadeInDuration = 600;
 const UIFadeOutDuration = 400;
@@ -46,7 +46,7 @@ class Lobby extends Component {
         setTimeout(() => {
             this.turnOnLobbyUI();
             this.turnOnInnerUI(this.state.homeUIOffset, 'home');
-        }, 2000);
+        }, 3000);
     }
 
     goToShowroom = () => {
