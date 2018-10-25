@@ -18,6 +18,8 @@ class GameBase extends Component {
         loadingContent: '',
         introScreenOn: true,
         introScreenOffset: new Animated.Value(1),
+        selectedAddress: null,
+        networkVersion: null,
     }
 
     componentDidMount = () => {
@@ -47,8 +49,15 @@ class GameBase extends Component {
         await this.props.UserActions.fetchUserData(TGV, web3.eth.coinbase);
     }
     
-    onPublicConfigUpdate = () => {
-        this.load();
+    onPublicConfigUpdate = ({ selectedAddress, networkVersion }) => {
+        if(this.state.selectedAddress !== selectedAddress || this.state.networkVersion !== networkVersion) {
+            this.setState({ selectedAddress: selectedAddress, networkVersion: networkVersion });
+            if(this.state.isReady) {
+                this.props.UserActions.fetchUserData(this.props.TGV, this.props.web3.eth.coinbase);
+            } else {
+                this.load();
+            }
+        }
     }
 
     dismissIntroScreen = () => {

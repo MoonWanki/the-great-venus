@@ -3,6 +3,7 @@ import { connect } from 'react-redux';
 import Animated from 'animated';
 import GameBase from './GameBase';
 import { Stage } from 'react-pixi-fiber';
+import { Helmet } from 'react-helmet';
 import './index.scss';
 
 class Client extends Component {
@@ -34,6 +35,10 @@ class Client extends Component {
     render() {
         return (
             <div className='canvas-wrapper'>
+                <Helmet>
+                    <title>TGV Client</title>
+                    <meta name="description" content="The Great Venus game client" />
+                </Helmet>
                 <Stage options={{ backgroundColor: 0x0 }} width={this.state.stageWidth} height={this.state.stageHeight}>
                     <GameBase
                         stageWidth={this.state.stageWidth}

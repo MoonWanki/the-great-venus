@@ -123,8 +123,8 @@ class Background extends Component {
                         anchor={[0.5, 0.5]}
                         position={[stageWidth/2, stageHeight/2]}
                         tilePosition={[
-                            (contentWidth - 1920)/2 + (this.state.mousePosition.x - contentWidth/2) * mouseSensitivity * 0.002 + this.state.x*xSpeed,
-                            (contentHeight - 1080)/2 + (this.state.mousePosition.y - contentHeight/2) * mouseSensitivity * 0.002
+                            (contentWidth - 1920)/2 + (this.state.mousePosition.x - contentWidth/2) * mouseSensitivity * 0.001 + this.state.x*xSpeed,
+                            (contentHeight - 1080)/2 + (this.state.mousePosition.y - contentHeight) * mouseSensitivity * 0.001
                         ]}
                          />
                 )}

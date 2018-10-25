@@ -9,6 +9,8 @@ import ShowroomUI from './ShowroomUI';
 import ForgeUI from './ForgeUI';
 import StageSelectUI from './StageSelectUI';
 import ColosseumUI from './ColosseumUI';
+import { connect } from 'react-redux';
+import SignUpUI from './SignUpUI';
 
 const slideDuration = 1500;
 const skySlideDuration = 7000;
@@ -37,16 +39,30 @@ class Lobby extends Component {
         stageSelectUIOffset: new Animated.Value(0),
         colosseumBGOffset: new Animated.Value(-1),
         colosseumUIOffset: new Animated.Value(0),
+        signUpUIOffset: new Animated.Value(0),
         highlightedStatue: 0,
     }
 
     componentDidMount() {
+        if(this.props.userData.level) {
+            this.enterLobby();
+        } else {
+            this.turnOnInnerUI(this.state.signUpUIOffset, 'signup');
+        }
+    }
+
+    enterLobby = () => {
         this.slideSkyBG({ toValue: -1, duration: skySlideDuration, easing: skySlideEasing });
         this.slideHomeBG({ toValue: 0, duration: skySlideDuration, easing: skySlideEasing });
         setTimeout(() => {
             this.turnOnLobbyUI();
             this.turnOnInnerUI(this.state.homeUIOffset, 'home');
         }, 3000);
+    }
+
+    onFinishSignUp = () => {
+        this.turnOffInnerUI(this.state.signUpUIOffset);
+        this.goToShowroom();
     }
 
     goToShowroom = () => {
@@ -208,6 +224,11 @@ class Lobby extends Component {
                     offset={this.state.colosseumUIOffset}
                     onBackButtonClick={this.goToShowroom}
                     {...this.props} />
+            case 'signup':
+                return <SignUpUI
+                    offset={this.state.signUpUIOffset}
+                    onFinish={this.onFinishSignUp}
+                    {...this.props} />
             default:
                 return null;
         }
@@ -240,4 +261,8 @@ class Lobby extends Component {
     }
 }
 
-export default Lobby;
+export default connect(
+    state => ({
+        userData: state.userModule.userData,
+    })
+)(Lobby);

@@ -8,6 +8,7 @@ import { Table, NavItem, Input, Row, Button, Dropdown, Icon } from 'react-materi
 import './AdminPage.scss';
 import StageResultModal from './StageResultModal';
 import * as TGVApi from 'utils/TGVApi';
+import { Helmet } from 'react-helmet';
 
 class AdminPage extends Component {
 
@@ -35,6 +36,8 @@ class AdminPage extends Component {
         stageResult: null,
         stageResultModalOn: false,
         nicknameForm: '',
+        selectedAddress: null,
+        networkVersion: null,
     }
 
     componentDidMount() {
@@ -66,8 +69,11 @@ class AdminPage extends Component {
         this.props.GameActions.fetchGameData(this.props.TGV);
     }
 
-    onPublicConfigUpdate = () => {
-        // this.update();
+    onPublicConfigUpdate = ({ selectedAddress, networkVersion }) => {
+        if(this.state.selectedAddress !== selectedAddress || this.state.networkVersion !== networkVersion) {
+            this.setState({ selectedAddress: selectedAddress, networkVersion: networkVersion });
+            this.update();
+        }
     }
 
     setToDefault = async () => {
@@ -192,6 +198,11 @@ class AdminPage extends Component {
         const { statueInfoForm, mobInfoForm } = this.state;
         return (
             <Fragment>
+
+                <Helmet>
+                    <title>TGV Test Page</title>
+                    <meta name="description" content="The Great Venus test page" />
+                </Helmet>
                 
                 <StageResultModal
                     open={this.state.stageResultModalOn}
