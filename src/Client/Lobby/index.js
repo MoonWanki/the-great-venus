@@ -60,11 +60,6 @@ class Lobby extends Component {
         }, 3000);
     }
 
-    onFinishSignUp = () => {
-        this.turnOffInnerUI(this.state.signUpUIOffset);
-        this.goToShowroom();
-    }
-
     goToShowroom = () => {
         switch(this.state.currentUI) {
             case 'home':
@@ -83,6 +78,11 @@ class Lobby extends Component {
                 this.turnOffInnerUI(this.state.colosseumUIOffset);
                 this.setState({ homeBGOffset: new Animated.Value(-1) });
                 this.slideColosseumBG({ toValue: -1, duration: slideDuration, easing: slideEasing });
+                break;
+            case 'signup':
+                this.turnOffInnerUI(this.state.signUpUIOffset);
+                this.slideSkyBG({ toValue: -1, duration: slideDuration, easing: slideEasing });
+                this.slideHomeBG({ toValue: -1, duration: slideDuration, easing: slideEasing });
                 break;
             default: break;
         }
@@ -227,7 +227,7 @@ class Lobby extends Component {
             case 'signup':
                 return <SignUpUI
                     offset={this.state.signUpUIOffset}
-                    onFinish={this.onFinishSignUp}
+                    onFinish={this.goToShowroom}
                     {...this.props} />
             default:
                 return null;

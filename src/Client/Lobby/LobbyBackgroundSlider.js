@@ -8,14 +8,14 @@ export default class LobbyBackgroundSlider extends Component {
         return (
             <Fragment>
                 <Background
-                    theme='sky1'
-                    offsetX={0}
-                    offsetY={skyOffset}
-                    {...rest} />
-                <Background
                     theme='home1'
                     offsetX={0}
                     offsetY={homeOffset}
+                    {...rest} />
+                <Background
+                    theme='sky1'
+                    offsetX={0}
+                    offsetY={skyOffset}
                     {...rest} />
                 <Background
                     theme='showroom'
