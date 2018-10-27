@@ -21,7 +21,7 @@ export default class StageResultModal extends Component {
                             ? <CollectionItem key={i} className='light-green darken-3' active>아군[{attack.unit}] ▶ 적군[{attack.mob}] &emsp; <b>{attack.damage ? (attack.isCrt ? attack.damage + ' (CRITICAL)' : attack.damage) : 'MISS'}</b></CollectionItem>
                             : <CollectionItem key={i} className='deep-orange accent-4' active>아군[{attack.unit}] ◀ 적군[{attack.mob}] &emsp; <b>{attack.damage ? (attack.isCrt ? attack.damage + ' (CRITICAL)' : attack.damage) : 'MISS'}</b></CollectionItem>
                         )}
-                        <CollectionItem><b>{roundResult.gold}</b>골드와 <b>{roundResult.exp}</b>의 경험치를 획득하였습니다.</CollectionItem>
+                        <CollectionItem><b>GEM {roundResult.gem}</b>개와 <b>{roundResult.exp}</b>의 경험치를 획득하였습니다.</CollectionItem>
                         <CollectionItem><b>{roundResult.victory ? '승리하였습니다.' : '패배하였습니다.'}</b></CollectionItem>
                     </Collection>
                 )}
