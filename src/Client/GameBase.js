@@ -7,7 +7,6 @@ import * as gameActions from 'store/modules/gameModule';
 import IntroScreen from './IntroScreen';
 import GameMain from './GameMain';
 import Animated from 'animated';
-import Easing from 'animated/lib/Easing';
 import PropTypes from 'prop-types';
 
 class GameBase extends Component {
@@ -61,8 +60,8 @@ class GameBase extends Component {
     }
 
     dismissIntroScreen = () => {
-        Animated.timing(this.state.introScreenOffset, { toValue: 0, delay: 500, duration: 1000, easing: Easing.bezier(0.6, 0, 0.7, 0.2) }).start();
-        setTimeout(() => this.setState({ introScreenOn: false }), 1500);
+        Animated.timing(this.state.introScreenOffset, { toValue: 0, duration: 2000 }).start();
+        setTimeout(() => this.setState({ introScreenOn: false }), 2000);
     }
 
     render() {
@@ -82,6 +81,8 @@ class GameBase extends Component {
 
     loadResources = () => {
         this.context.app.loader
+        .add("intro_credit1", require("../images/intro_credit1.png"))
+        .add("intro_credit2", require("../images/intro_credit2.png"))
         .add("statue0_skin1", require("../images/statue/0/skin/1.svg"))
         .add("statue0_skin2", require("../images/statue/0/skin/2.svg"))
         .add("statue0_skin3", require("../images/statue/0/skin/3.svg"))

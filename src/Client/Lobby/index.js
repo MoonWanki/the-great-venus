@@ -1,6 +1,7 @@
 import React, { Component, Fragment } from 'react';
 import HomeUI from './HomeUI';
 import Animated from 'animated';
+import PropTypes from 'prop-types';
 import Easing from 'animated/lib/Easing';
 import LobbyBackgroundSlider from './LobbyBackgroundSlider';
 import LobbyUI from './LobbyUI';
@@ -11,14 +12,17 @@ import StageSelectUI from './StageSelectUI';
 import ColosseumUI from './ColosseumUI';
 import { connect } from 'react-redux';
 import SignUpUI from './SignUpUI';
+import { Sprite } from 'react-pixi-fiber';
 
 const slideDuration = 1500;
-const skySlideDuration = 7000;
+const skySlideDuration = 15000;
 const skySlideEasing = Easing.bezier(0.3, 1, 0.6, 1);
 const slideEasing = Easing.bezier(0.6, 0, 0.2, 1);
-const UIFadeInDuration = 600;
+const UIFadeInDuration = 800;
 const UIFadeOutDuration = 400;
-const UIFadeEasing = Easing.bezier(0, 0.7, 0.3, 1);
+const UIFadeEasing = Easing.bezier(0, 0.8, 0.3, 1);
+
+const AnimatedSprite = Animated.createAnimatedComponent(Sprite);
 
 class Lobby extends Component {
 
@@ -41,23 +45,61 @@ class Lobby extends Component {
         colosseumUIOffset: new Animated.Value(0),
         signUpUIOffset: new Animated.Value(0),
         highlightedStatue: 0,
+        introCreditOffset: new Animated.Value(0),
+        introCreditTexture: null,
+        introCreditStep: 0,
     }
 
     componentDidMount() {
-        if(this.props.userData.level) {
-            this.enterLobby();
-        } else {
-            this.turnOnInnerUI(this.state.signUpUIOffset, 'signup');
+        window.onkeydown = this.onKeydownOnIntro;
+        setTimeout(this.showNextIntroCredit, 1000);
+        this.slideSkyBG({ toValue: -1, duration: skySlideDuration, easing: skySlideEasing });
+        this.slideHomeBG({ toValue: 0, duration: skySlideDuration, easing: skySlideEasing });
+    }
+
+    onKeydownOnIntro = (e) => {
+        if(e.keyCode === 27) {
+            this.showNextIntroCredit();
         }
     }
 
-    enterLobby = () => {
-        this.slideSkyBG({ toValue: -1, duration: skySlideDuration, easing: skySlideEasing });
-        this.slideHomeBG({ toValue: 0, duration: skySlideDuration, easing: skySlideEasing });
-        setTimeout(() => {
-            this.turnOnLobbyUI();
-            this.turnOnInnerUI(this.state.homeUIOffset, 'home');
-        }, 3000);
+    showNextIntroCredit = () => {
+        if(this.state.introCreditStep === 0) {
+            this.setState({
+                introCreditTexture: this.context.app.loader.resources.intro_credit1,
+                introCreditStep: 1,
+            });
+            Animated.timing(this.state.introCreditOffset, { toValue: 1, duration: 1000 }).start();
+            setTimeout(()=>{
+                Animated.timing(this.state.introCreditOffset, { toValue: 0, duration: 400 }).start();
+                setTimeout(this.showNextIntroCredit, 400);
+            }, 2500);
+        } else if(this.state.introCreditStep === 1) {
+            this.setState({
+                introCreditOffset: new Animated.Value(0),
+                introCreditTexture: this.context.app.loader.resources.intro_credit2,
+                introCreditStep: 2,
+            });
+            Animated.timing(this.state.introCreditOffset, { toValue: 1, duration: 1000 }).start();
+            setTimeout(()=>{
+                Animated.timing(this.state.introCreditOffset, { toValue: 0, duration: 400 }).start();
+                setTimeout(this.showNextIntroCredit, 400);
+            }, 2500);
+        } else if(this.state.introCreditStep === 2) {
+            window.onkeydown = null;
+            this.setState({
+                introCreditOffset: new Animated.Value(0),
+                introCreditStep: -1,
+            });
+            setTimeout(()=>{
+                if(this.props.userData.level) {
+                    this.turnOnLobbyUI();
+                this.turnOnInnerUI(this.state.homeUIOffset, 'home');
+                } else {
+                    this.turnOnInnerUI(this.state.signUpUIOffset, 'signup');
+                }
+            }, 1500);
+        }
     }
 
     goToShowroom = () => {
@@ -235,6 +277,7 @@ class Lobby extends Component {
     }
     
     render() {
+        console.log(this.state.introCreditStep);
         return (
             <Fragment>
                 <LobbyBackgroundSlider
@@ -245,22 +288,33 @@ class Lobby extends Component {
                     stageSelectOffset={this.state.stageSelectBGOffset}
                     forgeOffset={this.state.forgeBGOffset}
                     {...this.props} />
+                {this.state.introCreditStep > 0 && <AnimatedSprite
+                    interactive
+                    click={this.showNextIntroCredit}
+                    texture={this.state.introCreditTexture.texture}
+                    alpha={this.state.introCreditOffset}
+                    x={this.props.stageWidth/2}
+                    y={this.props.stageHeight/2}
+                    anchor={[0.5, 0.5]} />
+                }
                 {this.renderInnerUI()}
                 <LobbyUI
                     offset={this.state.lobbyUIOffset}
                     onSettingButtonClick={this.turnOnSettingUI}
                     {...this.props} />
-                {this.state.settingUIOn
-                    ? <SettingUI
-                        offset={this.state.settingUIOffset}
-                        onDismiss={this.turnOffSettingUI}
-                        {...this.props} />
-                    : null }
+                {this.state.settingUIOn && <SettingUI
+                    offset={this.state.settingUIOffset}
+                    onDismiss={this.turnOffSettingUI}
+                    {...this.props} />
+                }
             </Fragment>
         );
     }
 }
 
+Lobby.contextTypes = {
+    app: PropTypes.object,
+};
 export default connect(
     state => ({
         userData: state.userModule.userData,

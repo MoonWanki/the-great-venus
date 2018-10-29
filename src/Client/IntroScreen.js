@@ -43,7 +43,7 @@ class IntroScreen extends Component {
     render() {
         return (
             <AnimatedContainer
-                y={this.props.offset.interpolate({ inputRange: [0, 1], outputRange: [-this.props.contentHeight, 0]})}
+                alpha={this.props.offset}
                 width={this.props.contentWidth}
                 height={this.props.contentHeight}>
                 <Sprite x={0} y={0} width={this.props.contentWidth} height={this.props.contentWidth*9/16} alpha={1} texture={PIXI.Texture.fromImage(require('images/intro.jpg'))} />
