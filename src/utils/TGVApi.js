@@ -1,13 +1,13 @@
 const getUser = async (TGV, address) => {
-    const res = await TGV.users.call(address);
+    const user = await TGV.users.call(address);
     return {
-        name: res[0],
-        exp: Number(res[1].c[0]),
-        gem: Number(res[2].c[0]),
-        rank: Number(res[3].c[0]),
-        level: Number(res[4].c[0]),
-        lastStage: Number(res[5].c[0]),
-        numStatues: Number(res[6].c[0]),
+        name: user[0],
+        rank: Number(user[1].c[0]),
+        exp: Number(user[2].c[0]),
+        soul: Number(user[3].c[0]),
+        level: Number(user[4].c[0]),
+        lastStage: Number(user[5].c[0]),
+        numStatues: Number(user[6].c[0]),
     }
 }
 
@@ -42,57 +42,52 @@ export const getStatueRawSpec = async (TGV, StatueNo, level)  => {
     }
 }
 
-const getExtraValueByEquipLevel = async (TGV, part, equipLevel) => {
-    const res = await TGV.getExtraValueByEquipLevel.call(part, equipLevel);
+const getExtraValueByEquip = async (TGV, statueNo, part, equipLevel) => {
+    const res = await TGV.getExtraValueByEquip.call(statueNo, part, equipLevel);
     return Number(res.c[0]);
 }
 
 const getStatueSpec = async (TGV, level, statueNo, equip) => {
-
-    const statueSpec = await getStatueRawSpec(TGV, statueNo, level);
-    const extraCrtPerEquipLevel = await TGV.extraCrtPerEquipLevel.call();
-    const extraAvdPerEquipLevel = await TGV.extraAvdPerEquipLevel.call();
-
-    const extraHpByEquip = await getExtraValueByEquipLevel(TGV, 1, equip.hpEquipLevel);
-    const extraAtkByEquip = await getExtraValueByEquipLevel(TGV, 2, equip.atkEquipLevel);
-    const extraDefByEquip = await getExtraValueByEquipLevel(TGV, 3, equip.defEquipLevel);
-    const extraCrtByEquip = extraCrtPerEquipLevel * equip.crtEquipLevel;
-    const extraAvdByEquip = extraAvdPerEquipLevel * equip.avdEquipLevel;
-
+    const rawSpec = await getStatueRawSpec(TGV, statueNo, level);
+    const extraHpByEquip = await getExtraValueByEquip(TGV, statueNo, 1, equip.hpEquipLevel);
+    const extraAtkByEquip = await getExtraValueByEquip(TGV, statueNo, 2, equip.atkEquipLevel);
+    const extraDefByEquip = await getExtraValueByEquip(TGV, statueNo, 3, equip.defEquipLevel);
+    const extraCrtByEquip = await getExtraValueByEquip(TGV, statueNo, 4, equip.crtEquipLevel);
+    const extraAvdByEquip = await getExtraValueByEquip(TGV, statueNo, 5, equip.avdEquipLevel);
     return {
-        hp: statueSpec.hp + extraHpByEquip,
-        hpDefault: statueSpec.hp,
+        hp: rawSpec.hp + extraHpByEquip,
+        hpDefault: rawSpec.hp,
         hpExtra: extraHpByEquip,
-        atk: statueSpec.atk + extraAtkByEquip,
-        atkDefault: statueSpec.atk,
+        atk: rawSpec.atk + extraAtkByEquip,
+        atkDefault: rawSpec.atk,
         atkExtra: extraAtkByEquip,
-        def: statueSpec.def + extraDefByEquip,
-        defDefault: statueSpec.def,
+        def: rawSpec.def + extraDefByEquip,
+        defDefault: rawSpec.def,
         defExtra: extraDefByEquip,
-        crt: statueSpec.crt + extraCrtByEquip,
-        crtDefault: statueSpec.crt,
+        crt: rawSpec.crt + extraCrtByEquip,
+        crtDefault: rawSpec.crt,
         crtExtra: extraCrtByEquip,
-        avd: statueSpec.avd + extraAvdByEquip,
-        avdDefault: statueSpec.avd,
+        avd: rawSpec.avd + extraAvdByEquip,
+        avdDefault: rawSpec.avd,
         avdExtra: extraAvdByEquip,
         equip: {
             hp: {
                 look: equip.hpEquipLook,
                 level: equip.hpEquipLevel,
                 value: extraHpByEquip,
-                nextValue: await getExtraValueByEquipLevel(TGV, 1, equip.hpEquipLevel + 1),
+                nextValue: await getExtraValueByEquip(TGV, statueNo, 1, equip.hpEquipLevel + 1),
             },
             atk: {
                 look: equip.atkEquipLook,
                 level: equip.atkEquipLevel,
                 value: extraAtkByEquip,
-                nextValue: await getExtraValueByEquipLevel(TGV, 2, equip.atkEquipLevel + 1),
+                nextValue: await getExtraValueByEquip(TGV, statueNo, 2, equip.atkEquipLevel + 1),
             },
             def: {
                 look: equip.defEquipLook,
                 level: equip.defEquipLevel,
                 value: extraDefByEquip,
-                nextValue: await getExtraValueByEquipLevel(TGV, 3, equip.defEquipLevel + 1),
+                nextValue: await getExtraValueByEquip(TGV, statueNo, 3, equip.defEquipLevel + 1),
             },
             crt: {
                 look: equip.crtEquipLook,
@@ -121,6 +116,9 @@ const getStatueInfoList = async (TGV, maxStatue) => {
             def: statueInfo[2].c[0],
             crt: statueInfo[3].c[0],
             avd: statueInfo[4].c[0],
+            skillFactor: statueInfo[5].c[0],
+            skillChargerSize: statueInfo[6].c[0],
+            skillMultiTargetable: statueInfo[7],
         }
     });
 }
@@ -138,6 +136,9 @@ const getMobInfoList = async (TGV, maxMob) => {
             def: mobInfo[2].c[0],
             crt: mobInfo[3].c[0],
             avd: mobInfo[4].c[0],
+            skillFactor: mobInfo[5].c[0],
+            skillChargerSize: mobInfo[6].c[0],
+            skillMultiTargetable: mobInfo[7],
         }
     });
 }
@@ -155,6 +156,54 @@ const getStageInfoList = async (TGV, maxStage) => {
     return stageInfoList;
 }
 
+const toFinney = (bigNumber) => bigNumber.c[0]/10;
+
+export const getEquipConfig = async (TGV) => {
+    let upgradeCostTable = [];
+    let extraValueTable = [];
+    let costByStatue, costByPart, extraValueByStatue, extraValueByPart;
+    for(let i=0 ; i<4 ; i++) {
+        costByStatue = [];
+        extraValueByStatue = [];
+        for(let j=1 ; j<=3 ; j++) {
+            costByPart = [];
+            extraValueByPart = [];
+            for(let k=1 ; k<=45 ; k++) {
+                costByPart.push(TGV.getUpgradeCost.call(i, j, k));
+                extraValueByPart.push(TGV.getExtraValueByEquip.call(i, j, k));
+            }
+            costByPart = await Promise.all(costByPart);
+            extraValueByPart = await Promise.all(extraValueByPart);
+            costByStatue.push(costByPart.map(cost=>({
+                soul: cost[0].c[0],
+                fee: toFinney(cost[1]),
+            })));
+            extraValueByStatue.push(extraValueByPart.map(value=>value.c[0]));
+        }
+        upgradeCostTable.push(costByStatue);
+        extraValueTable.push(extraValueByStatue);
+    }
+    return {
+        upgradeCostTable: upgradeCostTable,
+        extraValueTable: extraValueTable,
+    }
+}
+
+export const getItemShopInfo = async (TGV) => {
+    const basicFee = await TGV.basicFee.call();
+    const basicSoul = await TGV.basicSoul.call();
+    const upgradeFeeDivFactor = await TGV.upgradeFeeDivFactor.call();
+    const crtPrice = await TGV.crtPrice.call();
+    const avdPrice = await TGV.avdPrice.call();
+    return {
+        basicFee: toFinney(basicFee),
+        basicSoul: basicSoul.c[0],
+        upgradeFeeDivFactor: upgradeFeeDivFactor.c[0],
+        crtPrice: toFinney(crtPrice),
+        avdPrice: toFinney(avdPrice),
+    }
+}
+
 export const getGameData = async (TGV) => {
     const maxStatue = await TGV.maxStatue.call();
     const maxMob = await TGV.maxMob.call();
@@ -162,13 +211,15 @@ export const getGameData = async (TGV) => {
     const statueInfoList = await getStatueInfoList(TGV, maxStatue);
     const mobInfoList = await getMobInfoList(TGV, maxMob);
     const stageInfoList = await getStageInfoList(TGV, maxStage);
+    const itemShopInfo = await getItemShopInfo(TGV);
     return {
-        maxStatue: maxStatue,
-        maxMob: maxMob,
-        maxStage: maxStage,
+        maxStatue: maxStatue.c[0],
+        maxMob: maxMob.c[0],
+        maxStage: maxStage.c[0],
         statueInfoList: statueInfoList,
         mobInfoList: mobInfoList,
         stageInfoList: stageInfoList,
+        itemShopInfo: itemShopInfo,
     }
 }
 
@@ -195,8 +246,7 @@ export const getUserData = async (TGV, address) => {
     const user = await getUser(TGV, address);
     const statueEquipInfo = await getStatueEquipInfo(TGV, address, user.numStatues);
     let statueSpecList = [];
-    for(let i=0 ; i<user.numStatues ; i++) 
-        statueSpecList.push(await getStatueSpec(TGV, user.level, i, statueEquipInfo[i]));
+    for(let i=0 ; i<user.numStatues ; i++) statueSpecList.push(await getStatueSpec(TGV, user.level, i, statueEquipInfo[i]));
     const requiredExp = await getRequiredExp(TGV, user.level);
     const preRequiredExp = user.level > 1 ? await getRequiredExp(TGV, user.level - 1) : 0;
     const percentage = (user.exp - preRequiredExp) / (requiredExp - preRequiredExp) * 100;
@@ -219,8 +269,8 @@ export const clearStage = async (TGV, stageNo, statueNoList, coinbase) => {
             case 'AttackResult':
                 attackList.push({
                     way: args.way,
-                    unit: args.unit.c[0],
-                    mob: args.mob.c[0],
+                    from: args.from.c[0],
+                    to: args.to.c[0],
                     damage: args.damage.c[0],
                     isCrt: args.isCrt,
                 });

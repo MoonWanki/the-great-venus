@@ -65,3 +65,13 @@
         font-weight: 700;
     }
 }
+
+.admin-equip-info-container {
+    display: flex;
+    align-items: center;
+    
+    .admin-equip-info-item {
+        min-width: 540px;
+        padding-right: 20px;
+    }
+}

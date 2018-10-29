@@ -1,49 +1,68 @@
-pragma solidity ^0.4.22;
+pragma solidity ^0.4.24;
 import "./SafeMath.sol";
 import "./TGVBase.sol";
 
 contract TGVItemShop is TGVBase {
 
+    using SafeMath for uint;
     using SafeMath8 for uint8;
 
-    uint public hpEquipPrice = 0.003 ether;
-    uint public hpUpgradeCost = 0.0006 ether;
-    uint public atkEquipPrice = 0.005 ether;
-    uint public atkUpgradeCost = 0.001 ether;
-    uint public defEquipPrice = 0.002 ether;
-    uint public defUpgradeCost = 0.0004 ether;
+    uint public basicFee = 1 finney;
+    uint public basicSoul = 5;
+    uint public upgradeFeeDivFactor = 2;
+    uint public crtPrice = 10 finney;
+    uint public avdPrice = 10 finney;
 
-    function buyHpEquip(uint statueNo, uint8 look) external payable {
-        require(msg.value >= hpEquipPrice);
-        statueEquipInfo[msg.sender][statueNo].hpEquipLook = look;
-        statueEquipInfo[msg.sender][statueNo].hpEquipLevel = 1;
+    function buyEquip(uint statueNo, uint part, uint8 look, uint8 beautyLevel) external payable {
+        require(part >= 1 && part <= 5);
+        if(part == 1) {
+            require(msg.value == basicFee);
+            statueEquipInfo[msg.sender][statueNo].hpEquipLook = look;
+            statueEquipInfo[msg.sender][statueNo].hpEquipLevel = 1;
+        } else if(part == 2) {
+            require(msg.value == basicFee);
+            statueEquipInfo[msg.sender][statueNo].atkEquipLook = look;
+            statueEquipInfo[msg.sender][statueNo].atkEquipLevel = 1;
+        } else if(part == 3) {
+            require(msg.value == basicFee);
+            statueEquipInfo[msg.sender][statueNo].defEquipLook = look;
+            statueEquipInfo[msg.sender][statueNo].defEquipLevel = 1;
+        } else if(part == 4) {
+            require(msg.value == crtPrice*beautyLevel);
+            statueEquipInfo[msg.sender][statueNo].crtEquipLook = look;
+            statueEquipInfo[msg.sender][statueNo].crtEquipLevel = beautyLevel;
+        } else if(part == 5) {
+            require(msg.value == avdPrice*beautyLevel);
+            statueEquipInfo[msg.sender][statueNo].avdEquipLook = look;
+            statueEquipInfo[msg.sender][statueNo].avdEquipLevel = beautyLevel;
+        }
     }
 
-    function buyAtkEquip(uint statueNo, uint8 look) external payable {
-        require(msg.value >= atkEquipPrice);
-        statueEquipInfo[msg.sender][statueNo].atkEquipLook = look;
-        statueEquipInfo[msg.sender][statueNo].atkEquipLevel = 1;
+    function getUpgradeCost(uint statueNo, uint part, uint currentEquipLevel) public view returns(uint, uint) {
+        require(part >= 1 && part <= 3 && currentEquipLevel > 0);
+        return (
+            basicSoul.add((getExtraValueByEquip(statueNo, part, currentEquipLevel.add(1))-getExtraValueByEquip(statueNo, part, currentEquipLevel))/upgradeFeeDivFactor),
+            basicFee.mul(currentEquipLevel.sub(1)/10 + 1)
+        );
     }
 
-    function buyDefEquip(uint statueNo, uint8 look) external payable {
-        require(msg.value >= defEquipPrice);
-        statueEquipInfo[msg.sender][statueNo].defEquipLook = look;
-        statueEquipInfo[msg.sender][statueNo].defEquipLevel = 1;
+    function upgradeEquip(uint statueNo, uint part, uint currentEquipLevel) external payable {
+        require(part >= 1 && part <= 3);
+        uint requiredSoul;
+        uint fee;
+        (requiredSoul, fee) = getUpgradeCost(statueNo, part, currentEquipLevel);
+        require(msg.value == fee && users[msg.sender].soul >= requiredSoul);
+        users[msg.sender].soul -= uint32(requiredSoul);
+        if(part == 1) statueEquipInfo[msg.sender][statueNo].hpEquipLevel = statueEquipInfo[msg.sender][statueNo].hpEquipLevel.add(1);
+        else if(part == 2) statueEquipInfo[msg.sender][statueNo].atkEquipLevel = statueEquipInfo[msg.sender][statueNo].atkEquipLevel.add(1);
+        else if(part == 3) statueEquipInfo[msg.sender][statueNo].defEquipLevel = statueEquipInfo[msg.sender][statueNo].defEquipLevel.add(1);
     }
 
-    function upgradeHpEquip(uint statueNo) external payable {
-        require(msg.value >= hpUpgradeCost);
-        statueEquipInfo[msg.sender][statueNo].hpEquipLevel++;
+    function editPriceList(uint _basicFee, uint _basicSoul, uint _upgradeFeeDivFactor, uint _crtPrice, uint _avdPrice) external onlyOwner {
+        basicFee = _basicFee;
+        basicSoul = _basicSoul;
+        upgradeFeeDivFactor = _upgradeFeeDivFactor;
+        crtPrice = _crtPrice;
+        avdPrice = _avdPrice;
     }
-
-    function upgradeAtkEquip(uint statueNo) external payable {
-        require(msg.value >= atkUpgradeCost);
-        statueEquipInfo[msg.sender][statueNo].atkEquipLevel++;
-    }
-
-    function upgradeDefEquip(uint statueNo) external payable {
-        require(msg.value >= defUpgradeCost);
-        statueEquipInfo[msg.sender][statueNo].defEquipLevel++;
-    }
-
 }

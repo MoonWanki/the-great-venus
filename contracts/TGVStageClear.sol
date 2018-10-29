@@ -5,174 +5,132 @@ import "./TGVBase.sol";
 contract TGVStageClear is TGVBase
 {
     using SafeMath for uint256;
+    using SafeMath32 for uint32;
+    using SafeMath16 for uint16;
+    using SafeMath8 for uint8;
 
-    event AttackResult(bool way, uint8 unit, uint8 mob, uint damage, bool isCrt);
-    event RoundResult(bool victory, uint exp, uint8 gem);
-
-    function clearStage(uint stageNo, uint[] statueNoList) external {
+    event AttackResult(bool way, uint from, uint to, uint damage, bool isCrt);
+    event RoundResult(bool victory, uint exp, uint gem);
+    
+    function clearStage(uint stageNo, uint[] statueNoList) external onlyValidStageNo(stageNo) {
+        require(users[msg.sender].lastStage.add(1) >= stageNo);
+        for(i = 0 ; i < statueNoList.length ; i++) require(statueNoList[i] < users[msg.sender].numStatues);
         bool victory;
         uint i;
         uint j;
+        uint roundExp;
         uint randNonce = 0;
-        UnitInfo[] memory ourUnits = new UnitInfo[](statueNoList.length);
-        for(i = 0 ; i < statueNoList.length ; i++) require(statueNoList[i] < users[msg.sender].numStatues);
+        Unit[] memory ourUnits = new Unit[](statueNoList.length);
         for(i = 1 ; i <= 3 ; i++) {
+            roundExp = 0;
             if(stageInfoList[stageNo][i].length == 0) break;
-            UnitInfo[] memory enemyUnits = new UnitInfo[](stageInfoList[stageNo][i].length);
-            for(j = 0 ; j < ourUnits.length ; j++) {
+            Unit[] memory enemyUnits = new Unit[](stageInfoList[stageNo][i].length);
+            for(j = 0 ; j < ourUnits.length ; j++)
                 ourUnits[j] = _getComputedStatue(statueNoList[j], users[msg.sender].level, statueEquipInfo[msg.sender][statueNoList[j]]);
-            }
             for(j = 0 ; j < enemyUnits.length ; j++) {
                 enemyUnits[j] = _getComputedMob(stageInfoList[stageNo][i][j], 1);
+                roundExp += expSpoiledByMob[stageInfoList[stageNo][i][j]];
             }
             (victory, randNonce) = _runBattle(ourUnits, enemyUnits, randNonce);
-            emit RoundResult(victory, 200, 1);
-            if(!victory) break;
-        }  
+            if(victory) {
+                users[msg.sender].exp = users[msg.sender].exp.add(uint32(roundExp));
+                if(users[msg.sender].exp >= getRequiredExp(users[msg.sender].level)) users[msg.sender].level = users[msg.sender].level.add(1);
+                users[msg.sender].soul = users[msg.sender].soul.add(uint32(enemyUnits.length));
+                emit RoundResult(true, roundExp, enemyUnits.length);
+                if(i == 3 && users[msg.sender].lastStage < stageNo) { // initially cleared
+                    if(statueAcquisitionStage[users[msg.sender].numStatues] == stageNo) users[msg.sender].numStatues = users[msg.sender].numStatues.add(1);
+                    users[msg.sender].lastStage = uint16(stageNo);
+                }
+            } else {
+                emit RoundResult(false, 0, 0);
+                break;
+            }
+        }
         users[msg.sender].randNonce++;
     }
 
-    function _getComputedStatue(uint statueNo, uint16 level, EquipInfo memory equipInfo) internal view returns(UnitInfo) {
-        uint32 hp;
-        uint32 atk;
-        uint32 def;
-        uint8 crt;
-        uint8 avd;
-        (hp, atk, def, crt, avd) = getStatueRawSpec(statueNo, level);
-        hp += getExtraValueByEquipLevel(1, equipInfo.hpEquipLevel);
-        atk += getExtraValueByEquipLevel(2, equipInfo.atkEquipLevel);
-        def += getExtraValueByEquipLevel(3, equipInfo.defEquipLevel);
-        return UnitInfo(hp, atk, def, crt, avd);
-    }
-
-    function _getComputedMob(uint mobNo, uint16 level) internal view returns(UnitInfo) {
-        uint32 hp;
-        uint32 atk;
-        uint32 def;
-        uint8 crt;
-        uint8 avd;
-        (hp, atk, def, crt, avd) = getMobRawSpec(mobNo, level);
-        return UnitInfo(hp, atk, def, crt, avd);
-    }
-
-    function _runBattle(UnitInfo[] memory ourUnits, UnitInfo[] memory enemyUnits, uint nonce) internal returns(bool victory, uint lastRandNonce)
-    {
-        uint8 ourIdx = 0; // 석상 1개 가리키는 index
-        uint8 enemyIdx = 0; // 몬스터 1개 가리키는 index
-        uint damage;
+    function _runBattle(Unit[] memory ourUnits, Unit[] memory enemyUnits, uint nonce) internal returns(bool, uint) {
         bool isCrt;
-        uint8 num_attack = 0;
+        uint i;
+        uint damage;
+        uint targetIdx;
         uint randNonce = nonce;
-        while(true)
-        {
-            if(_getTotalHp(ourUnits) == 0 || _getTotalHp(enemyUnits) == 0)
-                break;
-            ourIdx = _getNextIndex(ourIdx, ourUnits);
-            enemyIdx = _getNextIndex(enemyIdx, enemyUnits);
-            if(num_attack%2 == 0)
-            {
-                (damage, isCrt) = _attack(ourIdx, enemyIdx, 1, randNonce++, ourUnits, enemyUnits);
-                emit AttackResult(true, ourIdx, enemyIdx, damage, isCrt);
-                num_attack += 1;
-                continue;
+        uint upperBound = ourUnits.length > enemyUnits.length ? ourUnits.length : enemyUnits.length;
+        while(true) {
+            for(i = 0 ; i < upperBound ; i++) {
+                if(i < ourUnits.length && ourUnits[i].hp > 0) {
+                    targetIdx = _selectTarget(i, enemyUnits);
+                    (damage, isCrt, enemyUnits[targetIdx], randNonce) = _attack(ourUnits[i], enemyUnits[targetIdx], randNonce);
+                    emit AttackResult(true, i, targetIdx, damage, isCrt);
+                }
+                if(i < enemyUnits.length && enemyUnits[i].hp > 0) {
+                    targetIdx = _selectTarget(i, ourUnits);
+                    (damage, isCrt, ourUnits[targetIdx], randNonce) = _attack(enemyUnits[i], ourUnits[targetIdx], randNonce);
+                    emit AttackResult(false, i, targetIdx, damage, isCrt);
+                }
             }
-            if(num_attack%2 == 1)
-            {     
-                (damage, isCrt) = _attack(ourIdx, enemyIdx, 2, randNonce++, ourUnits, enemyUnits);
-                emit AttackResult(false, ourIdx, enemyIdx, damage, isCrt);               
-                num_attack += 1;
-                continue;
-            }
+            if(_hasDefeated(ourUnits)) return (false, randNonce);
+            if(_hasDefeated(enemyUnits)) return (true, randNonce);
         }
-        if(_getTotalHp(ourUnits) == 0) //몬스터가 이긴 경우 false 반환
-            return (false, randNonce);
-        if(_getTotalHp(enemyUnits) == 0) //석상이 이긴 경우 true 반환
-            return (true, randNonce);
     }
 
-    function _getNextIndex(uint8 idx, UnitInfo[] memory units) internal pure returns (uint8)
-    {
-        uint8 u = idx;
-        for(uint8 i = 1 ;i<=units.length;i++)
-        {
-            uint8 next = 0;
-            if(u+i>=units.length) next = uint8((u+i)%units.length);
-            else next = u+i;
-            if(units[next].hp!=0)
-            {
-                u = next;
-                break;
-            }
-        }
-        return u;
+    function _attack(Unit memory attacker, Unit memory opponent, uint randNonce) internal view returns(uint, bool, Unit, uint) {
+        if(uint(keccak256(abi.encodePacked(users[msg.sender].randNonce, msg.sender, randNonce))) % 100 < opponent.avd)
+            return (0, false, opponent, randNonce + 1);
+        bool isCrt = uint(keccak256(abi.encodePacked(users[msg.sender].randNonce, msg.sender, randNonce+1))) % 100 < attacker.crt;
+        uint damage = attacker.atk.mul(damageMulFactor).div(opponent.def.add(damageDivFactor));
+        damage += uint(keccak256(abi.encodePacked(users[msg.sender].randNonce, msg.sender, randNonce+2))) % (damage/damageFlexibler + 1) + 1;
+        damage *= isCrt ? 2 : 1;
+        opponent.hp = opponent.hp < damage ? 0 : opponent.hp - damage;
+        return (damage, isCrt, opponent, randNonce + 3);
     }
 
-    function _attack
-    (   
-        uint8 u, uint8 m, uint8 direction, uint randNonce,
-        UnitInfo[] memory units, UnitInfo[] memory mobs
-    ) internal view returns (uint, bool)
-    {
-        uint damage = 0;
-        bool isCrt = false;
-        uint8 isAvd = 0;
-        //direction 1 : 석고상 -> 몬스터 방향 공격
-        if(direction == 1)
-        {
-            (damage, isCrt) = _getDamage(units[u],mobs[m], randNonce);
-            isAvd = _applyDamage(mobs[m], damage, randNonce);
-        }
-
-        //direction 2 : 몬스터 -> 석고상 방향 공격
-        if(direction == 2)
-        {
-            (damage, isCrt) = _getDamage(mobs[m],units[u], randNonce);
-            isAvd = _applyDamage(units[u], damage, randNonce);
-        }
-        if(isAvd == 1)
-            damage = 0;
-        return (damage, isCrt);
-        
+    function _selectTarget(uint myIdx, Unit[] memory opponentUnits) internal pure returns(uint) {
+        if(myIdx >= opponentUnits.length || opponentUnits[myIdx].hp == 0) {
+            for(uint i = 0 ; i < opponentUnits.length ; i++) if(opponentUnits[i].hp > 0) return i;
+        } else return myIdx;
     }
 
-    function _getTotalHp(UnitInfo[] memory Units) internal pure returns (uint)
-    {
-        uint hp_units = 0;  // 석상들 총 체력
-        uint8 i = 0;
-        for(i = 0;i<Units.length;i++)
-            hp_units += Units[i].hp;
-        return (hp_units);
+    function _hasDefeated(Unit[] units) internal pure returns(bool) {
+        for(uint i = 0 ; i < units.length ; i++) if(units[i].hp > 0) return false;
+        return true;
     }
 
-    // 데미지 계산
-    function _getDamage(UnitInfo memory from, UnitInfo memory to, uint randNonce) internal view returns(uint, bool)
-    {
-        bool isCrt = false; 
-        uint8 randomforCritical = uint8(uint(keccak256(abi.encodePacked(users[msg.sender].randNonce, msg.sender, randNonce)))%100);
-        uint8 crk = 100;
-        if(randomforCritical<from.crt)  //강타 적용!
-        {
-            crk = 150;
-            isCrt = true;
-        }
-        randomforCritical = uint8(keccak256(abi.encodePacked(users[msg.sender].randNonce, msg.sender,randNonce+1)))%40; //데미지 구간 설정 위한 랜덤값
-        return (((from.hp*2) / to.def + 2 ) * (randomforCritical+80)/100 * crk/100, isCrt);
-        //데미지 = (나의공격력 * 2  / 상대방어력  + 2 ) * (0.8~1.2 랜덤수) * (1.5강타일때)
-    } 
+    function _getComputedStatue(uint statueNo, uint level, EquipInfo memory equipInfo) internal view returns(Unit) {
+        uint rawHp;
+        uint rawAtk;
+        uint rawDef;
+        uint rawCrt;
+        uint rawAvd;
+        (rawHp, rawAtk, rawDef, rawCrt, rawAvd) = getStatueRawSpec(statueNo, level);
+        return Unit(
+            rawHp.add(getExtraValueByEquip(statueNo, 1, equipInfo.hpEquipLevel)),
+            rawAtk.add(getExtraValueByEquip(statueNo, 2, equipInfo.atkEquipLevel)),
+            rawDef.add(getExtraValueByEquip(statueNo, 3, equipInfo.defEquipLevel)),
+            rawCrt.add(getExtraValueByEquip(statueNo, 4, equipInfo.crtEquipLevel)),
+            rawAvd.add(getExtraValueByEquip(statueNo, 5, equipInfo.avdEquipLevel)),
+            statueInfoList[statueNo].skillFactor,
+            statueInfoList[statueNo].skillChargerSize,
+            statueInfoList[statueNo].skillMultiTargetable
+        );
+    }
 
-    // 데미지 적용 함수
-    function _applyDamage(UnitInfo memory to, uint damage, uint randNonce) internal view returns (uint8)
-    {
-        uint8 randomforAvoid = uint8(keccak256(abi.encodePacked(users[msg.sender].randNonce, msg.sender, randNonce)))%100;    //회피율 적용위한 랜덤값
-        if(randomforAvoid<to.avd)   //회피 적용!
-            return 1;           //데미지 미적용
-        else
-        {
-            if(damage<=to.hp) 
-                to.hp -= uint16(damage);
-            else
-                to.hp = 0;          //데미지 적용
-            return 0;            
-        }
+    function _getComputedMob(uint mobNo, uint level) internal view returns(Unit) {
+        uint rawHp;
+        uint rawAtk;
+        uint rawDef;
+        uint rawCrt;
+        uint rawAvd;
+        (rawHp, rawAtk, rawDef, rawCrt, rawAvd) = getMobRawSpec(mobNo, level);
+        return Unit(
+            rawHp,
+            rawAtk,
+            rawDef,
+            rawCrt,
+            rawAvd,
+            mobInfoList[mobNo].skillFactor,
+            mobInfoList[mobNo].skillChargerSize,
+            mobInfoList[mobNo].skillMultiTargetable
+        );
     }
 }

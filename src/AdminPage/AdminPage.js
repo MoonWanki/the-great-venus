@@ -7,6 +7,7 @@ import * as web3Actions from 'store/modules/web3Module';
 import { Table, NavItem, Input, Row, Button, Dropdown, Icon } from 'react-materialize';
 import './AdminPage.scss';
 import StageResultModal from './StageResultModal';
+import PriceListModal from './PriceListModal';
 import * as TGVApi from 'utils/TGVApi';
 import { Helmet } from 'react-helmet';
 
@@ -35,9 +36,12 @@ class AdminPage extends Component {
         },
         stageResult: null,
         stageResultModalOn: false,
-        nicknameForm: '',
+        nicknameForm: 'Administrator',
         selectedAddress: null,
         networkVersion: null,
+        equipConfig: null,
+        priceListModalOn: false,
+        statueForPriceList: 0,
     }
 
     componentDidMount() {
@@ -50,7 +54,9 @@ class AdminPage extends Component {
             const web3 = res.value;
             await this.props.Web3Actions.fetchTGV(web3);
             this.update();
-			web3.currentProvider.publicConfigStore.on('update', this.onPublicConfigUpdate);
+            web3.currentProvider.publicConfigStore.on('update', this.onPublicConfigUpdate);
+            this.setState({ equipConfig: await TGVApi.getEquipConfig(this.props.TGV) });
+            window.Materialize.toast("장비 레벨별 능력치 & 강화 요금표가 준비되었습니다!", 1500);
 		} catch (err) {
 			console.error(err);
 		}
@@ -59,6 +65,7 @@ class AdminPage extends Component {
     update = async () => {
         this.loadGameData();
         this.loadMyData();
+        this.props.UserActions.fetchFinney(this.props.web3);
     }
 
     loadMyData = () => {
@@ -90,9 +97,17 @@ class AdminPage extends Component {
         }
     }
 
-    buyHpEquip = async (statueNo, look) => {
+    toFinney = (bigNumber) => bigNumber.c[0]/10;
+
+    buyEquip = async (statueNo, part, look) => {
         try {
-            await this.props.TGV.buyHpEquip(statueNo, look, { from: this.props.web3.eth.coinbase, value: this.props.web3.toWei(0.003, "ether") });
+            let fee = await this.props.TGV.basicFee.call();
+            fee = this.toFinney(fee);
+            window.Materialize.toast(fee + ' FINNEY를 지불합니다.', 2500);
+            await this.props.TGV.buyEquip(statueNo, part, look, 0, {
+                from: this.props.web3.eth.coinbase,
+                value: this.props.web3.toWei(fee, 'finney')
+            });
             window.Materialize.toast("장비를 장착합니다.", 1500);
             this.update();
         } catch(err) {
@@ -100,48 +115,20 @@ class AdminPage extends Component {
         }
     }
 
-    buyAtkEquip = async (statueNo, look) => {
+    upgradeEquip = async (statueNo, part, currentLevel) => {
         try {
-            await this.props.TGV.buyAtkEquip(statueNo, look, { from: this.props.web3.eth.coinbase, value: this.props.web3.toWei(0.005, "ether") });
-            window.Materialize.toast("장비를 장착합니다.", 1500);
-            this.update();
-        } catch(err) {
-            console.error(err);
-        }
-    }
-
-    buyDefEquip = async (statueNo, look) => {
-        try {
-            await this.props.TGV.buyDefEquip(statueNo, look, { from: this.props.web3.eth.coinbase, value: this.props.web3.toWei(0.002, "ether") });
-            window.Materialize.toast("장비를 장착합니다.", 1500);
-            this.update();
-        } catch(err) {
-            console.error(err);
-        }
-    }
-
-    buyCrtEquip = async (statueNo, look) => {
-        // try {
-        //     await this.props.TGV.buyCrtEquip(statueNo, look, { from: this.props.web3.eth.coinbase, value: this.props.web3.toWei(0.002, "ether") });
-        //     window.Materialize.toast("장비를 장착합니다.", 1500);
-        //     this.update();
-        // } catch(err) {
-        //     console.error(err);
-        // }
-    }
-
-    buyAvdEquip = async (statueNo, look) => {
-        // try {
-        //     await this.props.TGV.buyCrtEquip(statueNo, look, { from: this.props.web3.eth.coinbase, value: this.props.web3.toWei(0.002, "ether") });
-        //     window.Materialize.toast("장비를 장착합니다.", 1500);
-        //     this.update();
-        // } catch(err) {
-        //     console.error(err);
-        // }
-    }
-    upgradeHpEquip = async (statueNo) => {
-        try {
-            await this.props.TGV.upgradeHpEquip(statueNo, { from: this.props.web3.eth.coinbase, value: this.props.web3.toWei(0.0006, "ether") });
+            let fee = await this.props.TGV.getUpgradeCost(statueNo, part, currentLevel);
+            const soul = fee[0].c[0];
+            fee = this.toFinney(fee[1]);
+            if(soul > this.props.userData.soul) {
+                window.Materialize.toast("영혼의 결정이 " + soul + "개 필요합니다.", 1500);
+                return;
+            }
+            window.Materialize.toast("영혼의 결정 " + soul + "개와 " + fee + ' FINNEY를 지불합니다.', 2500);
+            await this.props.TGV.upgradeEquip(statueNo, part, currentLevel, {
+                from: this.props.web3.eth.coinbase,
+                value: this.props.web3.toWei(fee, 'finney')
+            });
             window.Materialize.toast("장비를 강화합니다.", 1500);
             this.update();
         } catch(err) {
@@ -149,45 +136,37 @@ class AdminPage extends Component {
         }
     }
 
-    upgradeAtkEquip = async (statueNo) => {
+    buyAura = async (statueNo, look, level) => {
         try {
-            await this.props.TGV.upgradeAtkEquip(statueNo, { from: this.props.web3.eth.coinbase, value: this.props.web3.toWei(0.001, "ether") });
-            window.Materialize.toast("장비를 강화합니다.", 1500);
+            let price = await this.props.TGV.crtPrice.call();
+            price = this.toFinney(price) * level;
+            window.Materialize.toast(price + ' FINNEY를 지불합니다.', 2500);
+            await this.props.TGV.buyEquip(statueNo, 4, look, level, {
+                from: this.props.web3.eth.coinbase,
+                value: this.props.web3.toWei(price, 'finney')
+            });
+            window.Materialize.toast("오오라를 구매합니다.", 1500);
             this.update();
         } catch(err) {
             console.error(err);
         }
     }
 
-    upgradeDefEquip = async (statueNo) => {
+    buySkin = async (statueNo, look, level) => {
         try {
-            await this.props.TGV.upgradeDefEquip(statueNo, { from: this.props.web3.eth.coinbase, value: this.props.web3.toWei(0.0004, "ether") });
-            window.Materialize.toast("장비를 강화합니다.", 1500);
+            let price = await this.props.TGV.avdPrice.call();
+            price = this.toFinney(price) * level;
+            window.Materialize.toast(price + ' FINNEY를 지불합니다.', 2500);
+            await this.props.TGV.buyEquip(statueNo, 5, look, level, {
+                from: this.props.web3.eth.coinbase,
+                value: this.props.web3.toWei(price, 'finney')
+            });
+            window.Materialize.toast("스킨을 구매합니다.", 1500);
             this.update();
         } catch(err) {
             console.error(err);
         }
-    }
-
-    upgradeCrtEquip = async (statueNo) => {
-        // try {
-        //     await this.props.TGV.upgradeDefEquip(statueNo, { from: this.props.web3.eth.coinbase });
-        //     window.Materialize.toast("장비를 강화합니다.", 1500);
-        //     this.update();
-        // } catch(err) {
-        //     console.error(err);
-        // }
-    }
-
-    upgradeAvdEquip = async (statueNo) => {
-        // try {
-        //     await this.props.TGV.upgradeDefEquip(statueNo, { from: this.props.web3.eth.coinbase });
-        //     window.Materialize.toast("장비를 강화합니다.", 1500);
-        //     this.update();
-        // } catch(err) {
-        //     console.error(err);
-        // }
-    }
+    } 
 
     clearStage = async (stageNo, units) => {
         try {
@@ -233,7 +212,7 @@ class AdminPage extends Component {
 
     addMobInfo = async (data) => {
         try {
-            await this.props.TGV.addMobInfo(data.hp, data.atk, data.def, data.crt, data.avd, { from: this.props.web3.eth.coinbase });
+            await this.props.TGV.addMobInfo(data.hp, data.atk, data.def, data.crt, data.avd, 0, 0, 0, { from: this.props.web3.eth.coinbase });
             window.Materialize.toast("몬스터 정보를 추가합니다.", 1500);
             this.update();
         } catch(err) {
@@ -243,7 +222,7 @@ class AdminPage extends Component {
 
     editMobInfo = async (data) => {
         try {
-            await this.props.TGV.editMobInfo(data.whatNo, data.hp, data.atk, data.def, data.crt, data.avd, { from: this.props.web3.eth.coinbase });
+            await this.props.TGV.editMobInfo(data.whatNo, data.hp, data.atk, data.def, data.crt, data.avd, 0, 0, false, 14, { from: this.props.web3.eth.coinbase });
             window.Materialize.toast("몬스터 정보를 변경합니다.", 1500);
             this.update();
         } catch(err) {
@@ -278,6 +257,13 @@ class AdminPage extends Component {
                     stageResult={this.state.stageResult}
                     onClose={()=>this.setState({ stageResultModalOn: false })} />
 
+                {this.state.equipConfig && gameData && <PriceListModal
+                    open={this.state.priceListModalOn}
+                    equipConfig={this.state.equipConfig}
+                    statueNo={this.state.statueForPriceList}
+                    basicFee={gameData.itemShopInfo.basicFee}
+                    onClose={()=>this.setState({ priceListModalOn: false })} />}
+               
                 <div className='admin-navbar'>
                     <h5>USER</h5>
                     <div className='admin-navbar-button' onClick={this.loadMyData}><Icon>refresh</Icon></div>
@@ -287,19 +273,14 @@ class AdminPage extends Component {
                 { isUserLoaded ?
                     userData.level > 0 ?
                     <div className='admin-userdata'>
-                        <div className='admin-userdata-segment' style={{ minWidth: '200px' }}>
+                        <div className='admin-userdata-segment' style={{ minWidth: '250px' }}>
                             <Table>
                                 <thead><tr><th style={{ fontSize: '1.4rem'}}>My Info</th></tr></thead>
                                 <tbody>
                                     <tr><td><h5>Lv.{userData.level}<br/>{userData.name}</h5></td></tr>
-                                    <tr><td>경험치</td><td><b>{userData.exp}</b> / <b>{userData.requiredExp}</b> (<b>{userData.expPercentage}</b>%)</td></tr>
-                                    <tr><td>GEM</td><td><b>{userData.gem}</b>개</td></tr>
-                                    <tr>
-                                        <td>초기화</td>
-                                        <th>
-                                            <Button floating flat large className='amber' waves='light' icon='refresh' onClick={()=>this.createUser(userData.name)} />
-                                        </th>
-                                    </tr>
+                                    <tr><td>EXP</td><td><b>{userData.exp}</b> / <b>{userData.requiredExp}</b> (<b>{userData.expPercentage}</b>%)</td></tr>
+                                    <tr><td>영혼의 결정</td><td><b>{userData.soul}</b>개</td></tr>
+                                    <tr><td>이더리움</td><td><b>{this.props.finney.toLocaleString()}</b> FINNEY</td></tr>
                                 </tbody>
                             </Table>
                         </div>
@@ -310,8 +291,11 @@ class AdminPage extends Component {
                                         <thead>
                                             <tr>
                                                 <th style={{ fontSize: '1.4rem'}}>{i}</th>
-                                                <th></th>
-                                                <th></th>
+                                                <th><Button floating flat className='amber darken-3' waves='light' icon='format_list_numbered' onClick={()=>{
+                                                    if(this.state.equipConfig)
+                                                        this.setState({ statueForPriceList: i, priceListModalOn: true });
+                                                    else window.Materialize.toast('수치를 계산 중입니다. 완료되면 알려드릴게요!', 1500);
+                                                    }} /></th>
                                             </tr>
                                         </thead>
                                         <tbody>
@@ -320,14 +304,14 @@ class AdminPage extends Component {
                                                 <td><b>{statue.hp} {statue.equip.hp.level ? `(${statue.hpDefault} + ${statue.hpExtra})` : null}</b></td>
                                                 <td>Lv. <b>{statue.equip.hp.level}</b></td>
                                                 <td>{statue.equip.hp.level ?
-                                                    <Button floating flat className='amber darken-3' waves='light' icon='gavel' onClick={()=>this.upgradeHpEquip(i)} />
+                                                    <Button floating flat className='amber darken-3' waves='light' icon='gavel' onClick={()=>this.upgradeEquip(i, 1, statue.equip.hp.level)} />
                                                     :
                                                     <Dropdown trigger={
                                                         <Button floating flat className='amber' waves='light' icon='add_shopping_cart' />
                                                     }>
-                                                    <NavItem onClick={() => this.buyHpEquip(i, 1)}>중절모</NavItem>
-                                                    <NavItem onClick={() => this.buyHpEquip(i, 2)}>텍사스카우보이모자</NavItem>
-                                                    <NavItem onClick={() => this.buyHpEquip(i, 3)}>힙합 스냅백</NavItem>
+                                                    <NavItem onClick={() => this.buyEquip(i, 1, 1)}>중절모</NavItem>
+                                                    <NavItem onClick={() => this.buyEquip(i, 1, 2)}>텍사스카우보이모자</NavItem>
+                                                    <NavItem onClick={() => this.buyEquip(i, 1, 3)}>힙합 스냅백</NavItem>
                                                     </Dropdown>
                                                 }</td>
                                             </tr>
@@ -336,14 +320,14 @@ class AdminPage extends Component {
                                                 <td><b>{statue.atk} {statue.equip.atk.level ? `(${statue.atkDefault} + ${statue.atkExtra})` : null}</b></td>
                                                 <td>Lv. <b>{statue.equip.atk.level}</b></td>
                                                 <td>{statue.equip.atk.level ?
-                                                    <Button floating flat className='amber darken-3' waves='light' icon='gavel' onClick={()=>this.upgradeAtkEquip(i)} />
+                                                    <Button floating flat className='amber darken-3' waves='light' icon='gavel' onClick={()=>this.upgradeEquip(i, 2, statue.equip.atk.level)} />
                                                     :
                                                     <Dropdown trigger={
                                                         <Button floating flat className='amber' waves='light' icon='add_shopping_cart' />
                                                     }>
-                                                    <NavItem onClick={() => this.buyAtkEquip(i, 1)}>루비 펜던트</NavItem>
-                                                    <NavItem onClick={() => this.buyAtkEquip(i, 2)}>사파이어 펜던트</NavItem>
-                                                    <NavItem onClick={() => this.buyAtkEquip(i, 3)}>에메랄드 펜던트</NavItem>
+                                                    <NavItem onClick={() => this.buyEquip(i, 2, 1)}>루비 펜던트</NavItem>
+                                                    <NavItem onClick={() => this.buyEquip(i, 2, 2)}>사파이어 펜던트</NavItem>
+                                                    <NavItem onClick={() => this.buyEquip(i, 2, 3)}>에메랄드 펜던트</NavItem>
                                                     </Dropdown>
                                                 }</td>
                                             </tr>
@@ -352,50 +336,46 @@ class AdminPage extends Component {
                                                 <td><b>{statue.def} {statue.equip.def.level ? `(${statue.defDefault} + ${statue.defExtra})` : null}</b></td>
                                                 <td>Lv. <b>{statue.equip.def.level}</b></td>
                                                 <td>{statue.equip.def.level ?
-                                                    <Button floating flat className='amber darken-3' waves='light' icon='gavel' onClick={()=>this.upgradeDefEquip(i)} />
+                                                    <Button floating flat className='amber darken-3' waves='light' icon='gavel' onClick={()=>this.upgradeEquip(i, 3, statue.equip.def.level)} />
                                                     :
                                                     <Dropdown trigger={
                                                         <Button floating flat className='amber' waves='light' icon='add_shopping_cart' />
                                                     }>
-                                                    <NavItem onClick={() => this.buyDefEquip(i, 1)}>불멸의 오오라</NavItem>
-                                                    <NavItem onClick={() => this.buyDefEquip(i, 2)}>냉기의 오오라</NavItem>
-                                                    <NavItem onClick={() => this.buyDefEquip(i, 3)}>잿빛 오오라</NavItem>
+                                                    <NavItem onClick={() => this.buyEquip(i, 3, 1)}>블루문 이어링</NavItem>
+                                                    <NavItem onClick={() => this.buyEquip(i, 3, 2)}>해골 이어링</NavItem>
+                                                    <NavItem onClick={() => this.buyEquip(i, 3, 3)}>합금도금 이어링</NavItem>
                                                     </Dropdown>
                                                 }</td>
                                             </tr>
                                             <tr>
                                                 <td>CRT</td>
                                                 <td><b>{statue.crt} {statue.equip.crt.level ? `(${statue.crtDefault} + ${statue.crtExtra})` : null} %</b></td>
-                                                <td>Lv. <b>{statue.equip.crt.level}</b></td>
+                                                <td></td>
                                                 <td>{statue.equip.crt.level ?
-                                                    <Button floating flat className='amber darken-3' waves='light' icon='gavel' onClick={()=>{
-                                                        this.upgradeCrtEquip(i);
-                                                    }} />
+                                                    <Button disabled floating flat className='amber darken-3' waves='light' icon='gavel' />
                                                     :
                                                     <Dropdown trigger={
                                                         <Button floating flat className='amber' waves='light' icon='add_shopping_cart' />
                                                     }>
-                                                    <NavItem onClick={() => this.buyCrtEquip(i, 1)}>블루문 이어링</NavItem>
-                                                    <NavItem onClick={() => this.buyCrtEquip(i, 2)}>해골 이어링</NavItem>
-                                                    <NavItem onClick={() => this.buyCrtEquip(i, 3)}>합금도금 이어링</NavItem>
+                                                    <NavItem onClick={() => this.buyAura(i, 1, 1)}>불멸의 오오라 (+5%)</NavItem>
+                                                    <NavItem onClick={() => this.buyAura(i, 2, 1)}>냉기의 오오라 (+5%)</NavItem>
+                                                    <NavItem onClick={() => this.buyAura(i, 3, 2)}>다크 오오라 (+10%)</NavItem>
                                                     </Dropdown>
                                                 }</td>
                                             </tr>
                                             <tr>
                                                 <td>AVD</td>
                                                 <td><b>{statue.avd} {statue.equip.avd.level ? `(${statue.avdDefault} + ${statue.avdExtra})` : null} %</b></td>
-                                                <td>Lv. <b>{statue.equip.avd.level}</b></td>
+                                                <td></td>
                                                 <td>{statue.equip.avd.level ?
-                                                    <Button floating flat className='amber darken-3' waves='light' icon='gavel' onClick={()=>{
-                                                        this.upgradeAvdEquip(i);
-                                                    }} />
+                                                    <Button disabled floating flat className='amber darken-3' waves='light' icon='gavel' />
                                                     :
                                                     <Dropdown trigger={
                                                         <Button floating flat className='amber' waves='light' icon='add_shopping_cart' />
                                                     }>
-                                                    <NavItem onClick={() => this.buyAvdEquip(i, 1)}>네이비 페인트</NavItem>
-                                                    <NavItem onClick={() => this.buyAvdEquip(i, 2)}>블루 페인트</NavItem>
-                                                    <NavItem onClick={() => this.buyAvdEquip(i, 3)}>얼룩무늬 페인트</NavItem>
+                                                    <NavItem onClick={() => this.buySkin(i, 1, 1)}>네이비 페인트 (+5%)</NavItem>
+                                                    <NavItem onClick={() => this.buySkin(i, 2, 1)}>그린블루 페인트 (+5%)</NavItem>
+                                                    <NavItem onClick={() => this.buySkin(i, 3, 2)}>얼룩무늬 페인트 (+10%)</NavItem>
                                                     </Dropdown>
                                                 }</td>
                                             </tr>
@@ -409,7 +389,7 @@ class AdminPage extends Component {
                     <Fragment>
                         <div style={{height: '30px'}} />
                         <Row>
-                            <Input s={6} label="Nickname" validate onChange={(e, v)=>this.setState({ nicknameForm: v })}/>
+                            <Input s={6} label="Nickname" defaultValue="Administrator" onChange={(e, v)=>this.setState({ nicknameForm: v })}/>
                             <Button floating large flat className='grey lighten-3' onClick={()=>this.createUser(this.state.nicknameForm)}>OK</Button>
                         </Row>
                     </Fragment>
@@ -422,12 +402,46 @@ class AdminPage extends Component {
                     {isGameLoaded && isUserLoaded && userData.level ? this.renderStageButtons() : null}
                 </div>
 
+                    {/* {this.props.gameData && this.state.equipConfig ?
+                        <div className="admin-equip-info-container">
+                        {this.state.equipConfig.extraValueTable.map((extraValueByStatue, i)=>{
+                            console.log(this.state.equipConfig);
+                            let iterator = [];
+                            for(let i=1 ; i<=45 ; i++) iterator.push(i);
+                            return <div key={i} className="admin-equip-info-item">
+                                <h4>{i}</h4>
+                                <Table striped bordered>
+                                    <thead>
+                                        <tr>
+                                            <th>레벨</th><th>HP</th><th>영결</th><th>요금</th><th>ATK</th><th>영결</th><th>요금</th><th>DEF</th><th>영결</th><th>요금</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        {iterator.map((level, j) =>
+                                        <tr key={j}>
+                                            <th>{level}</th>
+                                            <td>{extraValueByStatue[0][j]}</td>
+                                            <td>{j===0 ? '-' : this.state.equipConfig.upgradeCostTable[i][0][j-1].soul}</td>
+                                            <td>{j===0 ? this.props.gameData.itemShopInfo.basicFee : this.state.equipConfig.upgradeCostTable[i][0][j-1].fee}</td>
+                                            <td>{extraValueByStatue[1][j]}</td>
+                                            <td>{j===0 ? '-' : this.state.equipConfig.upgradeCostTable[i][1][j-1].soul}</td>
+                                            <td>{j===0 ? this.props.gameData.itemShopInfo.basicFee : this.state.equipConfig.upgradeCostTable[i][1][j-1].fee}</td>
+                                            <td>{extraValueByStatue[2][j]}</td>
+                                            <td>{j===0 ? '-' : this.state.equipConfig.upgradeCostTable[i][2][j-1].soul}</td>
+                                            <td>{j===0 ? this.props.gameData.itemShopInfo.basicFee : this.state.equipConfig.upgradeCostTable[i][2][j-1].fee}</td>
+                                        </tr>)}
+                                    </tbody>
+                                </Table>
+                            </div>
+                            }
+                        )}
+                        </div> : '로딩 중입니다. 네트워크 상태에 따라 최대 1분까지 소요될 수 있습니다.'} */}
+
                 <div className='admin-navbar'>
-                    <h5>GAME</h5>
+                    <h5>GAME CONFIG</h5>
                     <div className='admin-navbar-button' onClick={this.loadGameData}><Icon>refresh</Icon></div>
                     <h6 className='admin-navbar-button'>{isGamePending && 'Loading...'}</h6>
                 </div>
-
                 {isGameLoaded?
                 <div>
                     <div className="admin-gamedata-segment">
@@ -524,6 +538,7 @@ class AdminPage extends Component {
                     </div>
                 </div>
                 : '게임 정보를 불러올 수 없습니다.'}
+
             </Fragment>
         );
     }
@@ -534,6 +549,7 @@ export default connect(
         web3: state.web3Module.web3,
         TGV: state.web3Module.TGV,
         userData: state.userModule.userData,
+        finney: state.userModule.finney,
         isUserPending: state.userModule.isPending,
         isUserLoaded: state.userModule.isLoaded,
         gameData: state.gameModule.gameData,

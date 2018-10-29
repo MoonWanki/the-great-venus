@@ -38,6 +38,7 @@ class GameBase extends Component {
         // load web3
         let res = await this.props.Web3Actions.fetchWeb3();
         const web3 = res.value;
+        this.props.UserActions.fetchFinney(web3);
         web3.currentProvider.publicConfigStore.on('update', this.onPublicConfigUpdate);
         // load TGV
         res = await this.props.Web3Actions.fetchTGV(web3);

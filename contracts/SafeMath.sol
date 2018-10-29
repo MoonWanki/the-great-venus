@@ -66,6 +66,39 @@ library SafeMath32 {
     }
 }
 
+library SafeMath16 {
+
+    function mul(uint16 _a, uint16 _b) internal pure returns (uint16) {
+        if (_a == 0) {
+            return 0;
+        }
+        uint16 c = _a * _b;
+        require(c / _a == _b);
+        return c;
+    }
+
+    function div(uint16 _a, uint16 _b) internal pure returns (uint16) {
+        require(_b > 0);
+        return _a / _b;
+    }
+
+    function sub(uint16 _a, uint16 _b) internal pure returns (uint16) {
+        require(_b <= _a);
+        return _a - _b;
+    }
+
+    function add(uint16 _a, uint16 _b) internal pure returns (uint16) {
+        uint16 c = _a + _b;
+        require(c >= _a);
+        return c;
+    }
+
+    function mod(uint16 a, uint16 b) internal pure returns (uint16) {
+        require(b != 0);
+        return a % b;
+    }
+}
+
 library SafeMath8 {
 
     function mul(uint8 _a, uint8 _b) internal pure returns (uint8) {
