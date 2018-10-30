@@ -4,6 +4,7 @@ import { bindActionCreators } from 'redux';
 import * as web3Actions from 'store/modules/web3Module';
 import * as userActions from 'store/modules/userModule';
 import * as gameActions from 'store/modules/gameModule';
+import * as appActions from 'store/modules/appModule';
 import IntroScreen from './IntroScreen';
 import GameMain from './GameMain';
 import Animated from 'animated';
@@ -26,37 +27,32 @@ class GameBase extends Component {
     }
     
     load = async () => {
+        this.props.AppActions.setPreloader(true);
         try {
             await this.loadGame();
             this.loadResources();
         } catch (err) {
             console.error(err);
+            this.props.AppActions.setPreloader(false);
         }
     }
 
     loadGame = async() => {
-        // load web3
         let res = await this.props.Web3Actions.fetchWeb3();
         const web3 = res.value;
-        this.props.UserActions.fetchFinney(web3);
+        this.setState({ selectedAddress: web3.eth.coinbase, networkVersion: web3.version.network });
         web3.currentProvider.publicConfigStore.on('update', this.onPublicConfigUpdate);
-        // load TGV
+        this.props.UserActions.fetchFinney(web3);
         res = await this.props.Web3Actions.fetchTGV(web3);
         const TGV = res.value;
-        // load game data
         await this.props.GameActions.fetchGameData(TGV);
-        // load user data
         await this.props.UserActions.fetchUserData(TGV, web3.eth.coinbase);
     }
     
-    onPublicConfigUpdate = ({ selectedAddress, networkVersion }) => {
+    onPublicConfigUpdate = async ({ selectedAddress, networkVersion }) => {
         if(this.state.selectedAddress !== selectedAddress || this.state.networkVersion !== networkVersion) {
             this.setState({ selectedAddress: selectedAddress, networkVersion: networkVersion });
-            if(this.state.isReady) {
-                this.props.UserActions.fetchUserData(this.props.TGV, this.props.web3.eth.coinbase);
-            } else {
-                this.load();
-            }
+            window.location.reload();
         }
     }
 
@@ -212,6 +208,7 @@ class GameBase extends Component {
                 loadingProgress: 100,
                 isReady: true
             });
+            this.props.AppActions.setPreloader(false);
             this.dismissIntroScreen();
         });
     }
@@ -226,6 +223,7 @@ export default connect(
         UserActions: bindActionCreators(userActions, dispatch),
         GameActions: bindActionCreators(gameActions, dispatch),
         Web3Actions: bindActionCreators(web3Actions, dispatch),
+        AppActions: bindActionCreators(appActions, dispatch),
     })
 )(GameBase);
 

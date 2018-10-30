@@ -66,18 +66,22 @@ class Statue extends Component {
         return (
             <Container {...this.props}>
                 <Sprite
+                    tint={this.props.tint || 0xffffff}
                     anchor={[0.5, 1]}
                     texture={statue.skin[this.props.skin].texture} />
                 {this.props.no===0 && // if user statue
                     <Fragment>
                         <Sprite
                             anchor={[0.5, 1]}
+                            tint={this.props.tint || 0xffffff}
                             texture={statue.look.eye[this.props.eye].texture} />
                         <Sprite
                             anchor={[0.5, 1]}
+                            tint={this.props.tint || 0xffffff}
                             texture={statue.look.hair[this.props.hair].texture} />
                         <Sprite
                             anchor={[0.5, 1]}
+                            tint={this.props.tint || 0xffffff}
                             texture={statue.look.ear[this.props.skin].texture} />
                     </Fragment>
                 }

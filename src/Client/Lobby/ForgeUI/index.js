@@ -6,6 +6,10 @@ const AnimatedFlatButton = Animated.createAnimatedComponent(FlatButton);
 
 class ForgeUI extends Component {
 
+    state = {
+        currentSelectedStatue: this.props.currentSelectedStatue,
+    }
+
     render() {
         const { offset, stageWidth, stageHeight } = this.props;
         return (

@@ -230,6 +230,26 @@ class AdminPage extends Component {
         }
     }
 
+    addStageInfo = async (data) => {
+        try {
+            await this.props.TGV.addStageInfo(data[0], data[1], data[2], { from: this.props.web3.eth.coinbase });
+            window.Materialize.toast("스테이지 정보를 추가합니다.", 1500);
+            this.update();
+        } catch(err) {
+            console.error(err);
+        }
+    }
+
+    editStageInfo = async (data) => {
+        try {
+            await this.props.TGV.editStageInfo(data[0], data[1], data[2], { from: this.props.web3.eth.coinbase });
+            window.Materialize.toast("스테이지 정보를 변경합니다.", 1500);
+            this.update();
+        } catch(err) {
+            console.error(err);
+        }
+    }
+
     renderStageButtons = () => {
         let stageButtons = [];
         const { lastStage } = this.props.userData;
@@ -401,41 +421,6 @@ class AdminPage extends Component {
                 <div className='admin-stage-list'>
                     {isGameLoaded && isUserLoaded && userData.level ? this.renderStageButtons() : null}
                 </div>
-
-                    {/* {this.props.gameData && this.state.equipConfig ?
-                        <div className="admin-equip-info-container">
-                        {this.state.equipConfig.extraValueTable.map((extraValueByStatue, i)=>{
-                            console.log(this.state.equipConfig);
-                            let iterator = [];
-                            for(let i=1 ; i<=45 ; i++) iterator.push(i);
-                            return <div key={i} className="admin-equip-info-item">
-                                <h4>{i}</h4>
-                                <Table striped bordered>
-                                    <thead>
-                                        <tr>
-                                            <th>레벨</th><th>HP</th><th>영결</th><th>요금</th><th>ATK</th><th>영결</th><th>요금</th><th>DEF</th><th>영결</th><th>요금</th>
-                                        </tr>
-                                    </thead>
-                                    <tbody>
-                                        {iterator.map((level, j) =>
-                                        <tr key={j}>
-                                            <th>{level}</th>
-                                            <td>{extraValueByStatue[0][j]}</td>
-                                            <td>{j===0 ? '-' : this.state.equipConfig.upgradeCostTable[i][0][j-1].soul}</td>
-                                            <td>{j===0 ? this.props.gameData.itemShopInfo.basicFee : this.state.equipConfig.upgradeCostTable[i][0][j-1].fee}</td>
-                                            <td>{extraValueByStatue[1][j]}</td>
-                                            <td>{j===0 ? '-' : this.state.equipConfig.upgradeCostTable[i][1][j-1].soul}</td>
-                                            <td>{j===0 ? this.props.gameData.itemShopInfo.basicFee : this.state.equipConfig.upgradeCostTable[i][1][j-1].fee}</td>
-                                            <td>{extraValueByStatue[2][j]}</td>
-                                            <td>{j===0 ? '-' : this.state.equipConfig.upgradeCostTable[i][2][j-1].soul}</td>
-                                            <td>{j===0 ? this.props.gameData.itemShopInfo.basicFee : this.state.equipConfig.upgradeCostTable[i][2][j-1].fee}</td>
-                                        </tr>)}
-                                    </tbody>
-                                </Table>
-                            </div>
-                            }
-                        )}
-                        </div> : '로딩 중입니다. 네트워크 상태에 따라 최대 1분까지 소요될 수 있습니다.'} */}
 
                 <div className='admin-navbar'>
                     <h5>GAME CONFIG</h5>

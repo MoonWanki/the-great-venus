@@ -107,7 +107,7 @@ class SignUpUI extends Component {
                     onClick={this.onFinishCustomizing} />
                 <AnimatedFlatButton
                     x={contentWidth/2 - 100}
-                    y={this.state.lookSelectorOffset.interpolate({ inputRange: [0, 1], outputRange: [contentHeight*2/3, contentHeight] })}
+                    y={contentHeight*2/3}
                     alpha={this.state.lookSelectorOffset.interpolate({ inputRange: [0, 1], outputRange: [1, 0] })}
                     width={200}
                     height={70}
@@ -127,5 +127,5 @@ export default connect(
     dispatch => ({
         AppActions: bindActionCreators(appActions, dispatch),
         UserActions: bindActionCreators(userActions, dispatch),
-    })
+    }),
 )(SignUpUI);

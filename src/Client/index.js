@@ -5,7 +5,7 @@ import * as appActions from 'store/modules/appModule';
 import * as userActions from 'store/modules/userModule';
 import Animated from 'animated';
 import GameBase from './GameBase';
-import { Input } from 'react-materialize';
+import { Input, Preloader } from 'react-materialize';
 import { Stage } from 'react-pixi-fiber';
 import { Helmet } from 'react-helmet';
 import './index.scss';
@@ -62,8 +62,14 @@ class Client extends Component {
                         contentHeight={contentHeight} />
                 </Stage>
 
-                {this.props.nicknameInputOn && <div className='floating-from' style={{ left: `${contentWidth/2}px`, top: `${contentHeight*4/7}px`}}>
+                {this.props.nicknameInputOn &&
+                <div className='floating-form' style={{ left: `${contentWidth/2}px`, top: `${contentHeight*4/7}px`}}>
                     <Input placeholder='이름이 무엇인가요?' onChange={(e, v) => this.props.AppActions.setNicknameInput(v)} />
+                </div>}
+
+                {this.props.preloaderOn &&
+                <div className='floating-preloader'>
+                    <Preloader flashing size='big' />
                 </div>}
             </div>
         );
@@ -74,6 +80,9 @@ export default connect(
     (state) => ({
         web3Instance: state.web3Module.web3Instance,
         nicknameInputOn: state.appModule.nicknameInputOn,
+        isUserPending: state.userModule.isPending,
+        isGamePending: state.gameModule.isPending,
+        preloaderOn: state.appModule.preloaderOn,
     }),
     (dispatch) => ({
         AppActions: bindActionCreators(appActions, dispatch),

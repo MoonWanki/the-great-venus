@@ -21,6 +21,7 @@ contract TGVBase {
     uint public damageMulFactor;
     uint public damageDivFactor;
     uint public damageFlexibler;
+    uint public matchableRankGap;
 
     mapping(address => User) public users;
     mapping(address => mapping(uint => uint)) public defaultStatueLook;

@@ -13,6 +13,9 @@ import ColosseumUI from './ColosseumUI';
 import { connect } from 'react-redux';
 import SignUpUI from './SignUpUI';
 import { Sprite } from 'react-pixi-fiber';
+import { bindActionCreators } from 'redux';
+import * as userActions from 'store/modules/userModule';
+import * as appActions from 'store/modules/appModule';
 
 const slideDuration = 1500;
 const skySlideDuration = 15000;
@@ -44,7 +47,7 @@ class Lobby extends Component {
         colosseumBGOffset: new Animated.Value(-1),
         colosseumUIOffset: new Animated.Value(0),
         signUpUIOffset: new Animated.Value(0),
-        highlightedStatue: 0,
+        currentSelectedStatue: 0,
         introCreditOffset: new Animated.Value(0),
         introCreditTexture: null,
         introCreditStep: 0,
@@ -102,6 +105,18 @@ class Lobby extends Component {
         }
     }
 
+    onFinishSignup = async () => {
+        this.turnOffInnerUI(this.state.signUpUIOffset);
+        this.props.AppActions.setPreloader(true);
+        await this.props.UserActions.fetchUserData(this.props.TGV, this.props.web3.eth.coinbase);
+        this.props.AppActions.setPreloader(false);
+        this.slideSkyBG({ toValue: -1, duration: slideDuration, easing: slideEasing });
+        this.slideHomeBG({ toValue: -1, duration: slideDuration, easing: slideEasing });
+        this.turnOnLobbyUI();
+        this.slideShowroomBG({ toValue: 0, duration: slideDuration, easing: slideEasing });
+        setTimeout(() => this.turnOnInnerUI(this.state.showroomUIOffset, 'showroom'), slideDuration - 400);
+    }
+
     goToShowroom = () => {
         switch(this.state.currentUI) {
             case 'home':
@@ -120,12 +135,6 @@ class Lobby extends Component {
             this.turnOffInnerUI(this.state.colosseumUIOffset);
             this.setState({ homeBGOffset: new Animated.Value(-1) });
             this.slideColosseumBG({ toValue: -1, duration: slideDuration, easing: slideEasing });
-            break;
-            case 'signup':
-            this.turnOffInnerUI(this.state.signUpUIOffset);
-            this.slideSkyBG({ toValue: -1, duration: slideDuration, easing: slideEasing });
-            this.slideHomeBG({ toValue: -1, duration: slideDuration, easing: slideEasing });
-            this.turnOnLobbyUI();
             break;
             default: break;
         }
@@ -229,7 +238,7 @@ class Lobby extends Component {
         setTimeout(()=>this.setState({ currentUI: null }), UIFadeOutDuration);
     }
 
-    handleStatueHighlighted = (no) => this.setState({ highlightedStatue: no });
+    onClickStatue = (no) => this.setState({ currentSelectedStatue: no });
 
     renderInnerUI = () => {
         switch(this.state.currentUI) {
@@ -243,19 +252,20 @@ class Lobby extends Component {
             case 'showroom':
                 return <ShowroomUI
                     offset={this.state.showroomUIOffset}
+                    backgroundOffset={this.state.showroomBGOffset}
                     onHomeButtonClick={this.goToHome}
                     onForgeButtonClick={this.goToForge}
                     onStageSelectButtonClick={this.goToStageSelect}
                     onColosseumButtonClick={this.goToColosseum}
-                    highlightedStatue={this.state.highlightedStatue}
-                    onStatueHighlighted={this.handleStatueHighlighted}
+                    currentSelectedStatue={this.state.currentSelectedStatue}
+                    onClickStatue={this.onClickStatue}
                     {...this.props} />
             case 'forge':
                 return <ForgeUI
                     offset={this.state.forgeUIOffset}
                     onBackButtonClick={this.goToShowroom}
-                    highlightedStatue={this.state.highlightedStatue}
-                    onStatueHighlighted={this.handleStatueHighlighted}
+                    currentSelectedStatue={this.state.currentSelectedStatue}
+                    onClickStatue={this.onClickStatue}
                     {...this.props} />
             case 'stageselect':
                 return <StageSelectUI
@@ -270,7 +280,7 @@ class Lobby extends Component {
             case 'signup':
                 return <SignUpUI
                     offset={this.state.signUpUIOffset}
-                    onFinish={this.goToShowroom}
+                    onFinish={this.onFinishSignup}
                     {...this.props} />
             default:
                 return null;
@@ -278,7 +288,6 @@ class Lobby extends Component {
     }
     
     render() {
-        console.log(this.state.introCreditStep);
         return (
             <Fragment>
                 <LobbyBackgroundSlider
@@ -319,5 +328,11 @@ Lobby.contextTypes = {
 export default connect(
     state => ({
         userData: state.userModule.userData,
-    })
+        web3: state.web3Module.web3,
+        TGV: state.web3Module.TGV,
+    }),
+    dispatch => ({
+        UserActions: bindActionCreators(userActions, dispatch),
+        AppActions: bindActionCreators(appActions, dispatch),
+    }),
 )(Lobby);

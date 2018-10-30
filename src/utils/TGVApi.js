@@ -229,16 +229,16 @@ const getRequiredExp = async (TGV, level) => {
 }
 
 const getDefaultStatueLook = async (TGV, address) => {
-    let res = await TGV.defaultStatueLook.call(address, 1);
+    let res = await TGV.defaultStatueLook.call(address, 0);
+    const skin = res.c[0];
+    res = await TGV.defaultStatueLook.call(address, 1);
     const hair = res.c[0];
     res = await TGV.defaultStatueLook.call(address, 2);
-    const eyes = res.c[0];
-    res = await TGV.defaultStatueLook.call(address, 3);
-    const skin = res.c[0];
+    const eye = res.c[0];
     return {
-        hair: hair,
-        eyes: eyes,
         skin: skin,
+        hair: hair,
+        eye: eye,
     }
 }
 
