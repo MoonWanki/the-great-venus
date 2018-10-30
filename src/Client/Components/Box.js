@@ -3,7 +3,7 @@ import * as PIXI from "pixi.js";
 
 export default CustomPIXIComponent({
     customDisplayObject: () => new PIXI.Graphics(),
-    customApplyProps: (instance, oldProps, { color, x, y, width, height, alpha }) => {
+    customApplyProps: (instance, oldProps, { color=0x0, x=0, y=0, width=100, height=100, alpha=0.5 }) => {
         if (typeof oldProps !== "undefined") {
             instance.clear();
         }

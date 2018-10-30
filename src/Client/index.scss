@@ -1,14 +1,12 @@
-.canvas-wrapper {
-
+.client-wrapper {
     position: relative;
     background: black;
     overflow: hidden;
 
-    .floating-from-wrapper {
+    .floating-from {
         position: absolute;
-        background: white;
-        width: 40%;
-        height: 40%;
-        left: 30%;
+        color: white;
+        transform: translateX(-50%);
+        left: 50%;
     }
 }

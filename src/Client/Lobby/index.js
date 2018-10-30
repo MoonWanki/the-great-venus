@@ -94,7 +94,7 @@ class Lobby extends Component {
             setTimeout(()=>{
                 if(this.props.userData.level) {
                     this.turnOnLobbyUI();
-                this.turnOnInnerUI(this.state.homeUIOffset, 'home');
+                    this.turnOnInnerUI(this.state.homeUIOffset, 'home');
                 } else {
                     this.turnOnInnerUI(this.state.signUpUIOffset, 'signup');
                 }
@@ -105,27 +105,28 @@ class Lobby extends Component {
     goToShowroom = () => {
         switch(this.state.currentUI) {
             case 'home':
-                this.turnOffInnerUI(this.state.homeUIOffset);
-                this.slideHomeBG({ toValue: -1, duration: slideDuration, easing: slideEasing });
-                break;
+            this.turnOffInnerUI(this.state.homeUIOffset);
+            this.slideHomeBG({ toValue: -1, duration: slideDuration, easing: slideEasing });
+            break;
             case 'forge':
-                this.turnOffInnerUI(this.state.forgeUIOffset);
-                this.slideForgeBG({ toValue: 1, duration: slideDuration, easing: slideEasing });
-                break;
+            this.turnOffInnerUI(this.state.forgeUIOffset);
+            this.slideForgeBG({ toValue: 1, duration: slideDuration, easing: slideEasing });
+            break;
             case 'stageselect':
-                this.turnOffInnerUI(this.state.stageSelectUIOffset);
-                this.slideStageSelectBG({ toValue: -1, duration: slideDuration, easing: slideEasing });
-                break;
+            this.turnOffInnerUI(this.state.stageSelectUIOffset);
+            this.slideStageSelectBG({ toValue: -1, duration: slideDuration, easing: slideEasing });
+            break;
             case 'colosseum':
-                this.turnOffInnerUI(this.state.colosseumUIOffset);
-                this.setState({ homeBGOffset: new Animated.Value(-1) });
-                this.slideColosseumBG({ toValue: -1, duration: slideDuration, easing: slideEasing });
-                break;
+            this.turnOffInnerUI(this.state.colosseumUIOffset);
+            this.setState({ homeBGOffset: new Animated.Value(-1) });
+            this.slideColosseumBG({ toValue: -1, duration: slideDuration, easing: slideEasing });
+            break;
             case 'signup':
-                this.turnOffInnerUI(this.state.signUpUIOffset);
-                this.slideSkyBG({ toValue: -1, duration: slideDuration, easing: slideEasing });
-                this.slideHomeBG({ toValue: -1, duration: slideDuration, easing: slideEasing });
-                break;
+            this.turnOffInnerUI(this.state.signUpUIOffset);
+            this.slideSkyBG({ toValue: -1, duration: slideDuration, easing: slideEasing });
+            this.slideHomeBG({ toValue: -1, duration: slideDuration, easing: slideEasing });
+            this.turnOnLobbyUI();
+            break;
             default: break;
         }
         this.slideShowroomBG({ toValue: 0, duration: slideDuration, easing: slideEasing });

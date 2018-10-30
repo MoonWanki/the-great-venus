@@ -8,8 +8,6 @@ const initialState = {
     finney: '잔액을 불러올 수 없습니다.',
 };
 
-// const balance = payload.c[0]*(10**5) + payload.c[1]/(10**9);
-
 const LOAD_USER = 'user/LOAD_USER';
 const LOAD_USER_PENDING = 'user/LOAD_USER_PENDING';
 const LOAD_USER_FULFILLED = 'user/LOAD_USER_FULFILLED';

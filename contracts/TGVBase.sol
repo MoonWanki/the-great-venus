@@ -64,7 +64,7 @@ contract TGVBase {
         numUsers.add(1);
         users[msg.sender] = User(name, uint32(numUsers), 0, 0, 1, 0, 1, 0);
         for(uint i = 0 ; i < look.length ; i++)
-            defaultStatueLook[msg.sender][i+1] = look[i];
+            defaultStatueLook[msg.sender][i] = look[i];
     }
 
     // returns required exp to reach given level

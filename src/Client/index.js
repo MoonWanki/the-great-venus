@@ -5,9 +5,8 @@ import * as appActions from 'store/modules/appModule';
 import * as userActions from 'store/modules/userModule';
 import Animated from 'animated';
 import GameBase from './GameBase';
+import { Input } from 'react-materialize';
 import { Stage } from 'react-pixi-fiber';
-import Modal from 'react-responsive-modal';
-import { Input, Button } from 'react-materialize';
 import { Helmet } from 'react-helmet';
 import './index.scss';
 
@@ -20,8 +19,8 @@ class Client extends Component {
         contentWidth: screen.width,
         contentHeight: screen.height,
         floatingFormPosition: new Animated.Value(0),
-        userNameFormModalOn: true,
-        userNameForm: '',
+        nicknameFormModalOn: true,
+        nicknameForm: '',
     }
 
     componentDidMount() {
@@ -39,38 +38,33 @@ class Client extends Component {
         });
     }
 
-    onCreateUserNameBtnClick = () => {
-        if(this.state.userNameForm.length > 0) {
-            this.setState({ userNameFormModalOn: false });
+    onCreateNicknameBtnClick = () => {
+        if(this.state.NicknameForm.length > 0) {
+            this.setState({ nicknameFormModalOn: false });
             
         }
     }
 
     render() {
+
+        const { stageWidth, stageHeight, contentWidth, contentHeight } = this.state;
         return (
-            <div className='canvas-wrapper'>
+            <div className='client-wrapper'>
                 <Helmet>
                     <title>TGV Client</title>
                     <meta name="description" content="The Great Venus game client" />
                 </Helmet>
-                <Stage options={{ backgroundColor: 0x0 }} width={this.state.stageWidth} height={this.state.stageHeight}>
+                <Stage options={{ backgroundColor: 0x0 }} width={stageWidth} height={stageHeight}>
                     <GameBase
-                        stageWidth={this.state.stageWidth}
-                        stageHeight={this.state.stageHeight}
-                        contentWidth={this.state.contentWidth}
-                        contentHeight={this.state.contentHeight} />
+                        stageWidth={stageWidth}
+                        stageHeight={stageHeight}
+                        contentWidth={contentWidth}
+                        contentHeight={contentHeight} />
                 </Stage>
-                <Modal
-                    showCloseIcon={false}
-                    closeOnOverlayClick={false}
-                    closeOnEsc={false}
-                    open={this.props.nicknameModalOn}
-                    onClose={this.props.closeNicknameModal}
-                    center>
-                    <h2>닉네임을 설정해주세요</h2>
-                    <Input s={6} onChange={(e, v)=>this.setState({ userNameForm: v })} />
-                    <Button floating large flat className='grey lighten-3' onClick={this.onCreateUserNameBtnClick}>OK</Button>
-                </Modal>
+
+                {this.props.nicknameInputOn && <div className='floating-from' style={{ left: `${contentWidth/2}px`, top: `${contentHeight*4/7}px`}}>
+                    <Input placeholder='이름이 무엇인가요?' onChange={(e, v) => this.props.AppActions.setNicknameInput(v)} />
+                </div>}
             </div>
         );
     }
@@ -79,7 +73,7 @@ class Client extends Component {
 export default connect(
     (state) => ({
         web3Instance: state.web3Module.web3Instance,
-        nicknameModalOn: state.appModule.nicknameModalOn,
+        nicknameInputOn: state.appModule.nicknameInputOn,
     }),
     (dispatch) => ({
         AppActions: bindActionCreators(appActions, dispatch),
