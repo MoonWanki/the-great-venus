@@ -181,16 +181,14 @@ contract TGVConfig is TGVBase {
         expSpoiledByMob[mobNo] = exp;
     }
 
-    function addStageInfo(uint[] mobNoList1, uint[] mobNoList2, uint[] mobNoList3) external onlyOwner {
+    function increaseMaxStage() external onlyOwner {
         maxStage = maxStage.add(1);
-        editStageInfo(maxStage, mobNoList1, mobNoList2, mobNoList3);
     }
 
-    function editStageInfo(uint stageNo, uint[] mobNoList1, uint[] mobNoList2, uint[] mobNoList3)
+    function editStageRoundInfo(uint stageNo, uint roundNo, uint[] mobNoList)
     public onlyOwner onlyValidStageNo(stageNo) {
-        stageInfoList[stageNo][1] = mobNoList1;
-        stageInfoList[stageNo][2] = mobNoList2;
-        stageInfoList[stageNo][3] = mobNoList3;
+        stageInfoList[stageNo][roundNo] = new uint[](mobNoList.length);
+        stageInfoList[stageNo][roundNo] = mobNoList;
     }
 
 }

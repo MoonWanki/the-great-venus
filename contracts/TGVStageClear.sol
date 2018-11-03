@@ -14,39 +14,42 @@ contract TGVStageClear is TGVBase
     
     function clearStage(uint stageNo, uint[] statueNoList) external onlyValidStageNo(stageNo) {
         require(users[msg.sender].lastStage.add(1) >= stageNo);
+        uint i;
         for(i = 0 ; i < statueNoList.length ; i++) require(statueNoList[i] < users[msg.sender].numStatues);
         bool victory;
-        uint i;
-        uint j;
+        uint roundNo = 1;
         uint roundExp;
+        uint currentSoul = users[msg.sender].soul;
         uint randNonce = 0;
         Unit[] memory ourUnits = new Unit[](statueNoList.length);
-        for(i = 1 ; i <= 3 ; i++) {
+        while(true) {
             roundExp = 0;
-            if(stageInfoList[stageNo][i].length == 0) break;
-            Unit[] memory enemyUnits = new Unit[](stageInfoList[stageNo][i].length);
-            for(j = 0 ; j < ourUnits.length ; j++)
-                ourUnits[j] = _getComputedStatue(statueNoList[j], users[msg.sender].level, statueEquipInfo[msg.sender][statueNoList[j]]);
-            for(j = 0 ; j < enemyUnits.length ; j++) {
-                enemyUnits[j] = _getComputedMob(stageInfoList[stageNo][i][j], 1);
-                roundExp += expSpoiledByMob[stageInfoList[stageNo][i][j]];
+            if(stageInfoList[stageNo][roundNo].length == 0) break;
+            Unit[] memory enemyUnits = new Unit[](stageInfoList[stageNo][roundNo].length);
+            for(i = 0 ; i < ourUnits.length ; i++)
+                ourUnits[i] = _getComputedStatue(statueNoList[i], users[msg.sender].level, statueEquipInfo[msg.sender][statueNoList[i]]);
+            for(i = 0 ; i < enemyUnits.length ; i++) {
+                enemyUnits[i] = _getComputedMob(stageInfoList[stageNo][roundNo][i], 1);
+                roundExp += expSpoiledByMob[stageInfoList[stageNo][roundNo][i]];
             }
             (victory, randNonce) = _runBattle(ourUnits, enemyUnits, randNonce);
             if(victory) {
-                users[msg.sender].exp = users[msg.sender].exp.add(uint32(roundExp));
+                users[msg.sender].exp += users[msg.sender].exp.add(uint32(roundExp));
                 if(users[msg.sender].exp >= getRequiredExp(users[msg.sender].level)) users[msg.sender].level = users[msg.sender].level.add(1);
-                users[msg.sender].soul = users[msg.sender].soul.add(uint32(enemyUnits.length));
+                currentSoul = currentSoul.add(enemyUnits.length);
                 emit RoundResult(true, roundExp, enemyUnits.length);
-                if(i == 3 && users[msg.sender].lastStage < stageNo) { // initially cleared
-                    if(statueAcquisitionStage[users[msg.sender].numStatues] == stageNo) users[msg.sender].numStatues = users[msg.sender].numStatues.add(1);
-                    users[msg.sender].lastStage = uint16(stageNo);
-                }
             } else {
                 emit RoundResult(false, 0, 0);
                 break;
             }
+            roundNo++;
         }
+        users[msg.sender].soul = uint32(currentSoul);
         users[msg.sender].randNonce++;
+        if(users[msg.sender].lastStage < stageNo) {
+            users[msg.sender].lastStage = uint16(stageNo);
+            if(statueAcquisitionStage[users[msg.sender].numStatues] == stageNo) users[msg.sender].numStatues = users[msg.sender].numStatues.add(1);
+        }
     }
 
     function _runBattle(Unit[] memory ourUnits, Unit[] memory enemyUnits, uint nonce) internal returns(bool, uint) {

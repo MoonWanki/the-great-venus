@@ -30,6 +30,10 @@ class AdminPage extends Component {
             avd: '',
             whatNo: '',
         },
+        roundInfoForm: {
+            stageNo: '', roundNo: '',
+            mob1: '', mob2: '', mob3: '', mob4: '', mob5: '',
+        },
         requiredExpForm: {
             exp: '',
             whatLevel: '',
@@ -90,7 +94,7 @@ class AdminPage extends Component {
         }
         try {
             await this.props.TGV.createUser(name, [1, 3, 2], { from: this.props.web3.eth.coinbase });
-            window.Materialize.toast("유저 정보를 초기화합니다.", 1500);
+            window.Materialize.toast(name + "님 환영합니다!", 1500);
             this.update();
         } catch(err) {
             console.error(err);
@@ -190,10 +194,15 @@ class AdminPage extends Component {
         }
     }
 
-    addStatueInfo = async (data) => {
+    addMobInfo = async () => {
+        const { hp, atk, def, crt, avd } = this.state.statueInfoForm;
+        if(!hp || !atk || !def || !crt || !avd) {
+            window.Materialize.toast('항목을 전부 입력해주세요!', 1500);
+            return;
+        }
         try {
-            await this.props.TGV.addStatueInfo(data.hp, data.atk, data.def, data.crt, data.avd, { from: this.props.web3.eth.coinbase });
-            window.Materialize.toast("석상 정보를 추가합니다.", 1500);
+            await this.props.TGV.addStatueInfo(hp, atk, def, crt, avd, 0, 0, false, 14, { from: this.props.web3.eth.coinbase });
+            window.Materialize.toast("석고상 정보를 추가합니다.", 1500);
             this.update();
         } catch(err) {
             console.error(err);
@@ -201,18 +210,28 @@ class AdminPage extends Component {
     }
 
     editStatueInfo = async (data) => {
+        const { whatNo, hp, atk, def, crt, avd } = this.state.statueInfoForm;
+        if(!whatNo || !hp || !atk || !def || !crt || !avd) {
+            window.Materialize.toast('항목을 전부 입력해주세요!', 1500);
+            return;
+        }
         try {
-            await this.props.TGV.editStatueInfo(data.whatNo, data.hp, data.atk, data.def, data.crt, data.avd, { from: this.props.web3.eth.coinbase });
-            window.Materialize.toast("석상 정보를 변경합니다.", 1500);
+            await this.props.TGV.editStatueInfo(whatNo, hp, atk, def, crt, avd, 0, 0, false, 14, { from: this.props.web3.eth.coinbase });
+            window.Materialize.toast("석고상 정보를 변경합니다.", 1500);
             this.update();
         } catch(err) {
             console.error(err);
         }
     }
 
-    addMobInfo = async (data) => {
+    addMobInfo = async () => {
+        const { hp, atk, def, crt, avd } = this.state.mobInfoForm;
+        if(!hp || !atk || !def || !crt || !avd) {
+            window.Materialize.toast('항목을 전부 입력해주세요!', 1500);
+            return;
+        }
         try {
-            await this.props.TGV.addMobInfo(data.hp, data.atk, data.def, data.crt, data.avd, 0, 0, 0, { from: this.props.web3.eth.coinbase });
+            await this.props.TGV.editMobInfo(hp, atk, def, crt, avd, 0, 0, false, 14, { from: this.props.web3.eth.coinbase });
             window.Materialize.toast("몬스터 정보를 추가합니다.", 1500);
             this.update();
         } catch(err) {
@@ -220,9 +239,14 @@ class AdminPage extends Component {
         }
     }
 
-    editMobInfo = async (data) => {
+    editMobInfo = async () => {
+        const { whatNo, hp, atk, def, crt, avd } = this.state.mobInfoForm;
+        if(!whatNo || !hp || !atk || !def || !crt || !avd) {
+            window.Materialize.toast('항목을 전부 입력해주세요!', 1500);
+            return;
+        }
         try {
-            await this.props.TGV.editMobInfo(data.whatNo, data.hp, data.atk, data.def, data.crt, data.avd, 0, 0, false, 14, { from: this.props.web3.eth.coinbase });
+            await this.props.TGV.editMobInfo(whatNo, hp, atk, def, crt, avd, 0, 0, false, 14, { from: this.props.web3.eth.coinbase });
             window.Materialize.toast("몬스터 정보를 변경합니다.", 1500);
             this.update();
         } catch(err) {
@@ -230,20 +254,31 @@ class AdminPage extends Component {
         }
     }
 
-    addStageInfo = async (data) => {
+    increaseMaxStage = async () => {
         try {
-            await this.props.TGV.addStageInfo(data[0], data[1], data[2], { from: this.props.web3.eth.coinbase });
-            window.Materialize.toast("스테이지 정보를 추가합니다.", 1500);
+            await this.props.TGV.increaseMaxStage({ from: this.props.web3.eth.coinbase });
+            window.Materialize.toast("스테이지를 확장합니다.", 1500);
             this.update();
         } catch(err) {
             console.error(err);
         }
     }
 
-    editStageInfo = async (data) => {
+    editStageRoundInfo = async () => {
+        const { stageNo, roundNo, mob1 } = this.state.roundInfoForm;
+        if(!stageNo || !roundNo || !mob1) {
+            window.Materialize.toast("올바르게 입력해주세요", 1500);
+            return;
+        }
+        let mobNoList = [];
+        for(let i=1 ; i<=5 ; i++) {
+            const mobNo = this.state.roundInfoForm[`mob${i}`];
+            if(mobNo) mobNoList.push(mobNo);
+            else break;
+        }        
         try {
-            await this.props.TGV.editStageInfo(data[0], data[1], data[2], { from: this.props.web3.eth.coinbase });
-            window.Materialize.toast("스테이지 정보를 변경합니다.", 1500);
+            await this.props.TGV.editStageRoundInfo(stageNo, roundNo, mobNoList, { from: this.props.web3.eth.coinbase });
+            window.Materialize.toast("스테이지 정보를 수정합니다.", 1500);
             this.update();
         } catch(err) {
             console.error(err);
@@ -263,7 +298,7 @@ class AdminPage extends Component {
 
     render() {
         const { gameData, userData, isUserLoaded, isUserPending, isGameLoaded, isGamePending } = this.props;
-        const { statueInfoForm, mobInfoForm } = this.state;
+        const { statueInfoForm, mobInfoForm, roundInfoForm } = this.state;
         return (
             <Fragment>
 
@@ -441,19 +476,9 @@ class AdminPage extends Component {
                         <Row>
                             <Input s={2} placeholder="몇" onChange={(e, v)=>this.setState({ statueInfoForm: {...statueInfoForm, whatNo: v}})} />
                             번 석상을
-                            <Button floating flat className='amber' waves='light' icon='edit' onClick={async ()=>{
-                                if(statueInfoForm.whatNo && statueInfoForm.hp && statueInfoForm.atk && statueInfoForm.def && statueInfoForm.crt && statueInfoForm.avd)
-                                    this.editStatueInfo(statueInfoForm);
-                                else
-                                    window.Materialize.toast('항목을 전부 입력해주세요!', 1500);
-                            }} />
+                            <Button floating flat className='amber' waves='light' icon='edit' onClick={this.editStatueInfo} />
                             또는 신규 석상을
-                            <Button floating flat className='light-green' waves='light' icon='add' onClick={async ()=>{
-                                if(statueInfoForm.hp && statueInfoForm.atk && statueInfoForm.def && statueInfoForm.crt && statueInfoForm.avd)
-                                    this.addStatueInfo(statueInfoForm);
-                                else
-                                    window.Materialize.toast('항목을 전부 입력해주세요!', 1500);  
-                            }} />
+                            <Button floating flat className='light-green' waves='light' icon='add' onClick={this.addStatueInfo} />
                         </Row>
                         <Table striped bordered>
                             <thead>
@@ -478,19 +503,9 @@ class AdminPage extends Component {
                         <Row>
                             <Input s={2} placeholder="몇" onChange={(e, v)=>this.setState({ mobInfoForm: {...mobInfoForm, whatNo: v}})} />
                             번 몬스터를
-                            <Button floating flat className='amber' waves='light' icon='edit' onClick={async ()=>{
-                                if(mobInfoForm.whatNo && mobInfoForm.hp && mobInfoForm.atk && mobInfoForm.def && mobInfoForm.crt && mobInfoForm.avd)
-                                    this.editMobInfo(mobInfoForm);
-                                else
-                                    window.Materialize.toast('항목을 전부 입력해주세요!', 1500);
-                            }} />
+                            <Button floating flat className='amber' waves='light' icon='edit' onClick={this.editMobInfo} />
                             또는 신규 몬스터를
-                            <Button floating flat className='light-green' waves='light' icon='add' onClick={async ()=>{
-                                if(mobInfoForm.hp && mobInfoForm.atk && mobInfoForm.def && mobInfoForm.crt && mobInfoForm.avd)
-                                    this.addMobInfo(mobInfoForm);
-                                else
-                                    window.Materialize.toast('항목을 전부 입력해주세요!', 1500);  
-                            }} />
+                            <Button floating flat className='light-green' waves='light' icon='add' onClick={this.addMobInfo} />
                         </Row>
                         <Table striped bordered>
                             <thead>
@@ -505,6 +520,19 @@ class AdminPage extends Component {
                     </div>
                     <div className="admin-gamedata-segment">
                         <p className="admin-gamedata-segment-title">~ 스테이지 ~</p>
+                        <Row>
+                            <Input s={2} onChange={(e, v)=>this.setState({ roundInfoForm: {...roundInfoForm, mob1: v}})} />
+                            <Input s={2} onChange={(e, v)=>this.setState({ roundInfoForm: {...roundInfoForm, mob2: v}})} />
+                            <Input s={2} onChange={(e, v)=>this.setState({ roundInfoForm: {...roundInfoForm, mob3: v}})} />
+                            <Input s={2} onChange={(e, v)=>this.setState({ roundInfoForm: {...roundInfoForm, mob4: v}})} />
+                            <Input s={2} onChange={(e, v)=>this.setState({ roundInfoForm: {...roundInfoForm, mob5: v}})} />
+                        </Row>
+                        <Row>
+                            <Input s={3} placeholder="STAGE" onChange={(e, v)=>this.setState({ roundInfoForm: {...roundInfoForm, stageNo: v}})} />
+                            <Input s={3} placeholder="ROUND" onChange={(e, v)=>this.setState({ roundInfoForm: {...roundInfoForm, roundNo: v}})} />
+                            <Button floating flat className='amber' waves='light' icon='edit' onClick={this.editStageRoundInfo} />&nbsp;
+                            <Button floating flat className='light-green' waves='light' icon='add' onClick={this.increaseMaxStage} />
+                        </Row>
                         <Table striped bordered>
                             <thead>
                                 <tr>
