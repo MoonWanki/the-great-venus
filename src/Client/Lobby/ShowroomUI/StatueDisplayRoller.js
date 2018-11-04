@@ -2,6 +2,7 @@ import React, { Component } from 'react';
 import { Container } from 'react-pixi-fiber';
 import $ from 'jquery';
 import Statue from 'Client/Components/Statue';
+import { connect } from 'react-redux';
 
 class StatueDisplayRoller extends Component {
 
@@ -22,34 +23,50 @@ class StatueDisplayRoller extends Component {
 
     renderStatues = () => {
         let iterator = [];
-        for(let i=0 ; i<=this.props.maxStatue ; i++) iterator.push(i);
+        for(let i=0 ; i<=this.props.gameData.maxStatue ; i++) iterator.push(i);
         return iterator.map(i => {
-            if(i<this.props.numStatues) {
+            if(i === 0)  {
                 return <Statue
                     key={i}
-                    click={()=>this.props.onClick(i)}
+                    interactive
+                    click={()=>this.props.onClickStatue(i)}
                     x={this.props.width/2 + i*this.props.gapBetweenStatues}
                     y={this.props.height}
                     no={0}
                     scale={1.4}
-                    skin={this.props.defaultStatueLook.skin}
-                    eye={this.props.defaultStatueLook.eye}
-                    hair={this.props.defaultStatueLook.hair} />
-
+                    eye={this.props.userData.defaultStatueLook.eye}
+                    hair={this.props.userData.defaultStatueLook.hair}
+                    hpEquipLook={this.props.userData.statues[i].equip.hp.look}
+                    atkEquipLook={this.props.userData.statues[i].equip.atk.look}
+                    defEquipLook={this.props.userData.statues[i].equip.def.look} />
+            }
+            else if(i < this.props.userData.numStatues) {
+                return <Statue
+                    key={i}
+                    interactive
+                    click={()=>this.props.onClickStatue(i)}
+                    x={this.props.width/2 + i*this.props.gapBetweenStatues}
+                    y={this.props.height}
+                    no={i}
+                    scale={1.4}
+                    hpEquipLook={this.props.userData.statues[i].equip.hp.look}
+                    atkEquipLook={this.props.userData.statues[i].equip.atk.look}
+                    defEquipLook={this.props.userData.statues[i].equip.def.look} />
             } else {
                 return <Statue
                     key={i}
-                    click={()=>this.props.onClick(i)}
+                    interactive
+                    click={()=>this.props.onClickStatue(i)}
                     x={this.props.width/2 + i*this.props.gapBetweenStatues}
                     y={this.props.height}
-                    no={0}
+                    no={i}
                     scale={1.4}
-                    skin={this.props.defaultStatueLook.skin}
-                    eye={this.props.defaultStatueLook.eye}
-                    hair={this.props.defaultStatueLook.hair}
-                    tint={0x010101} />
+                    tint={0x010101}
+                    hpEquipLook={0}
+                    atkEquipLook={0}
+                    defEquipLook={0} />
             }
-        })
+        });
     }
 
     render() {
@@ -61,4 +78,9 @@ class StatueDisplayRoller extends Component {
     }
 }
 
-export default StatueDisplayRoller;
+export default connect(
+    state => ({
+        gameData: state.gameModule.gameData,
+        userData: state.userModule.userData,
+    }),
+)(StatueDisplayRoller);

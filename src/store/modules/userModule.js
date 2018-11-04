@@ -17,7 +17,7 @@ const SET_FINNEY = 'user/SET_FINNEY';
 
 export const fetchUserData = createAction(LOAD_USER, async (TGV, address) => await TGVApi.getUserData(TGV, address));
 
-export const fetchFinney = web3 => async dispatch => {
+export const fetchFinney = web3 => dispatch => {
     web3.eth.getBalance(web3.eth.coinbase, (err, balance) => {
         if(!err) {
             dispatch({

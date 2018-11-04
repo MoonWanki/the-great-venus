@@ -7,12 +7,7 @@ class Statue extends Component {
     state = {
         statues: [
             {
-                src: this.context.app.loader.resources.statue0,
-                skin: [
-                    this.context.app.loader.resources.statue0_skin1,
-                    this.context.app.loader.resources.statue0_skin2,
-                    this.context.app.loader.resources.statue0_skin3,
-                ],
+                body: this.context.app.loader.resources.statue0_skin2,
                 look: {
                     hair: [
                         this.context.app.loader.resources.statue0_hair1,
@@ -27,36 +22,125 @@ class Statue extends Component {
                         this.context.app.loader.resources.statue0_eye3,
                         this.context.app.loader.resources.statue0_eye4,
                     ],
-                    ear: [
-                        this.context.app.loader.resources.statue0_ear1,
-                        this.context.app.loader.resources.statue0_ear2,
-                        this.context.app.loader.resources.statue0_ear3,
+                    ear: this.context.app.loader.resources.statue0_ear2,
+                },
+                equip: {
+                    hp: [
+                        this.context.app.loader.resources.statue0_equip_hp1,
+                        this.context.app.loader.resources.statue0_equip_hp2,
+                        this.context.app.loader.resources.statue0_equip_hp3,
+                    ],
+                    atk: [
+                        this.context.app.loader.resources.statue0_equip_atk1,
+                        this.context.app.loader.resources.statue0_equip_atk2,
+                        this.context.app.loader.resources.statue0_equip_atk3,
+                    ],
+                    def: [
+                        this.context.app.loader.resources.statue0_equip_def1,
+                        this.context.app.loader.resources.statue0_equip_def2,
+                        this.context.app.loader.resources.statue0_equip_def3,
                     ],
                 },
             },
             {
-                src: this.context.app.loader.resources.statue1,
-                skin: [
-                    this.context.app.loader.resources.statue1_skin1,
-                    this.context.app.loader.resources.statue1_skin2,
-                    this.context.app.loader.resources.statue1_skin3,
-                ],
+                body: this.context.app.loader.resources.statue0_skin2,
+                equip: {
+                    hp: [
+                        this.context.app.loader.resources.statue0_equip_hp1,
+                        this.context.app.loader.resources.statue0_equip_hp2,
+                        this.context.app.loader.resources.statue0_equip_hp3,
+                    ],
+                    atk: [
+                        this.context.app.loader.resources.statue0_equip_atk1,
+                        this.context.app.loader.resources.statue0_equip_atk2,
+                        this.context.app.loader.resources.statue0_equip_atk3,
+                    ],
+                    def: [
+                        this.context.app.loader.resources.statue0_equip_def1,
+                        this.context.app.loader.resources.statue0_equip_def2,
+                        this.context.app.loader.resources.statue0_equip_def3,
+                    ],
+                }
             },
             {
-                src: this.context.app.loader.resources.statue2,
-                skin: [
-                    this.context.app.loader.resources.statue2_skin1,
-                    this.context.app.loader.resources.statue2_skin2,
-                    this.context.app.loader.resources.statue2_skin3,
-                ],
+                body: this.context.app.loader.resources.statue0_skin3,
+                equip: {
+                    hp: [
+                        this.context.app.loader.resources.statue0_equip_hp1,
+                        this.context.app.loader.resources.statue0_equip_hp2,
+                        this.context.app.loader.resources.statue0_equip_hp3,
+                    ],
+                    atk: [
+                        this.context.app.loader.resources.statue0_equip_atk1,
+                        this.context.app.loader.resources.statue0_equip_atk2,
+                        this.context.app.loader.resources.statue0_equip_atk3,
+                    ],
+                    def: [
+                        this.context.app.loader.resources.statue0_equip_def1,
+                        this.context.app.loader.resources.statue0_equip_def2,
+                        this.context.app.loader.resources.statue0_equip_def3,
+                    ],
+                }
             },
             {
-                src: this.context.app.loader.resources.statue3,
-                skin: [
-                    this.context.app.loader.resources.statue3_skin1,
-                    this.context.app.loader.resources.statue3_skin2,
-                    this.context.app.loader.resources.statue3_skin3,
-                ],
+                body: this.context.app.loader.resources.statue0_skin1,
+                equip: {
+                    hp: [
+                        this.context.app.loader.resources.statue0_equip_hp1,
+                        this.context.app.loader.resources.statue0_equip_hp2,
+                        this.context.app.loader.resources.statue0_equip_hp3,
+                    ],
+                    atk: [
+                        this.context.app.loader.resources.statue0_equip_atk1,
+                        this.context.app.loader.resources.statue0_equip_atk2,
+                        this.context.app.loader.resources.statue0_equip_atk3,
+                    ],
+                    def: [
+                        this.context.app.loader.resources.statue0_equip_def1,
+                        this.context.app.loader.resources.statue0_equip_def2,
+                        this.context.app.loader.resources.statue0_equip_def3,
+                    ],
+                }
+            },
+            {
+                body: this.context.app.loader.resources.statue0_skin2,
+                equip: {
+                    hp: [
+                        this.context.app.loader.resources.statue0_equip_hp1,
+                        this.context.app.loader.resources.statue0_equip_hp2,
+                        this.context.app.loader.resources.statue0_equip_hp3,
+                    ],
+                    atk: [
+                        this.context.app.loader.resources.statue0_equip_atk1,
+                        this.context.app.loader.resources.statue0_equip_atk2,
+                        this.context.app.loader.resources.statue0_equip_atk3,
+                    ],
+                    def: [
+                        this.context.app.loader.resources.statue0_equip_def1,
+                        this.context.app.loader.resources.statue0_equip_def2,
+                        this.context.app.loader.resources.statue0_equip_def3,
+                    ],
+                }
+            },
+            {
+                body: this.context.app.loader.resources.statue0_skin3,
+                equip: {
+                    hp: [
+                        this.context.app.loader.resources.statue0_equip_hp1,
+                        this.context.app.loader.resources.statue0_equip_hp2,
+                        this.context.app.loader.resources.statue0_equip_hp3,
+                    ],
+                    atk: [
+                        this.context.app.loader.resources.statue0_equip_atk1,
+                        this.context.app.loader.resources.statue0_equip_atk2,
+                        this.context.app.loader.resources.statue0_equip_atk3,
+                    ],
+                    def: [
+                        this.context.app.loader.resources.statue0_equip_def1,
+                        this.context.app.loader.resources.statue0_equip_def2,
+                        this.context.app.loader.resources.statue0_equip_def3,
+                    ],
+                }
             },
         ],
     }
@@ -64,11 +148,18 @@ class Statue extends Component {
     render() {
         const statue = this.state.statues[this.props.no];
         return (
-            <Container {...this.props}>
+            <Container
+                x={this.props.x || 0}
+                y={this.props.y || 0}
+                scale={this.props.scale || 1}
+                interactive={this.props.interactive || false}
+                click={this.props.click || null}
+                cursor={this.props.interactive ? 'pointer' : 'default'}
+                mask={this.props.mask || null}>
                 <Sprite
                     tint={this.props.tint || 0xffffff}
                     anchor={[0.5, 1]}
-                    texture={statue.skin[this.props.skin].texture} />
+                    texture={statue.body.texture} />
                 {this.props.no===0 && // if user statue
                     <Fragment>
                         <Sprite
@@ -82,9 +173,18 @@ class Statue extends Component {
                         <Sprite
                             anchor={[0.5, 1]}
                             tint={this.props.tint || 0xffffff}
-                            texture={statue.look.ear[this.props.skin].texture} />
+                            texture={statue.look.ear.texture} />
                     </Fragment>
                 }
+                {this.props.hpEquipLook > 0 && <Sprite
+                    anchor={[0.5, 1]}
+                    texture={statue.equip.hp[this.props.hpEquipLook - 1].texture} />}
+                {this.props.atkEquipLook > 0 && <Sprite
+                    anchor={[0.5, 1]}
+                    texture={statue.equip.atk[this.props.atkEquipLook - 1].texture} />}
+                {this.props.defEquipLook > 0 && <Sprite
+                    anchor={[0.5, 1]}
+                    texture={statue.equip.def[this.props.defEquipLook - 1].texture} />}
             </Container>
         )
     }

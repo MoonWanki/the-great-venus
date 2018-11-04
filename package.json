@@ -52,6 +52,7 @@
     "animated": "^0.2.2",
     "cross-env": "^5.2.0",
     "dotenv": "^2.0.0",
+    "lodash": "^4.17.11",
     "node-sass": "^4.9.3",
     "pixi.js": "^4.8.2",
     "react": "^16.4.0",

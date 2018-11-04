@@ -12,4 +12,4 @@ export default CustomPIXIComponent({
         instance.endFill();
         instance.alpha = alpha;
     },
-}, 'BlackBox');
+}, 'Box');

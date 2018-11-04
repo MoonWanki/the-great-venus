@@ -13,19 +13,21 @@ const AnimatedStatueDisplayRoller = Animated.createAnimatedComponent(StatueDispl
 class ShowroomUI extends Component {
 
     state = {
-        currentSelectedStatue: this.props.currentSelectedStatue,
-        statueDisplayRollerOffset: new Animated.Value(0),
+        statueDisplayRollerOffset: new Animated.Value(this.props.currentSelectedStatue),
     }
 
     onClickStatue = (no) => {
-        this.setState({ currentSelectedStatue: no });
-        this.props.onClickStatue(no);
-        Animated.timing(this.state.statueDisplayRollerOffset, { toValue: no, easing: statueDisplayRollerEasing }).start();
+        if(no === this.props.currentSelectedStatue) {
+            this.props.onForgeButtonClick();
+        } else {
+            this.props.onClickStatue(no);
+            Animated.timing(this.state.statueDisplayRollerOffset, { toValue: no, easing: statueDisplayRollerEasing }).start();
+        }
     }
 
     onMousewheel = (dir) => {
-        if(dir === -1 && this.state.currentSelectedStatue > 0) this.onClickStatue(this.state.currentSelectedStatue - 1);
-        else if(dir === 1 && this.state.currentSelectedStatue < this.props.gameData.maxStatue) this.onClickStatue(this.state.currentSelectedStatue + 1);
+        if(dir === -1 && this.props.currentSelectedStatue > 0) this.onClickStatue(this.props.currentSelectedStatue - 1);
+        else if(dir === 1 && this.props.currentSelectedStatue < this.props.gameData.maxStatue) this.onClickStatue(this.props.currentSelectedStatue + 1);
     }
 
     render() {
@@ -40,19 +42,16 @@ class ShowroomUI extends Component {
                     width={contentWidth}
                     height={contentHeight*3/5}
                     alpha={this.props.offset}
-                    maxStatue={this.props.gameData.maxStatue}
-                    numStatues={this.props.userData.numStatues}
-                    defaultStatueLook={this.props.userData.defaultStatueLook}
                     gapBetweenStatues={gapBetweenStatues}
                     onMousewheel={this.onMousewheel}
-                    onClick={this.onClickStatue} />
+                    onClickStatue={this.onClickStatue} />
                 <StatueSpecView
                     x={contentWidth/2 - 100}
                     y={contentHeight*3/5}
                     alpha={1}
                     width={200}
                     height={180}
-                    currentSelectedStatue={this.state.currentSelectedStatue}
+                    currentSelectedStatue={this.props.currentSelectedStatue}
                     onClick={this.props.onForgeButtonClick} />
                 <AnimatedFlatButton
                     x={stageWidth/2 - 90}

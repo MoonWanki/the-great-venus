@@ -19,7 +19,6 @@ contract TGVStageClear is TGVBase
         bool victory;
         uint roundNo = 1;
         uint roundExp;
-        uint currentSoul = users[msg.sender].soul;
         uint randNonce = 0;
         Unit[] memory ourUnits = new Unit[](statueNoList.length);
         while(true) {
@@ -34,9 +33,9 @@ contract TGVStageClear is TGVBase
             }
             (victory, randNonce) = _runBattle(ourUnits, enemyUnits, randNonce);
             if(victory) {
-                users[msg.sender].exp += users[msg.sender].exp.add(uint32(roundExp));
+                users[msg.sender].exp = users[msg.sender].exp.add(uint32(roundExp));
                 if(users[msg.sender].exp >= getRequiredExp(users[msg.sender].level)) users[msg.sender].level = users[msg.sender].level.add(1);
-                currentSoul = currentSoul.add(enemyUnits.length);
+                users[msg.sender].soul = users[msg.sender].soul.add(uint32(enemyUnits.length));
                 emit RoundResult(true, roundExp, enemyUnits.length);
             } else {
                 emit RoundResult(false, 0, 0);
@@ -44,7 +43,6 @@ contract TGVStageClear is TGVBase
             }
             roundNo++;
         }
-        users[msg.sender].soul = uint32(currentSoul);
         users[msg.sender].randNonce++;
         if(users[msg.sender].lastStage < stageNo) {
             users[msg.sender].lastStage = uint16(stageNo);
