@@ -7,27 +7,51 @@ import { bindActionCreators } from 'redux';
 import * as userActions from 'store/modules/userModule';
 import * as TGVApi from 'utils/TGVApi';
 import * as appActions from 'store/modules/appModule';
+import StageDisplay from './StageDisplay';
+
+const stageDisplayFadeDuration = 800;
 
 const AnimatedFlatButton = Animated.createAnimatedComponent(FlatButton);
+const AnimatedStageDisplay = Animated.createAnimatedComponent(StageDisplay);
 
 class StageSelectUI extends Component {
+
+    state = {
+        stageDisplayOn: false,
+        stageDisplayOffset: new Animated.Value(0),
+        stageResult: null,
+    }
 
     clearStage = async (stageNo, units) => {
         try {
             this.props.AppActions.setPreloader(true);
-            await TGVApi.clearStage(this.props.TGV, stageNo, units, this.props.web3.eth.coinbase);
-            window.Materialize.toast(stageNo + ' 스테이지에 입장합니다', 1500);
-            await this.update();
+            const roundResultList = await TGVApi.clearStage(this.props.TGV, stageNo, units, this.props.web3.eth.coinbase);
+            this.props.AppActions.setPreloader(false);
+            this.showStageDisplay(stageNo, units, roundResultList);
         } catch(err) {
             console.error(err);
-        } finally {
-            this.props.AppActions.setPreloader(false);
         }
     }
 
-    update = async () => {
-        await this.props.UserActions.fetchUserData(this.props.TGV, this.props.web3.eth.coinbase);
+    showStageDisplay = (stageNo, statueNoList, roundResultList) => {
+        this.setState({
+            stageResult: {
+                stageNo: stageNo,
+                statueNoList: statueNoList,
+                mobNoList: this.props.gameData.stageInfoList[stageNo-1].map(roundInfo => roundInfo.filter(mobIdx => mobIdx>0)),
+                roundResultList: roundResultList,
+            },
+            stageDisplayOn: true,
+        });
+        Animated.timing(this.state.stageDisplayOffset, { toValue: 1, duration: stageDisplayFadeDuration }).start();
+    }
+
+    // 끝나면 이거 호출하고 까만화면 띄우면 될듯 얘가 알아서 꺼주니까
+    dismissStageDisplay = async () => {
         this.props.UserActions.fetchFinney(this.props.web3);
+        await this.props.UserActions.fetchUserData(this.props.TGV, this.props.web3.eth.coinbase);
+        Animated.timing(this.state.stageDisplayOffset, { toValue: 0, duration: stageDisplayFadeDuration }).start();
+        setTimeout(()=>this.setState({ stageDisplayOn: false, stageResult: null }), stageDisplayFadeDuration);
     }
 
     renderStageButtons = () => _.times(this.props.gameData.maxStage, i => {
@@ -39,7 +63,7 @@ class StageSelectUI extends Component {
     });
 
     render() {
-        const { offset, stageHeight } = this.props;
+        const { offset, contentWidth, contentHeight, stageWidth, stageHeight } = this.props;
         return (
             <Fragment>
                 {this.renderStageButtons()}
@@ -51,6 +75,15 @@ class StageSelectUI extends Component {
                     height={36}
                     text={'BACK TO SHOWROOM'}
                     onClick={this.props.onBackButtonClick} />
+
+                {this.state.stageDisplayOn && <AnimatedStageDisplay
+                    stageWidth={stageWidth}
+                    stageHeight={stageHeight}
+                    contentWidth={contentWidth}
+                    contentHeight={contentHeight}
+                    offset={this.state.stageDisplayOffset}
+                    stageResult={this.state.stageResult}
+                    onFinish={this.dismissStageDisplay} />}
             </Fragment>
         );
     }

@@ -49,7 +49,7 @@ If you are in luck, it can be more than you invested - means that **you can earn
 ## All systems are decentralized
 
 We don't need any server for running TGV! <del>We have no server in fact.</del>  
-TGV is a **DApp**(Decentralized Application) based on the **Blockchain** technology.  
+TGV is a **ÐApp**(Decentralized Application) based on the **Blockchain** technology.  
 Thus, all of your data, which includes armies, items, golds and battle records, will be in the public blockchain network whenever and *forever*.
 
 
@@ -57,30 +57,31 @@ Thus, all of your data, which includes armies, items, golds and battle records, 
 
 ### Main framework and boilerplate
 
-- **TRUFFLE SUITE** | https://truffleframework.com/  
+- **TRUFFLE SUITE** | https://truffleframework.com  
 Supports nice environments for smart contract development.  
 
-- **Truffle-box / React-box** | https://truffle-box.github.io/  
+- **Truffle-box / React-box** | https://truffle-box.github.io  
 Boilerplate for React development on Truffle framework.  
 
 
 ### Main libraries
 
-- **ReactJS** | https://reactjs.org/  
+- **ReactJS** | https://reactjs.org  
 No.1 Front-end library in 2018, ReactJS.  
+
+- **PixiJS** | http://www.pixijs.com  
+Fast, flexible 2D WebGL Renderer engine.  
+
 
 ### Third-party libraries
 
-- **Redux** | https://redux.js.org/  
+- **Redux** | https://redux.js.org  
 For state management in React.  
 
-- **PixiJS** | http://www.pixijs.com/  
-Fast, flexible 2D WebGL Renderer engine.  
-
-- **React Pixi Fiber** | https://github.com/michalochman/react-pixi-fiber/ | by Michal Ochman  
+- **React Pixi Fiber** | https://github.com/michalochman/react-pixi-fiber | by Michal Ochman  
 For writing PixiJS using React declarative style in React 16.  
 
-- **React Materialize** | https://react-materialize.github.io/  
+- **React Materialize** | https://react-materialize.github.io  
 Provides [Materialize](https://materializecss.com/) in React declarative style.  
 
 - **Redux-Thunk** | https://github.com/reduxjs/redux-thunk  
@@ -89,5 +90,8 @@ Middleware that makes redux actions asynchronous.
 - **Sass Loader** | https://github.com/webpack-contrib/sass-loader  
 Enables compile [SASS(Syntactically Awesome Style Sheets)](https://sass-lang.com/) language.  
 
-- **Animated** | https://github.com/animatedjs/animated/  
-Declarative Animations Library for React and React Native.
+- **Animated** | https://github.com/animatedjs/animated  
+Declarative Animations Library for React and React Native.  
+
+- **Lodash** | https://github.com/lodash/lodash  
+A modern JavaScript utility library delivering modularity, performance & extras.  

@@ -69,7 +69,7 @@ class Background extends Component {
                 { src: this.context.app.loader.resources.bg_stageselect1_2, mouseSensitivity: 0, xSpeed: 1 },
                 { src: this.context.app.loader.resources.bg_stageselect1_3, mouseSensitivity: 0, xSpeed: 0 },
             ],
-            'field1_1': [
+            'stage_field1_1': [
                 { src: this.context.app.loader.resources.bg_field1_1_1, mouseSensitivity: 0, xSpeed: 0 },
                 { src: this.context.app.loader.resources.bg_field1_1_2, mouseSensitivity: 1, xSpeed: 0 },
                 { src: this.context.app.loader.resources.bg_field1_1_3, mouseSensitivity: 2, xSpeed: 0 },

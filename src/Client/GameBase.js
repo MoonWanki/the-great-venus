@@ -142,6 +142,7 @@ class GameBase extends Component {
         .add("bg_showroom", require("../images/background/showroom/1.png"))
         .add("bg_forge1", require("../images/background/forge/1.jpg"))
         .add("bg_colosseum_lobby", require("../images/background/colosseum/lobby/1.jpg"))
+        .add("stage_field_loading_screen", require("../images/intro.jpg"))
         .add("bg_field1_1_1", require("../images/background/field/1/1/1.png"))
         .add("bg_field1_1_2", require("../images/background/field/1/1/2.png"))
         .add("bg_field1_1_3", require("../images/background/field/1/1/3.png"))

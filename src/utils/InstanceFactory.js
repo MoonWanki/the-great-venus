@@ -3,11 +3,20 @@ import abi from '../../build/contracts/TGV.json';
 import contract from 'truffle-contract';
 
 export const getWeb3 = () => {
-	return new Promise((resolve, reject) => {
-		var web3 = window.web3;
-		if (typeof web3 !== 'undefined') {
-			console.log('Injected web3 detected.');
-			resolve(new Web3(web3.currentProvider));
+	return new Promise(async (resolve, reject) => {
+		if(window.ethereum) {
+			let web3 = new Web3(window.ethereum);
+			try {
+				await window.ethereum.enable();
+				console.log('Injected web3 detected. (for modern dapp)');
+				resolve(web3);
+			} catch (err) {
+				reject(err);
+			}
+		}
+		else if (window.web3) {
+			console.log('Injected web3 detected. (for legacy dapp)');
+			resolve(new Web3(window.web3.currentProvider));
 		} else {
 			reject('No web3 injected');
 			// console.log('No web3 instance injected, using Local web3.');

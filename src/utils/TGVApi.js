@@ -42,6 +42,17 @@ export const getStatueRawSpec = async (TGV, StatueNo, level)  => {
     }
 }
 
+export const getMobRawSpec = async (TGV, mobNo)  => {
+    const res = await TGV.getMobRawSpec.call(mobNo, 1);
+    return {
+        hp: Number(res[0].c[0]),
+        atk: Number(res[1].c[0]),
+        def: Number(res[2].c[0]),
+        crt: Number(res[3].c[0]),
+        avd: Number(res[4].c[0]),
+    }
+}
+
 const getExtraValueByEquip = async (TGV, statueNo, part, equipLevel) => {
     const res = await TGV.getExtraValueByEquip.call(statueNo, part, equipLevel);
     return Number(res.c[0]);
