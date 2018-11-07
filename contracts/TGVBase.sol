@@ -32,6 +32,9 @@ contract TGVBase {
     mapping(uint => mapping(uint => uint[])) public stageInfoList;
     mapping(uint => uint) public statueAcquisitionStage;
 
+    mapping (uint => address) public rankToOwner;   //몇등이 누구냐?
+    //누가 몇등이냐? - user객체안의 rank
+
     constructor() public {
         owner = msg.sender;
     }
@@ -66,6 +69,7 @@ contract TGVBase {
         users[msg.sender] = User(name, uint32(numUsers), 0, 0, 1, 0, 1, 0);
         for(uint i = 0 ; i < look.length ; i++)
             defaultStatueLook[msg.sender][i] = look[i];
+        rankToOwner[numUsers] = msg.sender;
     }
 
     // returns required exp to reach given level
@@ -151,5 +155,4 @@ contract TGVBase {
         uint skillChargerSize;
         bool skillMultiTargetable;
     }
-
 }
