@@ -1,8 +1,8 @@
 pragma solidity ^0.4.24;
 import "./SafeMath.sol";
-import "./TGVBase.sol";
+import "./TGVUserBattle.sol";
 
-contract TGVConfig is TGVBase {
+contract TGVConfig is TGVUserBattle {
 
     using SafeMath for uint256;
 
@@ -24,34 +24,14 @@ contract TGVConfig is TGVBase {
 
         statueInfoList[0] = Unit(300, 120, 90, 10, 5, 200, 4, false);
         statueInfoList[1] = Unit(280, 85, 76, 10, 5, 200, 4, false);
-        statueInfoList[2] = Unit(320, 135, 110, 10, 5, 200, 4, false);
-        statueInfoList[3] = Unit(350, 180, 150, 10, 5, 200, 4, false);
-        statueInfoList[4] = Unit(360, 200, 120, 10, 5, 200, 4, false);
-        statueInfoList[5] = Unit(380, 250, 100, 10, 5, 250, 4, true);
-        maxStatue = 5;
+        maxStatue = 1;
 
         mobInfoList[1] = Unit(100, 25, 80, 10, 5, 200, 4, false);
         mobInfoList[2] = Unit(120, 35, 100, 10, 5, 200, 4, false);
-        mobInfoList[3] = Unit(150, 55, 100, 10, 5, 200, 4, false);
-        mobInfoList[4] = Unit(200, 70, 90, 10, 5, 200, 4, false);
-        mobInfoList[5] = Unit(320, 120, 120, 10, 5, 200, 4, false);
-        mobInfoList[6] = Unit(440, 140, 110, 10, 5, 200, 4, false);
-        mobInfoList[7] = Unit(500, 175, 150, 10, 5, 200, 4, false);
-        mobInfoList[8] = Unit(650, 180, 210, 10, 5, 200, 4, false);
-        mobInfoList[9] = Unit(680, 220, 250, 10, 5, 200, 4, false);
-        mobInfoList[10] = Unit(750, 250, 320, 10, 5, 200, 4, false);
-        maxMob = 10;
+        maxMob = 2;
 
         expSpoiledByMob[1] = 14;
         expSpoiledByMob[2] = 20;
-        expSpoiledByMob[3] = 22;
-        expSpoiledByMob[4] = 28;
-        expSpoiledByMob[5] = 30;
-        expSpoiledByMob[6] = 32;
-        expSpoiledByMob[7] = 28;
-        expSpoiledByMob[8] = 35;
-        expSpoiledByMob[9] = 38;
-        expSpoiledByMob[10] = 45;
 
         stageInfoList[1][1].push(1);
         stageInfoList[1][1].push(1);
@@ -60,41 +40,10 @@ contract TGVConfig is TGVBase {
         stageInfoList[1][3].push(1);
         stageInfoList[1][3].push(1);
         stageInfoList[1][3].push(2);
-        stageInfoList[2][1].push(1);
-        stageInfoList[2][1].push(1);
-        stageInfoList[2][1].push(1);
-        stageInfoList[2][2].push(1);
-        stageInfoList[2][2].push(1);
-        stageInfoList[2][2].push(1);
-        stageInfoList[2][3].push(2);
-        stageInfoList[2][3].push(2);
-        stageInfoList[3][1].push(1);
-        stageInfoList[3][1].push(1);
-        stageInfoList[3][1].push(2);
-        stageInfoList[3][2].push(1);
-        stageInfoList[3][2].push(1);
-        stageInfoList[3][2].push(2);
-        stageInfoList[3][3].push(1);
-        stageInfoList[3][3].push(1);
-        stageInfoList[3][3].push(2);
-        stageInfoList[3][3].push(3);
-        maxStage = 3;
+        maxStage = 1;
 
         statueAcquisitionStage[1] = 2; // Haetae
         statueAcquisitionStage[2] = 15; // Moai
-        statueAcquisitionStage[3] = 30; // Guiliano
-        statueAcquisitionStage[4] = 45; // Agrippa
-        statueAcquisitionStage[5] = 60; // Weeping Angel
-        statueAcquisitionStage[6] = 75; // The Thinker
-        statueAcquisitionStage[7] = 90; // Liberty Queen
-        statueAcquisitionStage[8] = 105; // General Yi
-        statueAcquisitionStage[9] = 120; // Venus
-        statueAcquisitionStage[10] = 150; // ???
-        statueAcquisitionStage[11] = 180; // ???
-        statueAcquisitionStage[12] = 210; // ???
-        statueAcquisitionStage[13] = 240; // ???
-        statueAcquisitionStage[14] = 270; // ???
-        statueAcquisitionStage[15] = 300; // ???
     }
 
     function addStatueInfo(

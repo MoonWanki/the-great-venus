@@ -1,8 +1,8 @@
 pragma solidity ^0.4.24;
 import "./SafeMath.sol";
-import "./TGVBase.sol";
+import "./TGVItemShop.sol";
 
-contract TGVStageClear is TGVBase
+contract TGVStageClear is TGVItemShop
 {
     using SafeMath for uint256;
     using SafeMath32 for uint32;

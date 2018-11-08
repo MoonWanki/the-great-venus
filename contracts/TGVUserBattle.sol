@@ -67,13 +67,42 @@ contract TGVUserBattle is TGVStageClear
             if(enemyUnit.hp == 0) return (true, randNonce);
         }
     }
+}
 
-    function distributedReward() internal {
+// interface Aion
+contract Aion {
+    uint256 public serviceFee;
+    function ScheduleCall
+    (
+        uint256 blocknumber, address to, uint256 value, uint256 gaslimit, uint256 gasprice, bytes data, bool schedType
+        ) public payable returns (uint,address);
+
+}
+
+// Main contract
+contract Scheduler is TGVUserBattle{
+    uint256 public sqrtValue;
+    Aion aion;
+
+    constructor(uint256 number) public payable {
+        distributedReward(number);
+        scheduleMyfucntion(number);
+    }
+
+    function scheduleMyfucntion(uint256 number) public {
+        aion = Aion(0xFcFB45679539667f7ed55FA59A15c8Cad73d9a4E);
+        bytes memory data = abi.encodeWithSelector(bytes4(keccak256("distributedReward(uint256)")),number); 
+        uint callCost = 200000*1e9 + aion.serviceFee();
+        aion.ScheduleCall.value(callCost)(block.timestamp + 1 minutes, address(this), 0, 200000, 1e9, data, true);
+    }
+
+    function distributedReward(uint256 number) public {
+        // do your task here and call again the function to schedule
         uint i;
         uint[] memory rewardBalance;
-        rewardBalance[0] = this.balance/4;                //보상금의 25퍼
-        rewardBalance[1] = this.balance*3/10;             //보상금의 30퍼
-        rewardBalance[2] = this.balance*4/10;             //보상금의 40퍼
+        rewardBalance[0] = address(this).balance/4;                //보상금의 25퍼
+        rewardBalance[1] = address(this).balance*3/10;             //보상금의 30퍼
+        rewardBalance[2] = address(this).balance*4/10;             //보상금의 40퍼
         for(i = 0 ; i < numUsers/10 ; i++){
             rankToOwner[i].transfer(rewardBalance[0]/(numUsers/10));    //다이아 멤버 보상 송금
         }
@@ -83,5 +112,8 @@ contract TGVUserBattle is TGVStageClear
         for(i = numUsers*3/10 ; i < numUsers*7/10 ; i++){
             rankToOwner[i].transfer(rewardBalance[2]/(numUsers*4/10));  //골드 멤버 보상 송금
         }
-    }
+        scheduleMyfucntion(number);
+    } 
+
+    function () public payable {}
 }

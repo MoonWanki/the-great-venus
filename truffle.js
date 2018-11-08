@@ -1,6 +1,5 @@
+var apikey = require('./api_key');
 var HDWalletProvider = require("truffle-hdwallet-provider");
-var infura_apikey = "XXXXXX";
-var mnemonic = "twelve words you can find in metamask/settings/reveal seed words blabla";
 
 module.exports = {
   	networks: {
@@ -13,9 +12,10 @@ module.exports = {
     	},
     	ropsten: {
       		provider: function() {
-        		return new HDWalletProvider(mnemonic, "https://ropsten.infura.io/" + infura_apikey);
+        		return new HDWalletProvider(apikey.mnemonic, "https://ropsten.infura.io/" + apikey.infura_apikey);
       		},
-      		network_id: '3',
+			  network_id: '3',
+			  gas : 7782563,
     	},
     	solc: {
       		optimizer: {

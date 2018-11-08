@@ -18,3 +18,9 @@ build_webpack
 .env
 npm-debug.log
 .truffle-solidity-loader
+
+# api_key
+api_key.js
+
+# firebase
+.firebase
