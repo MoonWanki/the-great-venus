@@ -15,7 +15,7 @@ class ProfileContainer extends Component {
                     height={height}
                     color={0x0}
                     alpha={0.25} />
-                <Text y={0} text={`Lv. ${userData.level} ${userData.name}`} style={{ fill: 0xffffff, fontSize: 14 }} />
+                <Text y={0} text={`Lv. ${userData.level} ${userData.name} ${userData.rank}위`} style={{ fill: 0xffffff, fontSize: 14 }} />
                 <Text y={height/3} text={`영혼의 결정 ${userData.soul}개`} style={{ fill: 0xffffff, fontSize: 14 }} />
                 <Text y={height*2/3} text={`이더리움 ${this.props.finney.toLocaleString()} FINNEY`} style={{ fill: 0xffffff, fontSize: 14 }} />
             </Container>

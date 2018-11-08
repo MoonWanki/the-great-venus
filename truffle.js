@@ -7,7 +7,7 @@ module.exports = {
       		host: "localhost", 
       		port: 7545,
       		network_id: "*",
-      		gas: 12000000,
+      		gas: 100000000,
       		gasPrice: 3000000000,
     	},
     	ropsten: {
@@ -15,7 +15,7 @@ module.exports = {
         		return new HDWalletProvider(apikey.mnemonic, "https://ropsten.infura.io/" + apikey.infura_apikey);
       		},
 			  network_id: '3',
-			  gas : 7782563,
+			  gas : 8000000,
     	},
     	solc: {
       		optimizer: {

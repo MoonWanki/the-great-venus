@@ -6,14 +6,13 @@ contract TGVStageClear is TGVItemShop
 {
     using SafeMath for uint256;
     using SafeMath32 for uint32;
-    using SafeMath16 for uint16;
     using SafeMath8 for uint8;
 
     event AttackResult(bool way, uint from, uint to, uint damage, bool isCrt);
     event RoundResult(bool victory, uint exp, uint gem);
     
     function clearStage(uint stageNo, uint[] statueNoList) external onlyValidStageNo(stageNo) {
-        require(users[msg.sender].lastStage.add(1) >= stageNo);
+        require(users[msg.sender].lastStage + 1 >= stageNo);
         uint i;
         for(i = 0 ; i < statueNoList.length ; i++) require(statueNoList[i] < users[msg.sender].numStatues);
         bool victory;

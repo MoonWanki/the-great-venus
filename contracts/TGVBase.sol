@@ -31,9 +31,7 @@ contract TGVBase {
     mapping(uint => uint) public expSpoiledByMob;
     mapping(uint => mapping(uint => uint[])) public stageInfoList;
     mapping(uint => uint) public statueAcquisitionStage;
-
-    mapping (uint => address) public rankToOwner;   //몇등이 누구냐?
-    //누가 몇등이냐? - user객체안의 rank
+    mapping(uint => address) public rankToOwner;
 
     constructor() public {
         owner = msg.sender;
@@ -69,7 +67,7 @@ contract TGVBase {
 
     function createUser(string name, uint[] look) external {
         require(users[msg.sender].level == 0);
-        numUsers.add(1);
+        numUsers = numUsers.add(1);
         users[msg.sender] = User(name, uint32(numUsers), 0, 0, 1, 0, 1, 0);
         for(uint i = 0 ; i < look.length ; i++)
             defaultStatueLook[msg.sender][i] = look[i];
