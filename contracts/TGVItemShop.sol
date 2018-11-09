@@ -7,6 +7,13 @@ contract TGVItemShop is TGVBase {
     using SafeMath for uint;
     using SafeMath8 for uint8;
 
+    uint public equipIncreaseDivFactor = 23;
+    uint public equipBigIncreaseDivFactor = 6;
+    uint public equipIncreasePowerDivFactor = 7;
+    
+    uint public extraCrtPerEquipLevel = 10;
+    uint public extraAvdPerEquipLevel = 5;
+
     uint public basicFee = 1 finney;
     uint public basicSoul = 5;
     uint public upgradeFeeDivFactor = 2;
@@ -64,5 +71,20 @@ contract TGVItemShop is TGVBase {
         upgradeFeeDivFactor = _upgradeFeeDivFactor;
         crtPrice = _crtPrice;
         avdPrice = _avdPrice;
+    }
+
+    function getExtraValueByEquip(uint statueNo, uint part, uint equipLevel) public view returns (uint) {
+        require(part >= 1 && part <= 5);
+        if(equipLevel==0) return 0;
+        if(part == 1)
+            return (statueInfoList[statueNo].hp/equipIncreaseDivFactor).mul(equipLevel).add((statueInfoList[statueNo].hp/equipBigIncreaseDivFactor).mul(((equipLevel-1)/10)**2)).add(equipLevel**2/equipIncreasePowerDivFactor);
+        if(part == 2)
+            return (statueInfoList[statueNo].atk/equipIncreaseDivFactor).mul(equipLevel).add((statueInfoList[statueNo].atk/equipBigIncreaseDivFactor).mul(((equipLevel-1)/10)**2)).add(equipLevel**2/equipIncreasePowerDivFactor);
+        if(part == 3)
+            return (statueInfoList[statueNo].def/equipIncreaseDivFactor).mul(equipLevel).add((statueInfoList[statueNo].def/equipBigIncreaseDivFactor).mul(((equipLevel-1)/10)**2)).add(equipLevel**2/equipIncreasePowerDivFactor);
+        if(part == 4)
+            return equipLevel * extraCrtPerEquipLevel;
+        if(part == 5)
+            return equipLevel * extraAvdPerEquipLevel;
     }
 }

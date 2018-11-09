@@ -61,6 +61,7 @@ class StageDisplay extends Component {
                     stageHeight={stageHeight}
                     contentWidth={contentWidth}
                     contentHeight={contentHeight}
+                    stageNo={this.props.stageResult.stageNo}
                     roundResult={this.props.stageResult.roundResultList[this.state.currentRound - 1]}
                     initialStatues={this.state.initialStatues}
                     initialMobs={this.state.initialMobs}

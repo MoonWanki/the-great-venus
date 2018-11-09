@@ -36,7 +36,7 @@ class Lobby extends Component {
         settingUIOn: false,
         settingUIOffset: new Animated.Value(0),
         currentUI: null,
-        homeBGOffset: new Animated.Value(1),
+        homeBGOffset: new Animated.Value(0.95),
         homeUIOffset: new Animated.Value(0),
         showroomBGOffset: new Animated.Value(1),
         showroomUIOffset: new Animated.Value(0),

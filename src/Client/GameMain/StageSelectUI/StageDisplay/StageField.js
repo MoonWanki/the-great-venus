@@ -33,7 +33,7 @@ class StageField extends Component {
                     offsetY={0} />
                 <FlatButton
                     x={stageWidth/2}
-                    y={stageHeight/2}
+                    y={stageHeight - 100}
                     width={180}
                     height={36}
                     text='OK'

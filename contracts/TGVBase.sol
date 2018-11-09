@@ -8,20 +8,12 @@ contract TGVBase {
     using SafeMath8 for uint8;
 
     address public owner;
+
     uint public numUsers;
     uint public maxStatue;
     uint public maxMob;
     uint public maxStage;
-    uint public extraCrtPerEquipLevel;
-    uint public extraAvdPerEquipLevel;
-    uint public levelIncreaseDivFactor;
-    uint public equipIncreaseDivFactor;
-    uint public equipBigIncreaseDivFactor;
-    uint public equipIncreasePowerDivFactor;
-    uint public damageMulFactor;
-    uint public damageDivFactor;
-    uint public damageFlexibler;
-    uint public matchableRankGap;
+    uint public levelIncreaseDivFactor = 17;
 
     mapping(address => User) public users;
     mapping(address => mapping(uint => uint)) public defaultStatueLook;
@@ -102,21 +94,6 @@ contract TGVBase {
             mobInfoList[mobNo].crt,
             mobInfoList[mobNo].avd
         );
-    }
-
-    function getExtraValueByEquip(uint statueNo, uint part, uint equipLevel) public view returns (uint) {
-        require(part >= 1 && part <= 5);
-        if(equipLevel==0) return 0;
-        if(part == 1)
-            return (statueInfoList[statueNo].hp/equipIncreaseDivFactor).mul(equipLevel).add((statueInfoList[statueNo].hp/equipBigIncreaseDivFactor).mul(((equipLevel-1)/10)**2)).add(equipLevel**2/equipIncreasePowerDivFactor);
-        if(part == 2)
-            return (statueInfoList[statueNo].atk/equipIncreaseDivFactor).mul(equipLevel).add((statueInfoList[statueNo].atk/equipBigIncreaseDivFactor).mul(((equipLevel-1)/10)**2)).add(equipLevel**2/equipIncreasePowerDivFactor);
-        if(part == 3)
-            return (statueInfoList[statueNo].def/equipIncreaseDivFactor).mul(equipLevel).add((statueInfoList[statueNo].def/equipBigIncreaseDivFactor).mul(((equipLevel-1)/10)**2)).add(equipLevel**2/equipIncreasePowerDivFactor);
-        if(part == 4)
-            return equipLevel * extraCrtPerEquipLevel;
-        if(part == 5)
-            return equipLevel * extraAvdPerEquipLevel;
     }
 
     function getStageInfo(uint stageNo) public view returns (uint[], uint[], uint[]) {

@@ -8,6 +8,10 @@ contract TGVStageClear is TGVItemShop
     using SafeMath32 for uint32;
     using SafeMath8 for uint8;
 
+    uint public damageMulFactor = 200;
+    uint public damageDivFactor = 100;
+    uint public damageFlexibler = 7;
+
     event AttackResult(bool way, uint from, uint to, uint damage, bool isCrt);
     event RoundResult(bool victory, uint exp, uint gem);
     

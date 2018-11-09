@@ -7,20 +7,6 @@ contract TGVConfig is TGVUserBattle {
     using SafeMath for uint256;
 
     constructor() public {
-        
-        extraCrtPerEquipLevel = 10;
-        extraAvdPerEquipLevel = 5;
-
-        levelIncreaseDivFactor = 17;
-        equipIncreaseDivFactor = 23;
-        equipBigIncreaseDivFactor = 6;
-        equipIncreasePowerDivFactor = 7;
-
-        damageFlexibler = 7;
-        damageMulFactor = 200;
-        damageDivFactor = 100;
-
-        matchableRankGap = 10;
 
         statueInfoList[0] = Unit(300, 120, 90, 10, 5, 200, 4, false);
         statueInfoList[1] = Unit(280, 85, 76, 10, 5, 200, 4, false);
