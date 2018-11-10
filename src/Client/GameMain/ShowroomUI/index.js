@@ -16,8 +16,8 @@ class ShowroomUI extends Component {
         statueDisplayRollerOffset: new Animated.Value(this.props.currentSelectedStatue),
     }
 
-    onClickStatue = (no) => {
-        if(no === this.props.currentSelectedStatue) {
+    onClickStatue = no => {
+        if(no === this.props.currentSelectedStatue && no < this.props.userData.numStatues) {
             this.props.onForgeButtonClick();
         } else {
             this.props.onClickStatue(no);
@@ -31,67 +31,67 @@ class ShowroomUI extends Component {
     }
 
     render() {
-        const { offset, stageWidth, stageHeight, contentWidth, contentHeight } = this.props;
-        const gapBetweenStatues = contentWidth/3;
+        const { offset, width, height } = this.props;
+        const gapBetweenStatues = width/3;
 
         return (
             <Fragment>
                 <AnimatedStatueDisplayRoller
                     x={this.state.statueDisplayRollerOffset.interpolate({ inputRange: [0, this.props.gameData.maxStatue], outputRange: [0, -this.props.gameData.maxStatue*gapBetweenStatues] })}
-                    y={this.props.backgroundOffset.interpolate({ inputRange: [-1, 1], outputRange: [-contentHeight, contentHeight]})}
-                    width={contentWidth}
-                    height={contentHeight*3/5}
+                    y={this.props.backgroundOffset.interpolate({ inputRange: [-1, 1], outputRange: [-height, height]})}
+                    width={width}
+                    height={height*13/20}
                     alpha={this.props.offset}
                     gapBetweenStatues={gapBetweenStatues}
                     onMousewheel={this.onMousewheel}
                     onClickStatue={this.onClickStatue} />
                 <StatueSpecView
-                    x={contentWidth/2 - 100}
-                    y={contentHeight*3/5}
+                    x={width/2 - 100}
+                    y={height*13/20}
                     alpha={1}
                     width={200}
                     height={180}
                     currentSelectedStatue={this.props.currentSelectedStatue}
                     onClick={this.props.onForgeButtonClick} />
                 <AnimatedFlatButton
-                    x={stageWidth/2 - 90}
-                    y={offset.interpolate({ inputRange: [0, 1], outputRange: [-36, 50] })}
+                    x={width/2 - 90}
+                    y={offset.interpolate({ inputRange: [0, 1], outputRange: [this.props.contentY, -this.props.contentY + 20] })}
                     alpha={offset}
                     width={180}
                     height={36}
-                    text={'HOME'}
+                    text={'로비로 가기'}
                     onClick={this.props.onHomeButtonClick} />
-                <AnimatedFlatButton
+                {/* <AnimatedFlatButton
                     x={100}
-                    y={offset.interpolate({ inputRange: [0, 1], outputRange: [stageHeight, stageHeight - 100] })}
+                    y={offset.interpolate({ inputRange: [0, 1], outputRange: [height + this.props.contentY, height + this.props.contentY - 100] })}
                     alpha={offset}
                     width={280}
                     height={60}
                     text={"BLACKSMITH'S HOUSE"}
-                    onClick={this.props.onForgeButtonClick} />
+                    onClick={this.props.onForgeButtonClick} /> */}
                 <AnimatedFlatButton
-                    x={400}
-                    y={offset.interpolate({ inputRange: [0, 1], outputRange: [stageHeight, stageHeight - 100] })}
+                    x={-this.props.contentX + 50}
+                    y={offset.interpolate({ inputRange: [0, 1], outputRange: [height + this.props.contentY, height + this.props.contentY - 100] })}
                     alpha={offset}
-                    width={280}
-                    height={60}
-                    text={'BEAUTY SHOP'}
+                    width={100}
+                    height={36}
+                    text={'뷰티 샵'}
                     onClick={()=>window.Materialize.toast("준비 중입니다.", 1500)} />
                 <AnimatedFlatButton
-                    x={stageWidth - 600}
-                    y={offset.interpolate({ inputRange: [0, 1], outputRange: [stageHeight, stageHeight - 100] })}
+                    x={offset.interpolate({ inputRange: [0, 1], outputRange: [width + this.props.contentX, width + this.props.contentX - 400] })}
+                    y={height + this.props.contentY - 240}
                     alpha={offset}
-                    width={280}
-                    height={60}
-                    text={'SELECT STAGE'}
+                    width={320}
+                    height={120}
+                    text={'스테이지 입장'}
                     onClick={this.props.onStageSelectButtonClick} />
                 <AnimatedFlatButton
-                    x={stageWidth - 300}
-                    y={offset.interpolate({ inputRange: [0, 1], outputRange: [stageHeight, stageHeight - 100] })}
+                    x={offset.interpolate({ inputRange: [0, 1], outputRange: [width + this.props.contentX, width + this.props.contentX - 400] })}
+                    y={height + this.props.contentY - 100}
                     alpha={offset}
-                    width={280}
+                    width={320}
                     height={60}
-                    text={'ENTER COLOSSEUM'}
+                    text={'지하 투기장'}
                     onClick={this.props.onColosseumButtonClick} />
             </Fragment>
         );
@@ -102,5 +102,7 @@ export default connect(
     state => ({
         gameData: state.gameModule.gameData,
         userData: state.userModule.userData,
+        contentX: state.canvasModule.contentX,
+        contentY: state.canvasModule.contentY,
     }),
 )(ShowroomUI);

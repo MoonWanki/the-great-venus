@@ -58,7 +58,7 @@ const getExtraValueByEquip = async (TGV, statueNo, part, equipLevel) => {
     return Number(res.c[0]);
 }
 
-const getStatueSpec = async (TGV, level, statueNo, equip) => {
+export const getStatueSpec = async (TGV, level, statueNo, equip) => {
     const rawSpec = await getStatueRawSpec(TGV, statueNo, level);
     const extraHpByEquip = await getExtraValueByEquip(TGV, statueNo, 1, equip.hpEquipLevel);
     const extraAtkByEquip = await getExtraValueByEquip(TGV, statueNo, 2, equip.atkEquipLevel);

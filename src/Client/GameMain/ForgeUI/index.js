@@ -3,33 +3,34 @@ import FlatButton from 'Client/Components/FlatButton';
 import Animated from 'animated';
 import StatueSelector from './StatueSelector';
 import EquipDisplayContainer from './EquipDisplayContainer';
+import { connect } from 'react-redux';
 
 const AnimatedFlatButton = Animated.createAnimatedComponent(FlatButton);
 
 class ForgeUI extends Component {
 
     render() {
-        const { offset, stageWidth, stageHeight, contentWidth, contentHeight } = this.props;
+        const { offset, width, height } = this.props;
         return (
             <Fragment>
                 <StatueSelector
-                    x={contentWidth/8}
-                    y={contentHeight/8}
-                    width={contentWidth/5}
-                    height={contentHeight*5/8}
+                    x={width/8}
+                    y={height/8}
+                    width={width/5}
+                    height={height*5/8}
                     offset={1}
                     currentSelectedStatue={this.props.currentSelectedStatue}
                     onClickStatue={this.props.onClickStatue} />
                 <EquipDisplayContainer
-                    x={contentWidth*2/5}
-                    y={contentHeight/8}
-                    width={contentWidth/2}
-                    height={contentHeight*5/8}
+                    x={width*2/5}
+                    y={height/8}
+                    width={width/2}
+                    height={height*5/8}
                     offset={offset}
                     currentSelectedStatue={this.props.currentSelectedStatue} />
                 <AnimatedFlatButton
-                    x={offset.interpolate({ inputRange: [0, 1], outputRange: [stageWidth, stageWidth - 280] })}
-                    y={stageHeight - 86}
+                    x={width + this.props.contentX - 200}
+                    y={offset.interpolate({ inputRange: [0, 1], outputRange: [height + this.props.contentY, height + this.props.contentY - 50] })}
                     alpha={offset}
                     width={180}
                     height={36}
@@ -40,4 +41,9 @@ class ForgeUI extends Component {
     }
 }
 
-export default ForgeUI;
+export default connect(
+    state => ({
+        contentX: state.canvasModule.contentX,
+        contentY: state.canvasModule.contentY,
+    }),
+)(ForgeUI);

@@ -9,13 +9,13 @@ import IntroScreen from './IntroScreen';
 import GameMain from './GameMain';
 import Animated from 'animated';
 import PropTypes from 'prop-types';
+import { Container } from 'react-pixi-fiber';
 
 class GameBase extends Component {
 
     state = {
         isReady: false,
         loadingProgress: 0,
-        loadingContent: '',
         introScreenOn: true,
         introScreenOffset: new Animated.Value(1),
         selectedAddress: null,
@@ -63,16 +63,15 @@ class GameBase extends Component {
 
     render() {
         return (
-            <Fragment>
+            <Container {...this.props}>
                 {this.state.isReady && <GameMain {...this.props} />}
                 {this.state.introScreenOn && <IntroScreen
                     offset={this.state.introScreenOffset}
                     onReload={this.load}
                     loadingProgress={this.state.loadingProgress}
-                    loadingContent={this.state.loadingContent}
                     {...this.props} />
                 }
-            </Fragment>
+            </Container>
         );
     }
 
@@ -80,9 +79,7 @@ class GameBase extends Component {
         this.context.app.loader
         .add("intro_credit1", require("../images/intro_credit1.png"))
         .add("intro_credit2", require("../images/intro_credit2.png"))
-        .add("statue0_skin1", require("../images/statue/0/skin/1.svg"))
-        .add("statue0_skin2", require("../images/statue/0/skin/2.svg"))
-        .add("statue0_skin3", require("../images/statue/0/skin/3.svg"))
+        .add("statue0_body", require("../images/statue/0/body.svg"))
         .add("statue0_ear1", require("../images/statue/0/ear/1.svg"))
         .add("statue0_ear2", require("../images/statue/0/ear/2.svg"))
         .add("statue0_ear3", require("../images/statue/0/ear/3.svg"))
@@ -210,8 +207,8 @@ class GameBase extends Component {
         .add("bg_stageselect1_1", require("../images/background/stageselect/1/1.png"))
         .add("bg_stageselect1_2", require("../images/background/stageselect/1/2.png"))
         .add("bg_stageselect1_3", require("../images/background/stageselect/1/3.png"))
-        .on('progress', (loader, resource) => {
-            this.setState({ loadingContent: resource.name, loadingProgress: Math.ceil(loader.progress) })
+        .on('progress', (loader) => {
+            this.setState({ loadingProgress: Math.ceil(loader.progress) })
         })
         .load(() => {
             this.setState({

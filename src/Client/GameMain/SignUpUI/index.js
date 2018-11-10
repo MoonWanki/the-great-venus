@@ -9,6 +9,7 @@ import { bindActionCreators } from 'redux';
 import * as userActions from 'store/modules/userModule';
 import * as appActions from 'store/modules/appModule';
 import { Container } from 'react-pixi-fiber';
+import * as TGVApi from 'utils/TGVApi';
 
 const AnimatedFlatButton = Animated.createAnimatedComponent(FlatButton);
 const AnimatedLookSelector = Animated.createAnimatedComponent(LookSelector);
@@ -27,6 +28,7 @@ class SignUpUI extends Component {
         statueSkin: 0,
         statueEye: 0,
         statueHair: 0,
+        isCreatingUser: false,
     }
 
     onLookChanged = (type, n) => {
@@ -61,58 +63,72 @@ class SignUpUI extends Component {
             return;
         }
         try {
-            await this.props.TGV.createUser(nicknameInputValue, [this.state.statueSkin, this.state.statueHair, this.state.statueEye], { from: this.props.web3.eth.coinbase });
+            this.setState({ isCreatingUser: true });
             this.props.AppActions.closeNicknameInput();
+            this.props.AppActions.setPreloader(true);
+            await this.props.TGV.createUser(nicknameInputValue, [this.state.statueSkin, this.state.statueHair, this.state.statueEye], { from: this.props.web3.eth.coinbase });
+            let userData;
+            while(true) {
+                userData = await TGVApi.getUserData(this.props.TGV, this.props.web3.eth.coinbase);
+                if(userData.level > 0) {
+                    this.props.UserActions.syncFetchUserData(userData);
+                    break;
+                }
+            }
             this.props.onFinish();
         } catch(err) {
             console.error(err);
+            this.props.AppActions.openNicknameInput();
+        } finally {
+            this.setState({ isCreatingUser: false });
+            this.props.AppActions.setPreloader(false);
         }
     }
     
     render() {
-        const { offset, stageWidth, stageHeight, contentWidth, contentHeight } = this.props;
-        const boxSize = { w: contentWidth*2/5, h: contentHeight*3/5 };
+        const { offset, width, height } = this.props;
+        const boxSize = { w: width*2/5, h: height*3/5 };
         return (
-            <AnimatedContainer alpha={offset}>
+            <AnimatedContainer width={width} height={height} alpha={offset}>
                 <AnimatedLookSelector
                     offset={this.state.lookSelectorOffset}
-                    x={this.state.lookSelectorOffset.interpolate({ inputRange: [0, 1], outputRange: [contentWidth, contentWidth/2] })}
-                    y={contentHeight/8}
+                    x={this.state.lookSelectorOffset.interpolate({ inputRange: [0, 1], outputRange: [width, width/2] })}
+                    y={height/8}
                     width={boxSize.w}
                     height={boxSize.h}
                     onChange={this.onLookChanged} />
                 <AnimatedStatue
-                    x={this.state.lookSelectorOffset.interpolate({ inputRange: [0, 1], outputRange: [contentWidth/2, contentWidth/4] })}
-                    y={this.state.lookSelectorOffset.interpolate({ inputRange: [0, 1], outputRange: [contentHeight*4/7, contentHeight*2/3] })}
+                    x={this.state.lookSelectorOffset.interpolate({ inputRange: [0, 1], outputRange: [width/2, width/4] })}
+                    y={this.state.lookSelectorOffset.interpolate({ inputRange: [0, 1], outputRange: [height*4/7, height*2/3] })}
                     no={0}
                     scale={1.4}
                     skin={this.state.statueSkin}
                     eye={this.state.statueEye}
                     hair={this.state.statueHair} />
-                <AnimatedFlatButton
-                    x={100}
-                    y={this.state.lookSelectorOffset.interpolate({ inputRange: [0, 1], outputRange: [stageHeight - 86, stageHeight] })}
+                {!this.state.isCreatingUser && <AnimatedFlatButton
+                    x={-this.props.contentX + 100}
+                    y={this.state.lookSelectorOffset.interpolate({ inputRange: [0, 1], outputRange: [height + this.props.contentY - 86, height + this.props.contentY] })}
                     alpha={this.state.lookSelectorOffset.interpolate({ inputRange: [0, 1], outputRange: [1, 0] })}
                     width={180}
                     height={36}
                     text={'BACK'}
-                    onClick={this.showCustomizer} />
+                    onClick={this.showCustomizer} />}
                 <AnimatedFlatButton
-                    x={stageWidth - 280}
-                    y={this.state.lookSelectorOffset.interpolate({ inputRange: [0, 1], outputRange: [stageHeight, stageHeight - 86] })}
+                    x={width + this.props.contentX - 280}
+                    y={this.state.lookSelectorOffset.interpolate({ inputRange: [0, 1], outputRange: [height + this.props.contentY, height + this.props.contentY - 86] })}
                     alpha={this.state.lookSelectorOffset}
                     width={180}
                     height={36}
                     text={'DONE'}
                     onClick={this.onFinishCustomizing} />
                 <AnimatedFlatButton
-                    x={contentWidth/2 - 100}
-                    y={contentHeight*2/3}
+                    x={width/2 - 100}
+                    y={height*2/3}
                     alpha={this.state.lookSelectorOffset.interpolate({ inputRange: [0, 1], outputRange: [1, 0] })}
                     width={200}
                     height={70}
-                    text={'SIGN UP'}
-                    onClick={this.signUp} />
+                    text={this.state.isCreatingUser ? 'PROCESSING...' : 'SIGN UP'}
+                    onClick={this.state.isCreatingUser ? null : this.signUp} />
             </AnimatedContainer>
         );
     }
@@ -123,6 +139,8 @@ export default connect(
         web3: state.web3Module.web3,
         TGV: state.web3Module.TGV,
         nicknameInputValue: state.appModule.nicknameInputValue,
+        contentX: state.canvasModule.contentX,
+        contentY: state.canvasModule.contentY,
     }),
     dispatch => ({
         AppActions: bindActionCreators(appActions, dispatch),

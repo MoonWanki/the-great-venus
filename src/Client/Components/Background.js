@@ -79,7 +79,7 @@ class Background extends Component {
                 { src: this.context.app.loader.resources.bg_field1_1_7, mouseSensitivity: 6, xSpeed: 0 },
             ],
         },
-        mousePosition: new PIXI.Point(this.props.stageWidth/2, this.props.stageHeight/2),
+        mousePosition: new PIXI.Point(this.props.width/2, this.props.height/2),
         x: 0
     }
     
@@ -96,7 +96,7 @@ class Background extends Component {
     }
 
     render() {
-        const { stageWidth, stageHeight, contentWidth, contentHeight } = this.props;
+        const { width, height } = this.props;
         return (
             <AnimatedContainer
                 interactive
@@ -105,27 +105,27 @@ class Background extends Component {
                     ? this.props.offsetX
                     : this.props.offsetX.interpolate({
                         inputRange: [-1, 1],
-                        outputRange: [-contentWidth, contentWidth]
+                        outputRange: [-width, width]
                 })}
                 y={typeof this.props.offsetY === 'number'
                     ? this.props.offsetY
                     : this.props.offsetY.interpolate({
                         inputRange: [-1, 1],
-                        outputRange: [-contentHeight, contentHeight]
+                        outputRange: [-height, height]
                 })} >
 
                 {this.state.themes[this.props.theme].map(({ src, mouseSensitivity, xSpeed }, i)=>
                     <AnimatedTilingSprite
                         key={i}
                         texture={src.texture}
-                        width={contentWidth}
-                        height={contentHeight}
+                        width={width}
+                        height={height}
                         anchor={[0.5, 0.5]}
-                        position={[stageWidth/2, stageHeight/2]}
-                        tileScale={contentWidth/1920}
+                        position={[width/2, height/2]}
+                        tileScale={width/1920}
                         tilePosition={[
-                            (this.state.mousePosition.x - contentWidth/2) * mouseSensitivity * 0.001 + this.state.x*xSpeed,
-                            (this.state.mousePosition.y - contentHeight) * mouseSensitivity * 0.001
+                            (this.state.mousePosition.x - width/2) * mouseSensitivity * 0.001 + this.state.x*xSpeed,
+                            (this.state.mousePosition.y - height) * mouseSensitivity * 0.001
                         ]}
                          />
                 )}

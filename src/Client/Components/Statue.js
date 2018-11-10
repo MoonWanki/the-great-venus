@@ -7,7 +7,7 @@ class Statue extends Component {
     state = {
         statues: [
             {
-                body: this.context.app.loader.resources.statue0_skin2,
+                body: this.context.app.loader.resources.statue0_body,
                 look: {
                     hair: [
                         this.context.app.loader.resources.statue0_hair1,
@@ -43,7 +43,7 @@ class Statue extends Component {
                 },
             },
             {
-                body: this.context.app.loader.resources.statue0_skin2,
+                body: this.context.app.loader.resources.statue0_body,
                 equip: {
                     hp: [
                         this.context.app.loader.resources.statue0_equip_hp1,
@@ -63,7 +63,7 @@ class Statue extends Component {
                 }
             },
             {
-                body: this.context.app.loader.resources.statue0_skin3,
+                body: this.context.app.loader.resources.statue0_body,
                 equip: {
                     hp: [
                         this.context.app.loader.resources.statue0_equip_hp1,
@@ -83,7 +83,7 @@ class Statue extends Component {
                 }
             },
             {
-                body: this.context.app.loader.resources.statue0_skin1,
+                body: this.context.app.loader.resources.statue0_body,
                 equip: {
                     hp: [
                         this.context.app.loader.resources.statue0_equip_hp1,
@@ -103,7 +103,7 @@ class Statue extends Component {
                 }
             },
             {
-                body: this.context.app.loader.resources.statue0_skin2,
+                body: this.context.app.loader.resources.statue0_body,
                 equip: {
                     hp: [
                         this.context.app.loader.resources.statue0_equip_hp1,
@@ -123,7 +123,7 @@ class Statue extends Component {
                 }
             },
             {
-                body: this.context.app.loader.resources.statue0_skin3,
+                body: this.context.app.loader.resources.statue0_body,
                 equip: {
                     hp: [
                         this.context.app.loader.resources.statue0_equip_hp1,

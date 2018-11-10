@@ -8,6 +8,7 @@ const initialState = {
     finney: '잔액을 불러올 수 없습니다.',
 };
 
+const FETCH_USER_DATA = 'user/FETCH_USER_DATA';
 const LOAD_USER = 'user/LOAD_USER';
 const LOAD_USER_PENDING = 'user/LOAD_USER_PENDING';
 const LOAD_USER_FULFILLED = 'user/LOAD_USER_FULFILLED';
@@ -16,6 +17,8 @@ const SET_NICKNAME = 'user/SET_NICKNAME';
 const SET_FINNEY = 'user/SET_FINNEY';
 
 export const fetchUserData = createAction(LOAD_USER, async (TGV, address) => await TGVApi.getUserData(TGV, address));
+
+export const syncFetchUserData = createAction(FETCH_USER_DATA);
 
 export const fetchFinney = web3 => dispatch => {
     web3.eth.getBalance(web3.eth.coinbase, (err, balance) => {
@@ -31,6 +34,12 @@ export const fetchFinney = web3 => dispatch => {
 export const setNickname = createAction(SET_NICKNAME);
 
 export default handleActions({
+    [FETCH_USER_DATA]: (state, { payload }) => {
+        return {
+            ...state,
+            userData: payload,
+        };
+    },
     [LOAD_USER_PENDING]: state => {
         return {
             ...state,

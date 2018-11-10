@@ -8,8 +8,10 @@ import * as userActions from 'store/modules/userModule';
 import * as TGVApi from 'utils/TGVApi';
 import * as appActions from 'store/modules/appModule';
 import StageDisplay from './StageDisplay';
+import Easing from 'animated/lib/Easing';
 
-const stageDisplayFadeDuration = 800;
+const stageDisplayFadeDuration = 500;
+const stageDisplayFadeEasing = Easing.bezier(0, 0.8, 0.3, 1);
 
 const AnimatedFlatButton = Animated.createAnimatedComponent(FlatButton);
 const AnimatedStageDisplay = Animated.createAnimatedComponent(StageDisplay);
@@ -26,10 +28,11 @@ class StageSelectUI extends Component {
         try {
             this.props.AppActions.setPreloader(true);
             const roundResultList = await TGVApi.clearStage(this.props.TGV, stageNo, units, this.props.web3.eth.coinbase);
-            this.props.AppActions.setPreloader(false);
             this.showStageDisplay(stageNo, units, roundResultList);
         } catch(err) {
             console.error(err);
+        } finally {
+            this.props.AppActions.setPreloader(false);
         }
     }
 
@@ -43,14 +46,14 @@ class StageSelectUI extends Component {
             },
             stageDisplayOn: true,
         });
-        Animated.timing(this.state.stageDisplayOffset, { toValue: 1, duration: stageDisplayFadeDuration }).start();
+        Animated.timing(this.state.stageDisplayOffset, { toValue: 1, duration: stageDisplayFadeDuration, easing: stageDisplayFadeEasing }).start();
     }
 
     // 끝나면 이거 호출하고 까만화면 띄우면 될듯 얘가 알아서 꺼주니까
     dismissStageDisplay = async () => {
         this.props.UserActions.fetchFinney(this.props.web3);
         await this.props.UserActions.fetchUserData(this.props.TGV, this.props.web3.eth.coinbase);
-        Animated.timing(this.state.stageDisplayOffset, { toValue: 0, duration: stageDisplayFadeDuration }).start();
+        Animated.timing(this.state.stageDisplayOffset, { toValue: 0, duration: stageDisplayFadeDuration, easing: stageDisplayFadeEasing }).start();
         setTimeout(()=>this.setState({ stageDisplayOn: false, stageResult: null }), stageDisplayFadeDuration);
     }
 
@@ -63,13 +66,13 @@ class StageSelectUI extends Component {
     });
 
     render() {
-        const { offset, contentWidth, contentHeight, stageWidth, stageHeight } = this.props;
+        const { offset, width, height } = this.props;
         return (
             <Fragment>
                 {this.renderStageButtons()}
                 <AnimatedFlatButton
                     x={100}
-                    y={offset.interpolate({ inputRange: [0, 1], outputRange: [stageHeight, stageHeight - 86] })}
+                    y={offset.interpolate({ inputRange: [0, 1], outputRange: [height + this.props.contentY, height + this.props.contentY - 86] })}
                     alpha={offset}
                     width={180}
                     height={36}
@@ -77,10 +80,8 @@ class StageSelectUI extends Component {
                     onClick={this.props.onBackButtonClick} />
 
                 {this.state.stageDisplayOn && <AnimatedStageDisplay
-                    stageWidth={stageWidth}
-                    stageHeight={stageHeight}
-                    contentWidth={contentWidth}
-                    contentHeight={contentHeight}
+                    width={width}
+                    height={height}
                     offset={this.state.stageDisplayOffset}
                     stageResult={this.state.stageResult}
                     onFinish={this.dismissStageDisplay} />}
@@ -95,6 +96,7 @@ export default connect(
         TGV: state.web3Module.TGV,
         gameData: state.gameModule.gameData,
         userData: state.userModule.userData,
+        contentY: state.canvasModule.contentY,
     }),
     dispatch => ({
         UserActions: bindActionCreators(userActions, dispatch),

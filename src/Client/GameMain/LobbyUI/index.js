@@ -1,29 +1,20 @@
 import React, { Component, Fragment } from 'react';
-import FlatButton from 'Client/Components/FlatButton';
 import Animated from 'animated';
 import ProfileContainer from './ProfileContainer';
+import { connect } from 'react-redux';
 
-const AnimatedFlatButton = Animated.createAnimatedComponent(FlatButton);
 const AnimatedProfileContainer = Animated.createAnimatedComponent(ProfileContainer);
 
 class LobbyUI extends Component {
 
     render() {
-        const { offset, stageWidth, contentWidth } = this.props;
-        const profileContainerSize = { w: contentWidth/6, h: contentWidth/20 }
+        const { offset, width } = this.props;
+        const profileContainerSize = { w: width/6, h: width/20 }
         return (
             <Fragment>
-                <AnimatedFlatButton
-                    x={stageWidth-200}
-                    y={offset.interpolate({ inputRange: [0, 1], outputRange: [-30, 50] })}
-                    alpha={1}
-                    width={100}
-                    height={30}
-                    text={'SETTING'}
-                    onClick={this.props.onSettingButtonClick} />
                 <AnimatedProfileContainer
-                    x={offset.interpolate({ inputRange: [0, 1], outputRange: [-profileContainerSize.w, 0] })}
-                    y={0}
+                    x={offset.interpolate({ inputRange: [0, 1], outputRange: [-this.props.contentX - profileContainerSize.w, -this.props.contentX] })}
+                    y={-this.props.contentY}
                     width={profileContainerSize.w}
                     height={profileContainerSize.h} />
             </Fragment>
@@ -31,4 +22,9 @@ class LobbyUI extends Component {
     }
 }
 
-export default LobbyUI;
+export default connect(
+    state => ({
+        contentX: state.canvasModule.contentX,
+        contentY: state.canvasModule.contentY,
+    })
+)(LobbyUI);

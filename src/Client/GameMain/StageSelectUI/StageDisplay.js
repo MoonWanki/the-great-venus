@@ -1,13 +1,15 @@
 import React, { Component } from 'react';
 import { Container, Sprite } from 'react-pixi-fiber';
-import Box from 'Client/Components/Box';
 import PropTypes from 'prop-types';
 import Animated from 'animated';
-import StageField from './StageField';
+import Field from 'Client/Components/Field';
 import { connect } from 'react-redux';
+import Background from 'Client/Components/Background';
 import * as TGVApi from 'utils/TGVApi';
+import Easing from 'animated/lib/Easing';
 
-const loadingScreenFadeDuration = 800;
+const loadingScreenFadeDuration = 500;
+const loadingScreenFadeEasing = Easing.bezier(0, 0.8, 0.3, 1);
 
 const AnimatedSprite = Animated.createAnimatedComponent(Sprite);
 
@@ -15,6 +17,7 @@ class StageDisplay extends Component {
 
     state = {
         loadingScreenOffset: new Animated.Value(1),
+        fieldBGOffset: new Animated.Value(0),
         stageFieldOn: false,
         currentRound: 1,
         userLevel: this.props.userData.level,
@@ -29,7 +32,7 @@ class StageDisplay extends Component {
     }
 
     showStageField = async () => {
-        const initialStatues = await Promise.all(this.props.stageResult.statueNoList.map(statueNo => TGVApi.getStatueRawSpec(this.props.TGV, statueNo, this.state.userLevel)));
+        const initialStatues = await Promise.all(this.props.stageResult.statueNoList.map(statueNo => TGVApi.getStatueSpec(this.props.TGV, this.state.userLevel, statueNo, this.props.userData)));
         const initialMobs = await Promise.all(this.props.stageResult.mobNoList[this.state.currentRound - 1].map(mobNo => TGVApi.getMobRawSpec(this.props.TGV, mobNo, this.state.userLevel)));
         await this.sleep(1000);
         this.setState({
@@ -37,12 +40,12 @@ class StageDisplay extends Component {
             initialMobs: initialMobs,
             stageFieldOn: true,
         });
-        Animated.timing(this.state.loadingScreenOffset, { toValue: 0, duration: loadingScreenFadeDuration }).start();
+        Animated.timing(this.state.loadingScreenOffset, { toValue: 0, duration: loadingScreenFadeDuration, easing: loadingScreenFadeEasing }).start();
     }
 
     onFinishRound = () => {
         if(this.state.currentRound < this.props.stageResult.roundResultList.length) {
-            Animated.timing(this.state.loadingScreenOffset, { toValue: 1, duration: loadingScreenFadeDuration }).start();
+            Animated.timing(this.state.loadingScreenOffset, { toValue: 1, duration: loadingScreenFadeDuration, easing: loadingScreenFadeEasing }).start();
             setTimeout(() => {
                 this.setState({ stageFieldOn: false, initialStatues: null, initialMobs: null, currentRound: this.state.currentRound + 1 });
                 this.showStageField();
@@ -53,24 +56,29 @@ class StageDisplay extends Component {
     }
 
     render() {
-        const { stageWidth, stageHeight, contentWidth, contentHeight } = this.props;
+        const { width, height } = this.props;
         return (
             <Container alpha={this.props.offset}>
-                {this.state.stageFieldOn && <StageField
-                    stageWidth={stageWidth}
-                    stageHeight={stageHeight}
-                    contentWidth={contentWidth}
-                    contentHeight={contentHeight}
+                <Background
+                    theme={`stage_field1_1`}
+                    width={this.state.fieldBGOffset}
+                    height={height}
+                    offsetX={0}
+                    offsetY={0} />
+                {this.state.stageFieldOn && <Field
+                    width={width}
+                    height={height}
                     stageNo={this.props.stageResult.stageNo}
+                    roundNo={this.state.currentRound}
                     roundResult={this.props.stageResult.roundResultList[this.state.currentRound - 1]}
                     initialStatues={this.state.initialStatues}
                     initialMobs={this.state.initialMobs}
                     onFinish={this.onFinishRound} />}
-            <AnimatedSprite
-                width={contentWidth}
-                height={contentWidth*9/16}
-                alpha={this.state.loadingScreenOffset}
-                texture={this.context.app.loader.resources.stage_field_loading_screen.texture} />
+                <AnimatedSprite
+                    width={width}
+                    height={height}
+                    alpha={this.state.loadingScreenOffset}
+                    texture={this.context.app.loader.resources.stage_field_loading_screen.texture} />
             </Container>
         );
     }

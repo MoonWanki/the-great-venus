@@ -16,6 +16,7 @@ import { Sprite } from 'react-pixi-fiber';
 import { bindActionCreators } from 'redux';
 import * as userActions from 'store/modules/userModule';
 import * as appActions from 'store/modules/appModule';
+import FlatButton from 'Client/Components/FlatButton';
 
 const slideDuration = 1500;
 const skySlideDuration = 15000;
@@ -27,7 +28,7 @@ const UIFadeEasing = Easing.bezier(0, 0.8, 0.3, 1);
 
 const AnimatedSprite = Animated.createAnimatedComponent(Sprite);
 
-class Lobby extends Component {
+class GameMain extends Component {
 
     state = {
         skyOffset: new Animated.Value(0),
@@ -54,6 +55,7 @@ class Lobby extends Component {
     }
 
     componentDidMount() {
+        alert('오픈 베타 버전입니다!\n캐릭터 육성 및 컨텐츠 구매 등의 기능들을 테스트 가능하며, 이를 위한 임시 GUI 환경으로 제공되오니 양해바랍니다.');
         window.onkeydown = this.onKeydownOnIntro;
         setTimeout(this.showNextIntroCredit, 1000);
         this.slideSkyBG({ toValue: -1, duration: skySlideDuration, easing: skySlideEasing });
@@ -107,15 +109,13 @@ class Lobby extends Component {
 
     onFinishSignup = async () => {
         this.turnOffInnerUI(this.state.signUpUIOffset);
-        this.props.AppActions.setPreloader(true);
-        await this.props.UserActions.fetchUserData(this.props.TGV, this.props.web3.eth.coinbase);
-        this.props.AppActions.setPreloader(false);
         this.slideSkyBG({ toValue: -1, duration: slideDuration, easing: slideEasing });
         this.slideHomeBG({ toValue: -1, duration: slideDuration, easing: slideEasing });
         this.turnOnLobbyUI();
         this.slideShowroomBG({ toValue: 0, duration: slideDuration, easing: slideEasing });
         setTimeout(() => this.turnOnInnerUI(this.state.showroomUIOffset, 'showroom'), slideDuration - 400);
     }
+
 
     goToShowroom = () => {
         switch(this.state.currentUI) {
@@ -303,15 +303,21 @@ class Lobby extends Component {
                     click={this.showNextIntroCredit}
                     texture={this.state.introCreditTexture.texture}
                     alpha={this.state.introCreditOffset}
-                    x={this.props.stageWidth/2}
-                    y={this.props.stageHeight/2}
+                    x={this.props.width/2}
+                    y={this.props.height/2}
                     anchor={[0.5, 0.5]} />
                 }
                 {this.renderInnerUI()}
                 <LobbyUI
                     offset={this.state.lobbyUIOffset}
-                    onSettingButtonClick={this.turnOnSettingUI}
                     {...this.props} />
+                <FlatButton
+                    x={this.props.width + this.props.contentX - 120}
+                    y={-this.props.contentY + 20}
+                    width={100}
+                    height={30}
+                    text={'SETTING'}
+                    onClick={this.turnOnSettingUI} />
                 {this.state.settingUIOn && <SettingUI
                     offset={this.state.settingUIOffset}
                     onDismiss={this.turnOffSettingUI}
@@ -322,17 +328,20 @@ class Lobby extends Component {
     }
 }
 
-Lobby.contextTypes = {
+GameMain.contextTypes = {
     app: PropTypes.object,
 };
+
 export default connect(
     state => ({
         userData: state.userModule.userData,
         web3: state.web3Module.web3,
         TGV: state.web3Module.TGV,
+        contentX: state.canvasModule.contentX,
+        contentY: state.canvasModule.contentY,
     }),
     dispatch => ({
         UserActions: bindActionCreators(userActions, dispatch),
         AppActions: bindActionCreators(appActions, dispatch),
     }),
-)(Lobby);
+)(GameMain);

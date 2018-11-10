@@ -20,33 +20,40 @@ class IntroScreen extends Component {
 
     getMessage = () => {
         return this.props.isWeb3Pending ?
-            <Text text={'메타마스크와 연결 중입니다.'} style={{ fill: 0xffffff, fontSize: 20 }} /> :
+            this.getLoadingMessage('메타마스크와 연결 중입니다.') :
             this.props.isWeb3Error ?
-            <Modal text='메타마스크가 필요합니다!' width={500} height={300} buttonText={'다시 로드'} offset={new Animated.Value(1)} {...this.props} onDismiss={this.props.onReload} /> :
+            <Modal text='메타마스크가 필요합니다!' width={500} height={300} buttonText={'다시 로드'} offset={new Animated.Value(1)} onDismiss={this.props.onReload} /> :
             this.props.isTGVPending ?
-            <Text text={'컨트랙트 정보를 불러오고 있습니다.'} style={{ fill: 0xffffff, fontSize: 20 }} /> :
+            this.getLoadingMessage('컨트랙트 정보를 불러오고 있습니다.') :
             this.props.isTGVError ?
-            <Modal text='네트워크를 확인해주세요.' width={500} height={300} buttonText={'다시 로드'} offset={new Animated.Value(1)} {...this.props} onDismiss={this.props.onReload} /> :
+            <Modal text={'Ropsten 테스트넷으로 접속해주세요!\n\n메타마스크에서 네트워크를 선택할 수 있습니다.'} width={500} height={300} buttonText={'다시 로드'} offset={new Animated.Value(1)} onDismiss={this.props.onReload} /> :
             this.props.isGamePending ?
-            <Text text={'게임 정보를 불러오고 있습니다.'} style={{ fill: 0xffffff, fontSize: 20 }} /> :
+            this.getLoadingMessage('게임 정보를 불러오고 있습니다.') :
             !this.props.isGameLoaded ?
-            <Modal text='네트워크를 확인해주세요.' width={500} height={300} buttonText={'다시 로드'} offset={new Animated.Value(1)} {...this.props} onDismiss={this.props.onReload} /> :
+            <Modal text={'Ropsten 테스트넷으로 접속해주세요!\n\n메타마스크에서 네트워크를 선택할 수 있습니다.'} width={500} height={300} buttonText={'다시 로드'} offset={new Animated.Value(1)} onDismiss={this.props.onReload} /> :
             this.props.isUserPending ?
-            <Text text={'유저 정보를 불러오고 있습니다.'} style={{ fill: 0xffffff, fontSize: 20 }} /> :
+            this.getLoadingMessage('유저 정보를 불러오고 있습니다.') :
             !this.props.isUserLoaded ?
-            <Modal text='메타마스크에 로그인해주세요!' width={500} height={300} buttonText={'다시 로드'} offset={new Animated.Value(1)} {...this.props} onDismiss={this.props.onReload} /> :
+            <Modal text='메타마스크에 로그인해주세요!' width={500} height={300} buttonText={'다시 로드'} offset={new Animated.Value(1)} onDismiss={this.props.onReload} /> :
             this.props.loadingProgress < 100 ?
-            <Text text={`리소스를 불러오고 있습니다...${this.props.loadingProgress}%\n${this.props.loadingContent}`} style={{ fill: 0xffffff, fontSize: 20 }} /> :
-            <Text text={'로딩을 완료하였습니다!'} style={{ fill: 0xffffff, fontSize: 20 }} />
+            this.getLoadingMessage(`리소스를 불러오고 있습니다...${this.props.loadingProgress}%`) :
+            this.getLoadingMessage('로딩을 완료하였습니다!')
     }
+
+    getLoadingMessage = text => <Text
+        anchor={[0.5, 0.5]}
+        text={text}
+        x={this.props.width/2}
+        y={this.props.height/2 + 60}
+        style={{ fill: 0xffffff, fontSize: 16, align: 'center' }} />
 
     render() {
         return (
             <AnimatedContainer
                 alpha={this.props.offset}
-                width={this.props.contentWidth}
-                height={this.props.contentHeight}>
-                <Sprite x={0} y={0} width={this.props.contentWidth} height={this.props.contentWidth*9/16} alpha={1} texture={PIXI.Texture.fromImage(require('images/intro.jpg'))} />
+                width={this.props.width}
+                height={this.props.height}>
+                <Sprite width={this.props.width} height={this.props.height} texture={PIXI.Texture.fromImage(require('images/intro.jpg'))} />
                 {this.getMessage()}
             </AnimatedContainer>
         )

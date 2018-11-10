@@ -3,7 +3,7 @@ import { connect } from 'react-redux';
 import { bindActionCreators } from 'redux';
 import * as appActions from 'store/modules/appModule';
 import * as userActions from 'store/modules/userModule';
-import Animated from 'animated';
+import * as canvasActions from 'store/modules/canvasModule';
 import GameBase from './GameBase';
 import { Input, Preloader } from 'react-materialize';
 import { Stage } from 'react-pixi-fiber';
@@ -16,38 +16,29 @@ class Client extends Component {
         isGameReady: false,
         stageWidth: 0,
         stageHeight: 0,
-        contentWidth: screen.width,
-        contentHeight: screen.height,
-        floatingFormPosition: new Animated.Value(0),
-        nicknameFormModalOn: true,
-        nicknameForm: '',
     }
 
     componentDidMount() {
         this.setToFullSize();
-        window.onresize = () => this.setToFullSize();
-        window.onpopstate = () => {
-            window.location.reload();
-        };
+        window.onresize = this.setToFullSize;
     }
 
     setToFullSize = () => {
+        const stageWidth = window.innerWidth;
+        const stageHeight = window.innerHeight - 6;
         this.setState({
-            stageWidth: window.innerWidth,
-            stageHeight: window.innerHeight - 6
+            stageWidth: stageWidth,
+            stageHeight: stageHeight,
         });
-    }
-
-    onCreateNicknameBtnClick = () => {
-        if(this.state.NicknameForm.length > 0) {
-            this.setState({ nicknameFormModalOn: false });
-            
-        }
+        this.props.CanvasActions.setContentPosition({
+            stageWidth: stageWidth,
+            stageHeight: stageHeight,
+        })
     }
 
     render() {
 
-        const { stageWidth, stageHeight, contentWidth, contentHeight } = this.state;
+        const { stageWidth, stageHeight } = this.state;
         return (
             <div className='client-wrapper'>
                 <Helmet>
@@ -56,14 +47,14 @@ class Client extends Component {
                 </Helmet>
                 <Stage options={{ backgroundColor: 0x0 }} width={stageWidth} height={stageHeight}>
                     <GameBase
-                        stageWidth={stageWidth}
-                        stageHeight={stageHeight}
-                        contentWidth={contentWidth}
-                        contentHeight={contentHeight} />
+                        x={this.props.contentX}
+                        y={this.props.contentY}
+                        width={this.props.contentWidth}
+                        height={this.props.contentHeight} />
                 </Stage>
 
                 {this.props.nicknameInputOn &&
-                <div className='floating-form' style={{ left: `${contentWidth/2}px`, top: `${contentHeight*4/7}px`}}>
+                <div className='floating-form' style={{ left: `${stageWidth/2}px`, top: `${stageHeight*4/7}px`}}>
                     <Input placeholder='이름이 무엇인가요?' onChange={(e, v) => this.props.AppActions.setNicknameInput(v)} />
                 </div>}
 
@@ -77,15 +68,20 @@ class Client extends Component {
 }
 
 export default connect(
-    (state) => ({
+    state => ({
         web3Instance: state.web3Module.web3Instance,
         nicknameInputOn: state.appModule.nicknameInputOn,
         isUserPending: state.userModule.isPending,
         isGamePending: state.gameModule.isPending,
         preloaderOn: state.appModule.preloaderOn,
+        contentX: state.canvasModule.contentX,
+        contentY: state.canvasModule.contentY,
+        contentWidth: state.canvasModule.contentWidth,
+        contentHeight: state.canvasModule.contentHeight,
     }),
-    (dispatch) => ({
+    dispatch => ({
         AppActions: bindActionCreators(appActions, dispatch),
         UserActions: bindActionCreators(userActions, dispatch),
+        CanvasActions: bindActionCreators(canvasActions, dispatch),
     }),
 )(Client);
