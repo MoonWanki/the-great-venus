@@ -3,13 +3,12 @@ import * as PIXI from "pixi.js";
 
 export default CustomPIXIComponent({
     customDisplayObject: () => new PIXI.Graphics(),
-    customApplyProps: (instance, oldProps, { color=0x0, x=0, y=0, width=100, height=100, alpha=1 }) => {
-        if (typeof oldProps !== "undefined") {
-            instance.clear();
-        }
-        instance.beginFill(color);
-        instance.drawRect(x, y, width, height);
+    customApplyProps: (instance, oldProps, newProps) => {
+        const { color, x, y, width, height, alpha } = newProps;
+        instance.clear();
+        instance.beginFill(color||0x0);
+        instance.drawRect(x||0, y||0, width||0, height||0);
         instance.endFill();
-        instance.alpha = alpha;
+        instance.alpha = alpha||1;
     },
 }, 'Box');

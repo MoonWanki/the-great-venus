@@ -21,7 +21,7 @@ class HomeUI extends Component {
                     y={0}
                     width={width}
                     height={height}
-                    alpha={offset.interpolate({ inputRange: [0, 1], outputRange: [0, 0.5] })} />
+                    alpha={offset.interpolate({ inputRange: [0, 1], outputRange: [0, 0.3] })} />
                 <MenuContainer
                     x={width/2 - menuContainerSize.w/2}
                     y={height/2 - menuContainerSize.h/2}

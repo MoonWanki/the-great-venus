@@ -273,12 +273,35 @@ export const getUserData = async (TGV, address) => {
 export const clearStage = async (TGV, stageNo, statueNoList, coinbase) => {
     const res = await TGV.clearStage(stageNo, statueNoList, { from: coinbase });
     console.log(res);
-    let roundList = [];
-    let attackList = [];
+    let roundResultList = [];
+    let ourUnits = [];
+    let enemyUnits = [];
+    let attackResultList = [];
     res.logs.forEach(({ event, args }) => {
         switch(event) {
+            case 'RoundUnitInfo':
+                if(args.isAlly) {
+                    ourUnits.push({
+                        no: args.no.c[0],
+                        hp: args.hp.c[0],
+                        atk: args.atk.c[0],
+                        def: args.def.c[0],
+                        crt: args.crt.c[0],
+                        avd: args.avd.c[0],
+                    });
+                } else {
+                    enemyUnits.push({
+                        no: args.no.c[0],
+                        hp: args.hp.c[0],
+                        atk: args.atk.c[0],
+                        def: args.def.c[0],
+                        crt: args.crt.c[0],
+                        avd: args.avd.c[0],
+                    });
+                }
+                break;
             case 'AttackResult':
-                attackList.push({
+                attackResultList.push({
                     way: args.way,
                     from: args.from.c[0],
                     to: args.to.c[0],
@@ -287,16 +310,68 @@ export const clearStage = async (TGV, stageNo, statueNoList, coinbase) => {
                 });
                 break;
             case 'RoundResult':
-                roundList.push({
+                roundResultList.push({
+                    ourUnits: ourUnits,
+                    enemyUnits: enemyUnits,
+                    attackResultList: attackResultList,
                     victory: args.victory,
                     exp: args.exp.c[0],
-                    gem: args.gem.c[0],
-                    attackList: attackList,
+                    soul: args.soul.c[0],
                 });
-                attackList = [];
+                ourUnits = [];
+                enemyUnits = [];
+                attackResultList = [];
                 break;
             default: break;
         }
     });
-    return roundList;
+    return roundResultList;
+};
+
+export const matchWithPlayer = async (TGV, oppanentAddr, coinbase) => {
+    const res = await TGV.clearStage(oppanentAddr, { from: coinbase });
+    console.log(res);
+    let ourUnits = [];
+    let enemyUnits = [];
+    let attackResultList = [];
+    res.logs.forEach(({ event, args }) => {
+        switch(event) {
+            case 'RoundUnitInfo':
+                if(args.isAlly) {
+                    ourUnits.push({
+                        hp: args.hp.c[0],
+                        atk: args.atk.c[0],
+                        def: args.def.c[0],
+                        crt: args.crt.c[0],
+                        avd: args.avd.c[0],
+                    });
+                } else {
+                    enemyUnits.push({
+                        hp: args.hp.c[0],
+                        atk: args.atk.c[0],
+                        def: args.def.c[0],
+                        crt: args.crt.c[0],
+                        avd: args.avd.c[0],
+                    });
+                }
+                break;
+            case 'AttackResult':
+                attackResultList.push({
+                    way: args.way,
+                    from: args.from.c[0],
+                    to: args.to.c[0],
+                    damage: args.damage.c[0],
+                    isCrt: args.isCrt,
+                });
+                break;
+            case 'RoundResult':
+                return {
+                    ourUnits: ourUnits,
+                    enemyUnits: enemyUnits,
+                    attackResultList: attackResultList,
+                    victory: args.victory,
+                };
+            default: break;
+        }
+    });
 };

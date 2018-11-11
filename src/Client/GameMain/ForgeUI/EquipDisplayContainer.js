@@ -1,14 +1,19 @@
 import React, { Component, Fragment } from 'react';
-import { Container } from 'react-pixi-fiber';
+import { Container, Text } from 'react-pixi-fiber';
 import Box from 'Client/Components/Box';
 import Statue from 'Client/Components/Statue';
 import FlatButton from 'Client/Components/FlatButton';
 import { connect } from 'react-redux';
 import { bindActionCreators } from 'redux';
 import * as userActions from 'store/modules/userModule';
+import * as gameActions from 'store/modules/gameModule';
 import * as appActions from 'store/modules/appModule';
 
 class EquipDisplayContainer extends Component {
+
+    state = {
+        isBlacksmithWorking: false,
+    }
 
     toFinney = (bigNumber) => bigNumber.c[0]/10;
 
@@ -170,6 +175,13 @@ class EquipDisplayContainer extends Component {
                     hpEquipLook={this.props.userData.statues[this.props.currentSelectedStatue].equip.hp.look}
                     atkEquipLook={this.props.userData.statues[this.props.currentSelectedStatue].equip.atk.look}
                     defEquipLook={this.props.userData.statues[this.props.currentSelectedStatue].equip.def.look} />
+                {this.props.isBlacksmithWorking && <Container
+                    width={width}
+                    height={height}
+                    interactive>
+                    <Box width={width} height={height} alpha={0.5} />
+                    <Text text={`조금만 기다려보게나! 뚝딱 만들어 주겠네.`} anchor={[0.5, 0.5]} x={width/2} y={height/2} style={{ fill: 0xffffff, fontSize: 16 }}/>
+                </Container>}
             </Container>
         );
     }
@@ -181,9 +193,11 @@ export default connect(
         TGV: state.web3Module.TGV,
         gameData: state.gameModule.gameData,
         userData: state.userModule.userData,
+        isBlacksmithWorking: state.gameModule.isBlacksmithWorking,
     }),
     dispatch => ({
         UserActions: bindActionCreators(userActions, dispatch),
+        GameActions: bindActionCreators(gameActions, dispatch),
         AppActions: bindActionCreators(appActions, dispatch),
     }),
 )(EquipDisplayContainer);

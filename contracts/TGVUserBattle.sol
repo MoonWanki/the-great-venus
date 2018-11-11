@@ -54,9 +54,11 @@ contract TGVUserBattle is TGVStageClear
         // enemyUnits[enemyUnits.length - 1] = _getComputedStatue(0, users[opponentAddr].level, statueEquipInfo[opponentAddr][0]);
         for(i = 0 ; i < ourUnits.length ; i++) {
             ourUnits[i] = _getComputedStatue(i, users[msg.sender].level, statueEquipInfo[msg.sender][i]);
+            emit RoundUnitInfo(true, i, ourUnits[i].hp, ourUnits[i].atk, ourUnits[i].def, ourUnits[i].crt, ourUnits[i].avd);
         }
         for(i = 0 ; i < enemyUnits.length ; i++) {
             enemyUnits[i] = _getComputedStatue(i, users[opponentAddr].level, statueEquipInfo[opponentAddr][i]);
+            emit RoundUnitInfo(false, i, enemyUnits[i].hp, enemyUnits[i].atk, enemyUnits[i].def, enemyUnits[i].crt, enemyUnits[i].avd);
         }
         (victory,) = _runBattle(ourUnits, enemyUnits, 0);
         if(victory) {

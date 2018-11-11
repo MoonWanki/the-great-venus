@@ -102,7 +102,6 @@ class SignUpUI extends Component {
                     y={this.state.lookSelectorOffset.interpolate({ inputRange: [0, 1], outputRange: [height*4/7, height*2/3] })}
                     no={0}
                     scale={1.4}
-                    skin={this.state.statueSkin}
                     eye={this.state.statueEye}
                     hair={this.state.statueHair} />
                 {!this.state.isCreatingUser && <AnimatedFlatButton

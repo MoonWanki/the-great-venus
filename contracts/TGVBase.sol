@@ -34,7 +34,7 @@ contract TGVBase {
         _;
     }
 
-    function selfDestruct() public payable onlyOwner {
+    function kill() public payable onlyOwner {
         selfdestruct(owner);
     }
 

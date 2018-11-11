@@ -55,7 +55,7 @@ class GameMain extends Component {
     }
 
     componentDidMount() {
-        alert('오픈 베타 버전입니다!\n캐릭터 육성 및 컨텐츠 구매 등의 기능들을 테스트 가능하며, 이를 위한 임시 GUI 환경으로 제공되오니 양해바랍니다.');
+        alert('오픈 베타 버전입니다!\n기본적인 컨텐츠 이용 테스트가 가능하며, 이를 위해 임시 GUI 환경으로 제공되는 점 양해바랍니다.');
         window.onkeydown = this.onKeydownOnIntro;
         setTimeout(this.showNextIntroCredit, 1000);
         this.slideSkyBG({ toValue: -1, duration: skySlideDuration, easing: skySlideEasing });
@@ -314,9 +314,9 @@ class GameMain extends Component {
                 <FlatButton
                     x={this.props.width + this.props.contentX - 120}
                     y={-this.props.contentY + 20}
-                    width={100}
+                    width={80}
                     height={30}
-                    text={'SETTING'}
+                    text={'설정'}
                     onClick={this.turnOnSettingUI} />
                 {this.state.settingUIOn && <SettingUI
                     offset={this.state.settingUIOffset}

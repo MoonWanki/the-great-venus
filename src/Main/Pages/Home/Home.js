@@ -74,7 +74,7 @@ class Home extends Component {
 
 
     onStartButtonClick = () => {
-        if(!this.props.web3) {
+        if(!window.web3) {
             if(typeof InstallTrigger !== 'undefined' || (!!window.chrome && !!window.chrome.webstore)) { // if cannot find metamask
                 this.setState({ openNoMetamaskModal: true });
             } else { // if neither chrome or firefox

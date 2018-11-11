@@ -5,75 +5,130 @@ import Animated from 'animated';
 import Field from 'Client/Components/Field';
 import { connect } from 'react-redux';
 import Background from 'Client/Components/Background';
-import * as TGVApi from 'utils/TGVApi';
 import Easing from 'animated/lib/Easing';
+import Modal from 'Client/Components/Modal';
+import * as userActions from 'store/modules/userModule';
+import { bindActionCreators } from 'redux';
 
-const loadingScreenFadeDuration = 500;
-const loadingScreenFadeEasing = Easing.bezier(0, 0.8, 0.3, 1);
+const loadingScreenFadeDuration = 1000;
+const fieldBGSlideDuration = 1500;
+const fieldBGSlideEasing = Easing.bezier(0.6, 0, 0.2, 1);
+const fieldFadeDuration = 200;
 
 const AnimatedSprite = Animated.createAnimatedComponent(Sprite);
+const AnimatedField = Animated.createAnimatedComponent(Field);
 
 class StageDisplay extends Component {
 
     state = {
         loadingScreenOffset: new Animated.Value(1),
-        fieldBGOffset: new Animated.Value(0),
-        stageFieldOn: false,
-        currentRound: 1,
+        fieldBGOn: false,
+        fieldBGOffset: [new Animated.Value(0), new Animated.Value(1)],
+        fieldOffset: new Animated.Value(0),
+        fieldOn: false,
+        currentRound: 0,
         userLevel: this.props.userData.level,
         userSoul: this.props.userData.soul,
         userExp: this.props.userData.exp,
+        roundResultModalOn: false,
+        stageResultModalOn: false,
     }
 
     sleep = ms => new Promise(resolve => setTimeout(resolve, ms));
 
-    componentDidMount = () => {
-        this.showStageField();
+    componentDidMount = async () => {
+        this.toNextRound();
+        await this.sleep(1000);
+        this.setState({ fieldBGOn: true });
+        this.dismissLoadingScreen();
     }
 
-    showStageField = async () => {
-        const initialStatues = await Promise.all(this.props.stageResult.statueNoList.map(statueNo => TGVApi.getStatueSpec(this.props.TGV, this.state.userLevel, statueNo, this.props.userData)));
-        const initialMobs = await Promise.all(this.props.stageResult.mobNoList[this.state.currentRound - 1].map(mobNo => TGVApi.getMobRawSpec(this.props.TGV, mobNo, this.state.userLevel)));
-        await this.sleep(1000);
-        this.setState({
-            initialStatues: initialStatues,
-            initialMobs: initialMobs,
-            stageFieldOn: true,
-        });
-        Animated.timing(this.state.loadingScreenOffset, { toValue: 0, duration: loadingScreenFadeDuration, easing: loadingScreenFadeEasing }).start();
+    slideFieldBG = async () => {
+        Animated.timing(this.state.fieldBGOffset[0], { toValue: -1, duration: fieldBGSlideDuration, easing: fieldBGSlideEasing }).start();
+        Animated.timing(this.state.fieldBGOffset[1], { toValue: 0, duration: fieldBGSlideDuration, easing: fieldBGSlideEasing }).start();
+        await this.sleep(fieldBGSlideDuration);
+        this.setState({ fieldBGOffset: [new Animated.Value(0), new Animated.Value(1)] });
+    }
+
+    dismissLoadingScreen = () => {
+        Animated.timing(this.state.loadingScreenOffset, { toValue: 0, duration: loadingScreenFadeDuration }).start();
     }
 
     onFinishRound = () => {
+        this.setState({ roundResultModalOn: true });
+    }
+
+    toNextRound = async () => {
         if(this.state.currentRound < this.props.stageResult.roundResultList.length) {
-            Animated.timing(this.state.loadingScreenOffset, { toValue: 1, duration: loadingScreenFadeDuration, easing: loadingScreenFadeEasing }).start();
-            setTimeout(() => {
-                this.setState({ stageFieldOn: false, initialStatues: null, initialMobs: null, currentRound: this.state.currentRound + 1 });
-                this.showStageField();
-            }, loadingScreenFadeDuration);
+            const { soul, exp } = this.props.userData;
+            const roundExp = this.props.stageResult.roundResultList[this.state.currentRound - 1].exp;
+            const roundSoul = this.props.stageResult.roundResultList[this.state.currentRound - 1].soul;
+            this.props.UserActions.syncFetchUserData({ ...this.props.userData, exp: exp + roundExp, soul: soul + roundSoul });
+            this.turnFieldOff();
+            await this.sleep(fieldFadeDuration);
+            this.slideFieldBG();
+            this.setState({ currentRound: this.state.currentRound + 1 });
+            await this.sleep(fieldBGSlideDuration);
+            this.turnFieldOn();
         } else {
-            this.props.onFinish();
+            this.setState({ stageResultModalOn: true });
         }
+    }
+
+    turnFieldOn = () => {
+        this.setState({ fieldOn: true });
+        Animated.timing(this.state.fieldOffset, { toValue: 1, duration: fieldFadeDuration }).start();
+    }
+
+    turnFieldOff = async () => {
+        Animated.timing(this.state.fieldOffset, { toValue: 0, duration: fieldFadeDuration }).start();
+        await this.sleep(fieldFadeDuration);
+        this.setState({ fieldOn: false });
     }
 
     render() {
         const { width, height } = this.props;
+        const roundResult = this.props.stageResult.roundResultList[this.state.currentRound - 1];
         return (
-            <Container alpha={this.props.offset}>
-                <Background
+            <Container alpha={this.props.offset} width={width} height={height}>
+                {this.state.fieldBGOn && <Background
                     theme={`stage_field1_1`}
-                    width={this.state.fieldBGOffset}
-                    height={height}
-                    offsetX={0}
-                    offsetY={0} />
-                {this.state.stageFieldOn && <Field
                     width={width}
                     height={height}
-                    stageNo={this.props.stageResult.stageNo}
-                    roundNo={this.state.currentRound}
-                    roundResult={this.props.stageResult.roundResultList[this.state.currentRound - 1]}
-                    initialStatues={this.state.initialStatues}
-                    initialMobs={this.state.initialMobs}
+                    offsetX={this.state.fieldBGOffset[0]}
+                    offsetY={0} />}
+                {this.state.fieldBGOn && <Background
+                    theme={`stage_field1_1`}
+                    width={width}
+                    height={height}
+                    offsetX={this.state.fieldBGOffset[1]}
+                    offsetY={0} />}
+                {this.state.fieldOn && <AnimatedField
+                    width={width}
+                    height={height}
+                    offset={this.state.fieldOffset}
+                    data={roundResult}
                     onFinish={this.onFinishRound} />}
+                {this.state.roundResultModalOn && <Modal
+                    text={`${this.state.currentRound}라운드 클리어!\n\n영혼의 결정 ${roundResult.soul}개를 얻었습니다.\n경험치를 ${roundResult.exp} 얻었습니다.`}
+                    width={500}
+                    height={300}
+                    buttonText={'다음'}
+                    offset={1}
+                    onDismiss={() => {
+                        this.setState({ roundResultModalOn: false });
+                        this.toNextRound();
+                    }} />}
+                {this.state.stageResultModalOn && <Modal
+                    text={`${this.props.stageResult.stageNo} 스테이지 클리어!`}
+                    width={500}
+                    height={300}
+                    buttonText={'확인'}
+                    offset={1}
+                    onDismiss={() => {
+                        this.setState({ stageResultModalOn: false });
+                        this.props.onFinish();
+                    }} />}
                 <AnimatedSprite
                     width={width}
                     height={height}
@@ -93,4 +148,7 @@ export default connect(
         TGV: state.web3Module.TGV,
         userData: state.userModule.userData,
     }),
+    dispatch => ({
+        UserActions: bindActionCreators(userActions, dispatch),
+    })
 )(StageDisplay);

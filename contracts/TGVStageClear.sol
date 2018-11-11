@@ -12,8 +12,9 @@ contract TGVStageClear is TGVItemShop
     uint public damageDivFactor = 100;
     uint public damageFlexibler = 7;
 
+    event RoundUnitInfo(bool isAlly, uint no, uint hp, uint atk, uint def, uint crt, uint avd);
     event AttackResult(bool way, uint from, uint to, uint damage, bool isCrt);
-    event RoundResult(bool victory, uint exp, uint gem);
+    event RoundResult(bool victory, uint exp, uint soul);
     
     function clearStage(uint stageNo, uint[] statueNoList) external onlyValidStageNo(stageNo) {
         require(users[msg.sender].lastStage + 1 >= stageNo);
@@ -28,11 +29,22 @@ contract TGVStageClear is TGVItemShop
             roundExp = 0;
             if(stageInfoList[stageNo][roundNo].length == 0) break;
             Unit[] memory enemyUnits = new Unit[](stageInfoList[stageNo][roundNo].length);
-            for(i = 0 ; i < ourUnits.length ; i++)
+            for(i = 0 ; i < ourUnits.length ; i++) {
                 ourUnits[i] = _getComputedStatue(statueNoList[i], users[msg.sender].level, statueEquipInfo[msg.sender][statueNoList[i]]);
+                emit RoundUnitInfo(true, statueNoList[i], ourUnits[i].hp, ourUnits[i].atk, ourUnits[i].def, ourUnits[i].crt, ourUnits[i].avd);
+            }
             for(i = 0 ; i < enemyUnits.length ; i++) {
                 enemyUnits[i] = _getComputedMob(stageInfoList[stageNo][roundNo][i], 1);
                 roundExp += expSpoiledByMob[stageInfoList[stageNo][roundNo][i]];
+                emit RoundUnitInfo(
+                    false,
+                    stageInfoList[stageNo][roundNo][i],
+                    enemyUnits[i].hp,
+                    enemyUnits[i].atk,
+                    enemyUnits[i].def,
+                    enemyUnits[i].crt,
+                    enemyUnits[i].avd
+                );
             }
             (victory, randNonce) = _runBattle(ourUnits, enemyUnits, randNonce);
             if(victory) {
@@ -64,13 +76,17 @@ contract TGVStageClear is TGVItemShop
             for(i = 0 ; i < upperBound ; i++) {
                 if(i < ourUnits.length && ourUnits[i].hp > 0) {
                     targetIdx = _selectTarget(i, enemyUnits);
-                    (damage, isCrt, enemyUnits[targetIdx], randNonce) = _attack(ourUnits[i], enemyUnits[targetIdx], randNonce);
-                    emit AttackResult(true, i, targetIdx, damage, isCrt);
+                    if(targetIdx!=404) {
+                        (damage, isCrt, enemyUnits[targetIdx], randNonce) = _attack(ourUnits[i], enemyUnits[targetIdx], randNonce);
+                        emit AttackResult(true, i, targetIdx, damage, isCrt);
+                    }
                 }
                 if(i < enemyUnits.length && enemyUnits[i].hp > 0) {
                     targetIdx = _selectTarget(i, ourUnits);
-                    (damage, isCrt, ourUnits[targetIdx], randNonce) = _attack(enemyUnits[i], ourUnits[targetIdx], randNonce);
-                    emit AttackResult(false, i, targetIdx, damage, isCrt);
+                    if(targetIdx!=404) {
+                        (damage, isCrt, ourUnits[targetIdx], randNonce) = _attack(enemyUnits[i], ourUnits[targetIdx], randNonce);
+                        emit AttackResult(false, i, targetIdx, damage, isCrt);
+                    }
                 }
             }
             if(_hasDefeated(ourUnits)) return (false, randNonce);
@@ -91,7 +107,10 @@ contract TGVStageClear is TGVItemShop
 
     function _selectTarget(uint myIdx, Unit[] memory opponentUnits) internal pure returns(uint) {
         if(myIdx >= opponentUnits.length || opponentUnits[myIdx].hp == 0) {
-            for(uint i = 0 ; i < opponentUnits.length ; i++) if(opponentUnits[i].hp > 0) return i;
+            for(uint i = 0 ; i < opponentUnits.length ; i++) {
+                if(opponentUnits[i].hp > 0) return i;
+            }
+            return 404;
         } else return myIdx;
     }
 

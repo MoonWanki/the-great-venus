@@ -29,10 +29,10 @@ class ForgeUI extends Component {
                     offset={offset}
                     currentSelectedStatue={this.props.currentSelectedStatue} />
                 <AnimatedFlatButton
-                    x={width + this.props.contentX - 200}
-                    y={offset.interpolate({ inputRange: [0, 1], outputRange: [height + this.props.contentY, height + this.props.contentY - 50] })}
+                    x={width + this.props.contentX - 260}
+                    y={offset.interpolate({ inputRange: [0, 1], outputRange: [height + this.props.contentY, height + this.props.contentY - 80] })}
                     alpha={offset}
-                    width={180}
+                    width={160}
                     height={36}
                     text={'DONE'}
                     onClick={this.props.onBackButtonClick} />
