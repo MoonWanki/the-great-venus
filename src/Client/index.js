@@ -54,7 +54,7 @@ class Client extends Component {
                 </Stage>
 
                 {this.props.nicknameInputOn &&
-                <div className='floating-form' style={{ left: `${stageWidth/2}px`, top: `${stageHeight*4/7}px`}}>
+                <div className='floating-form' style={{ left: '50%', top: '60%'}}>
                     <Input placeholder='이름이 무엇인가요?' onChange={(e, v) => this.props.AppActions.setNicknameInput(v)} />
                 </div>}
 

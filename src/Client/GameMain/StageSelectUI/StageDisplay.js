@@ -30,7 +30,8 @@ class StageDisplay extends Component {
         userLevel: this.props.userData.level,
         userSoul: this.props.userData.soul,
         userExp: this.props.userData.exp,
-        roundResultModalOn: false,
+        roundVictoryModalOn: false,
+        roundDefeatedModalOn: false,
         stageResultModalOn: false,
     }
 
@@ -55,15 +56,16 @@ class StageDisplay extends Component {
     }
 
     onFinishRound = () => {
-        this.setState({ roundResultModalOn: true });
+        if(this.props.stageResult.roundResultList[this.state.currentRound - 1].victory) {
+            this.applyRoundResult();
+            this.setState({ roundVictoryModalOn: true });
+        } else {
+            this.setState({ roundDefeatedModalOn: true });
+        }
     }
 
     toNextRound = async () => {
         if(this.state.currentRound < this.props.stageResult.roundResultList.length) {
-            const { soul, exp } = this.props.userData;
-            const roundExp = this.props.stageResult.roundResultList[this.state.currentRound - 1].exp;
-            const roundSoul = this.props.stageResult.roundResultList[this.state.currentRound - 1].soul;
-            this.props.UserActions.syncFetchUserData({ ...this.props.userData, exp: exp + roundExp, soul: soul + roundSoul });
             this.turnFieldOff();
             await this.sleep(fieldFadeDuration);
             this.slideFieldBG();
@@ -73,6 +75,13 @@ class StageDisplay extends Component {
         } else {
             this.setState({ stageResultModalOn: true });
         }
+    }
+
+    applyRoundResult = () => {
+        const { soul, exp } = this.props.userData;
+        const roundExp = this.props.stageResult.roundResultList[this.state.currentRound - 1].exp;
+        const roundSoul = this.props.stageResult.roundResultList[this.state.currentRound - 1].soul;
+        this.props.UserActions.syncFetchUserData({ ...this.props.userData, exp: exp + roundExp, soul: soul + roundSoul });
     }
 
     turnFieldOn = () => {
@@ -109,15 +118,25 @@ class StageDisplay extends Component {
                     offset={this.state.fieldOffset}
                     data={roundResult}
                     onFinish={this.onFinishRound} />}
-                {this.state.roundResultModalOn && <Modal
+                {this.state.roundVictoryModalOn && <Modal
                     text={`${this.state.currentRound}라운드 클리어!\n\n영혼의 결정 ${roundResult.soul}개를 얻었습니다.\n경험치를 ${roundResult.exp} 얻었습니다.`}
                     width={500}
                     height={300}
                     buttonText={'다음'}
                     offset={1}
                     onDismiss={() => {
-                        this.setState({ roundResultModalOn: false });
+                        this.setState({ roundVictoryModalOn: false });
                         this.toNextRound();
+                    }} />}
+                {this.state.roundDefeatedModalOn && <Modal
+                    text={`패배하였습니다.`}
+                    width={500}
+                    height={300}
+                    buttonText={'돌아가기'}
+                    offset={1}
+                    onDismiss={() => {
+                        this.setState({ roundDefeatedModalOn: false });
+                        this.props.onFinish();
                     }} />}
                 {this.state.stageResultModalOn && <Modal
                     text={`${this.props.stageResult.stageNo} 스테이지 클리어!`}

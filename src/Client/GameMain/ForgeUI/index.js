@@ -14,18 +14,18 @@ class ForgeUI extends Component {
         return (
             <Fragment>
                 <StatueSelector
-                    x={width/8}
-                    y={height/8}
-                    width={width/5}
-                    height={height*5/8}
+                    x={width*3/20}
+                    y={height*1/6}
+                    width={width*4/20}
+                    height={height*3/5}
                     offset={1}
                     currentSelectedStatue={this.props.currentSelectedStatue}
                     onClickStatue={this.props.onClickStatue} />
                 <EquipDisplayContainer
-                    x={width*2/5}
-                    y={height/8}
-                    width={width/2}
-                    height={height*5/8}
+                    x={width*8/20}
+                    y={height*1/6}
+                    width={width*9/20}
+                    height={height*3/5}
                     offset={offset}
                     currentSelectedStatue={this.props.currentSelectedStatue} />
                 <AnimatedFlatButton

@@ -22,7 +22,7 @@ export default class FlatButton extends Component {
                     anchor={[0.5, 0.5]}
                     position={[this.props.width/2, this.props.height/2]}
                     text={this.props.text}
-                    style={{ fill: 0xffffff, fontSize: 16 }} />
+                    style={{ fill: 0xffffff, fontSize: 16, align: 'center' }} />
             </Container>
         );
     }

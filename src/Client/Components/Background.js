@@ -83,15 +83,19 @@ class Background extends Component {
         x: 0
     }
     
-    componentDidMount() {
+    componentDidMount = () => {
         this.context.app.ticker.add(this.moving);
     }
 
-    moving = () => {
-        this.setState((state) => ({ x: state.x + 0.05 }))
+    componentWillUnmount = () => {
+        this.context.app.ticker.remove(this.moving);
     }
 
-    handleMouseMove = (event) => {
+    moving = () => {
+        this.setState(state => ({ x: state.x + 0.05 }))
+    }
+
+    handleMouseMove = event => {
         this.setState({ mousePosition: event.data.global });
     }
 

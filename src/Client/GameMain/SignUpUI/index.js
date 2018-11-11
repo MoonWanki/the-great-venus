@@ -8,8 +8,9 @@ import { connect } from 'react-redux';
 import { bindActionCreators } from 'redux';
 import * as userActions from 'store/modules/userModule';
 import * as appActions from 'store/modules/appModule';
-import { Container } from 'react-pixi-fiber';
+import { Container, Text } from 'react-pixi-fiber';
 import * as TGVApi from 'utils/TGVApi';
+import Box from 'Client/Components/Box';
 
 const AnimatedFlatButton = Animated.createAnimatedComponent(FlatButton);
 const AnimatedLookSelector = Animated.createAnimatedComponent(LookSelector);
@@ -29,6 +30,7 @@ class SignUpUI extends Component {
         statueEye: 0,
         statueHair: 0,
         isCreatingUser: false,
+        loadingMessage: '',
     }
 
     onLookChanged = (type, n) => {
@@ -63,13 +65,13 @@ class SignUpUI extends Component {
             return;
         }
         try {
-            this.setState({ isCreatingUser: true });
+            this.setState({ isCreatingUser: true, loadingMessage: '캐릭터를 생성 중입니다. 잠시만 기다려주세요.' });
             this.props.AppActions.closeNicknameInput();
             this.props.AppActions.setPreloader(true);
             await this.props.TGV.createUser(nicknameInputValue, [this.state.statueSkin, this.state.statueHair, this.state.statueEye], { from: this.props.web3.eth.coinbase });
-            let userData;
+            this.setState({ loadingMessage: '데이터 동기화 중입니다. 잠시만 기다려주세요.' });
             while(true) {
-                userData = await TGVApi.getUserData(this.props.TGV, this.props.web3.eth.coinbase);
+                const userData = await TGVApi.getUserData(this.props.TGV, this.props.web3.eth.coinbase);
                 if(userData.level > 0) {
                     this.props.UserActions.syncFetchUserData(userData);
                     break;
@@ -80,25 +82,24 @@ class SignUpUI extends Component {
             console.error(err);
             this.props.AppActions.openNicknameInput();
         } finally {
-            this.setState({ isCreatingUser: false });
+            this.setState({ isCreatingUser: false, loadingMessage: '' });
             this.props.AppActions.setPreloader(false);
         }
     }
     
     render() {
         const { offset, width, height } = this.props;
-        const boxSize = { w: width*2/5, h: height*3/5 };
         return (
             <AnimatedContainer width={width} height={height} alpha={offset}>
                 <AnimatedLookSelector
                     offset={this.state.lookSelectorOffset}
-                    x={this.state.lookSelectorOffset.interpolate({ inputRange: [0, 1], outputRange: [width, width/2] })}
-                    y={height/8}
-                    width={boxSize.w}
-                    height={boxSize.h}
+                    x={this.state.lookSelectorOffset.interpolate({ inputRange: [0, 1], outputRange: [width, width*9/20] })}
+                    y={height/4}
+                    width={width/3}
+                    height={height/2}
                     onChange={this.onLookChanged} />
                 <AnimatedStatue
-                    x={this.state.lookSelectorOffset.interpolate({ inputRange: [0, 1], outputRange: [width/2, width/4] })}
+                    x={this.state.lookSelectorOffset.interpolate({ inputRange: [0, 1], outputRange: [width/2, width/3] })}
                     y={this.state.lookSelectorOffset.interpolate({ inputRange: [0, 1], outputRange: [height*4/7, height*2/3] })}
                     no={0}
                     scale={1.4}
@@ -128,6 +129,15 @@ class SignUpUI extends Component {
                     height={70}
                     text={this.state.isCreatingUser ? 'PROCESSING...' : 'SIGN UP'}
                     onClick={this.state.isCreatingUser ? null : this.signUp} />
+                {this.state.isCreatingUser && <Container interactive>
+                    <Box width={width} height={height} alpha={0.5} />
+                    <Text
+                        anchor={[0.5, 0.5]}
+                        text={this.state.loadingMessage}
+                        x={width/2}
+                        y={height/2 + 60}
+                        style={{ fill: 0xffffff, fontSize: 16, align: 'center' }} />
+                </Container>}
             </AnimatedContainer>
         );
     }

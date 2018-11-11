@@ -8,55 +8,69 @@ import { bindActionCreators } from 'redux';
 import * as userActions from 'store/modules/userModule';
 import * as gameActions from 'store/modules/gameModule';
 import * as appActions from 'store/modules/appModule';
+import * as TGVApi from 'utils/TGVApi';
 
 class EquipDisplayContainer extends Component {
 
     state = {
-        isBlacksmithWorking: false,
+        blacksmithMessage: '',
     }
 
     toFinney = (bigNumber) => bigNumber.c[0]/10;
 
     buyEquip = async (statueNo, part, look) => {
         try {
+            this.setState({ blacksmithMessage: '조금만 기다려보게나! 뚝딱 만들어 주겠네.' });
+            this.props.GameActions.setBlacksmithWorking(true);
             let fee = await this.props.TGV.basicFee.call();
             fee = this.toFinney(fee);
-            window.Materialize.toast(fee + ' FINNEY를 지불합니다.', 2500);
             await this.props.TGV.buyEquip(statueNo, part, look, 0, {
                 from: this.props.web3.eth.coinbase,
                 value: this.props.web3.toWei(fee, 'finney')
             });
-            window.Materialize.toast("장비를 장착합니다.", 1500);
-            this.update();
+            this.setState({ blacksmithMessage: '다됐네! 이제 착용을 해보면 되겠군. 조금만 기다려보게.' });
+            while(true) {
+                const newUserData = await TGVApi.getUserData(this.props.TGV, this.props.web3.eth.coinbase);
+                if(JSON.stringify(newUserData.statues[statueNo].equip) !== JSON.stringify(this.props.userData.statues[statueNo].equip)) {
+                    this.props.UserActions.syncFetchUserData(newUserData);
+                    break;
+                }
+            }
         } catch(err) {
             console.error(err);
+        } finally {
+            this.props.GameActions.setBlacksmithWorking(false);
         }
     }
 
     upgradeEquip = async (statueNo, part, currentLevel) => {
+        let fee = await this.props.TGV.getUpgradeCost(statueNo, part, currentLevel);
+        const soul = fee[0].c[0];
+        fee = this.toFinney(fee[1]);
+        if(soul > this.props.userData.soul) {
+            window.Materialize.toast("영혼의 결정이 " + soul + "개 필요합니다.", 1500);
+            return;
+        }
         try {
-            let fee = await this.props.TGV.getUpgradeCost(statueNo, part, currentLevel);
-            const soul = fee[0].c[0];
-            fee = this.toFinney(fee[1]);
-            if(soul > this.props.userData.soul) {
-                window.Materialize.toast("영혼의 결정이 " + soul + "개 필요합니다.", 1500);
-                return;
-            }
-            window.Materialize.toast("영혼의 결정 " + soul + "개와 " + fee + ' FINNEY를 지불합니다.', 2500);
+            this.setState({ blacksmithMessage: '조금만 기다려보게나! 뚝딱 만들어 주겠네.' });
+            this.props.GameActions.setBlacksmithWorking(true);
             await this.props.TGV.upgradeEquip(statueNo, part, currentLevel, {
                 from: this.props.web3.eth.coinbase,
                 value: this.props.web3.toWei(fee, 'finney')
             });
-            window.Materialize.toast("장비를 강화합니다.", 1500);
-            this.update();
+            this.setState({ blacksmithMessage: '다됐네! 이제 착용을 해보면 되겠군. 조금만 기다려보게.' });
+            while(true) {
+                const newUserData = await TGVApi.getUserData(this.props.TGV, this.props.web3.eth.coinbase);
+                if(JSON.stringify(newUserData.statues[statueNo].equip) !== JSON.stringify(this.props.userData.statues[statueNo].equip)) {
+                    this.props.UserActions.syncFetchUserData(newUserData);
+                    break;
+                }
+            }
         } catch(err) {
             console.error(err);
+        } finally {
+            this.props.GameActions.setBlacksmithWorking(false);
         }
-    }
-
-    update = async () => {
-        await this.props.UserActions.fetchUserData(this.props.TGV, this.props.web3.eth.coinbase);
-        this.props.UserActions.fetchFinney(this.props.web3);
     }
 
     render() {
@@ -180,7 +194,7 @@ class EquipDisplayContainer extends Component {
                     height={height}
                     interactive>
                     <Box width={width} height={height} alpha={0.5} />
-                    <Text text={`조금만 기다려보게나! 뚝딱 만들어 주겠네.`} anchor={[0.5, 0.5]} x={width/2} y={height/2} style={{ fill: 0xffffff, fontSize: 16 }}/>
+                    <Text text={this.state.blacksmithMessage} anchor={[0.5, 0.5]} x={width/2} y={height/2} style={{ fill: 0xffffff, fontSize: 16 }}/>
                 </Container>}
             </Container>
         );

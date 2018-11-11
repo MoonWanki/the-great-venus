@@ -54,7 +54,8 @@ contract TGVStageClear is TGVItemShop
                 emit RoundResult(true, roundExp, enemyUnits.length);
             } else {
                 emit RoundResult(false, 0, 0);
-                break;
+                users[msg.sender].randNonce++;
+                return;
             }
             roundNo++;
         }

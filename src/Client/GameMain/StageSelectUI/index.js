@@ -78,7 +78,7 @@ class StageSelectUI extends Component {
         if(i <= this.props.userData.lastStage + 1)
             return <FlatButton key={i} x={200*i - this.props.contentX} y={400} width={100} height={100} text={i} onClick={() => this.clearStage(i, _.times(this.props.userData.numStatues))} />
         else
-            return <FlatButton key={i} x={200*i - this.props.contentX} y={400} width={100} height={100} text={i +' (LOCKED)'} />
+            return <FlatButton key={i} x={200*i - this.props.contentX} y={400} width={100} height={100} text={i +'\n(LOCKED)'} />
     });
 
     render() {
