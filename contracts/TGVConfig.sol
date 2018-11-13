@@ -8,12 +8,12 @@ contract TGVConfig is TGVUserBattle {
 
     constructor() public {
 
-        statueInfoList[0] = Unit(300, 120, 90, 10, 5, 200, 4, false);
-        statueInfoList[1] = Unit(280, 85, 76, 10, 5, 200, 4, false);
+        statueInfoList[0] = Unit(500, 150, 120, 10, 5);
+        statueInfoList[1] = Unit(320, 125, 80, 10, 5);
         maxStatue = 1;
 
-        mobInfoList[1] = Unit(100, 80, 80, 10, 5, 200, 4, false);
-        mobInfoList[2] = Unit(150, 65, 200, 10, 5, 200, 4, false);
+        mobInfoList[1] = Unit(120, 65, 90, 12, 7);
+        mobInfoList[2] = Unit(200, 45, 135, 8, 2);
         maxMob = 2;
 
         expSpoiledByMob[1] = 14;
@@ -26,7 +26,17 @@ contract TGVConfig is TGVUserBattle {
         stageInfoList[1][3].push(1);
         stageInfoList[1][3].push(1);
         stageInfoList[1][3].push(2);
-        maxStage = 1;
+        stageInfoList[2][1].push(1);
+        stageInfoList[2][1].push(1);
+        stageInfoList[2][1].push(1);
+        stageInfoList[2][2].push(1);
+        stageInfoList[2][2].push(1);
+        stageInfoList[2][2].push(1);
+        stageInfoList[2][3].push(1);
+        stageInfoList[2][3].push(1);
+        stageInfoList[2][3].push(1);
+        stageInfoList[2][3].push(2);
+        maxStage = 2;
         
         statueAcquisitionStage[1] = 2; // Haetae
     }
@@ -50,9 +60,6 @@ contract TGVConfig is TGVUserBattle {
         uint def,
         uint crt,
         uint avd,
-        uint skillFactor,
-        uint skillChargerSize,
-        bool skillMultiTargetable,
         uint acquisitionStage
     ) external onlyOwner onlyValidStatueNo(statueNo) {
         statueInfoList[statueNo].hp = hp;
@@ -60,9 +67,6 @@ contract TGVConfig is TGVUserBattle {
         statueInfoList[statueNo].def = def;
         statueInfoList[statueNo].crt = crt;
         statueInfoList[statueNo].avd = avd;
-        statueInfoList[statueNo].skillFactor = skillFactor;
-        statueInfoList[statueNo].skillChargerSize = skillChargerSize;
-        statueInfoList[statueNo].skillMultiTargetable = skillMultiTargetable;
         statueAcquisitionStage[statueNo] = acquisitionStage;
     }
     
@@ -73,9 +77,6 @@ contract TGVConfig is TGVUserBattle {
         uint def,
         uint crt,
         uint avd,
-        uint skillFactor,
-        uint skillChargerSize,
-        bool skillMultiTargetable,
         uint exp
     ) external onlyOwner onlyValidMobNo(mobNo) {
         mobInfoList[mobNo].hp = hp;
@@ -83,9 +84,6 @@ contract TGVConfig is TGVUserBattle {
         mobInfoList[mobNo].def = def;
         mobInfoList[mobNo].crt = crt;
         mobInfoList[mobNo].avd = avd;
-        mobInfoList[mobNo].skillFactor = skillFactor;
-        mobInfoList[mobNo].skillChargerSize = skillChargerSize;
-        mobInfoList[mobNo].skillMultiTargetable = skillMultiTargetable;
         expSpoiledByMob[mobNo] = exp;
     }
 

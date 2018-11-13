@@ -48,7 +48,7 @@ class BattleUnit extends Component {
                     atkEquipLook={this.props.atkEquipLook}
                     defEquipLook={this.props.defEquipLook} />
                 }
-                <PercentageBar color={0xFF0000} x={-60} y={-280} width={120} height={8} value={this.props.data.hp} maxValue={this.props.data.maxHp}/>
+                {this.props.data.hp > 0 && <PercentageBar color={0xFF0000} x={-60} y={-280} width={120} height={8} value={this.props.data.hp} maxValue={this.props.data.maxHp}/>}
             </Container>
         );
     }

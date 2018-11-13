@@ -9,11 +9,11 @@ class StatueSelector extends Component {
 
     renderThumbnails = () => _.times(this.props.gameData.maxStatue + 1, i => {
         if(i===0) {
-            return <FlatButton x={10} y={10} width={this.props.width/2 - 20} height={this.props.width/2 - 20} text={i} onClick={()=>this.props.onClickStatue(i)} />     
+            return <FlatButton key={i} x={10} y={10} width={this.props.width/2 - 20} height={this.props.width/2 - 20} text={i} onClick={()=>this.props.onClickStatue(i)} />     
         } else if(i < this.props.userData.numStatues) {
-            return <FlatButton x={10 + (i%2 ? this.props.width/2 : 0)} y={10 + Math.floor(i/2)*this.props.width/2} width={this.props.width/2 - 20} height={this.props.width/2 - 20} text={i} onClick={()=>this.props.onClickStatue(i)} />     
+            return <FlatButton key={i} x={10 + (i%2 ? this.props.width/2 : 0)} y={10 + Math.floor(i/2)*this.props.width/2} width={this.props.width/2 - 20} height={this.props.width/2 - 20} text={i} onClick={()=>this.props.onClickStatue(i)} />     
         } else {
-            return <FlatButton x={10 + (i%2 ? this.props.width/2 : 0)} y={10 + Math.floor(i/2)*this.props.width/2} width={this.props.width/2 - 20} height={this.props.width/2 - 20} text={'?'} />
+            return <FlatButton key={i} x={10 + (i%2 ? this.props.width/2 : 0)} y={10 + Math.floor(i/2)*this.props.width/2} width={this.props.width/2 - 20} height={this.props.width/2 - 20} text={'?'} />
         }
     });
     

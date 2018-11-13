@@ -104,7 +104,7 @@ contract TGVBase {
         string name;
         uint32 rank;
         uint32 exp;
-        uint32 soul;
+        uint32 sorbiote;
         uint32 level;
         uint16 lastStage;
         uint8 numStatues;
@@ -130,8 +130,5 @@ contract TGVBase {
         uint def;
         uint crt;
         uint avd;
-        uint skillFactor;
-        uint skillChargerSize;
-        bool skillMultiTargetable;
     }
 }

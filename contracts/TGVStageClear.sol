@@ -14,7 +14,7 @@ contract TGVStageClear is TGVItemShop
 
     event RoundUnitInfo(bool isAlly, uint no, uint hp, uint atk, uint def, uint crt, uint avd);
     event AttackResult(bool way, uint from, uint to, uint damage, bool isCrt);
-    event RoundResult(bool victory, uint exp, uint soul);
+    event RoundResult(bool victory, uint exp, uint sorbiote);
     
     function clearStage(uint stageNo, uint[] statueNoList) external onlyValidStageNo(stageNo) {
         require(users[msg.sender].lastStage + 1 >= stageNo);
@@ -34,7 +34,7 @@ contract TGVStageClear is TGVItemShop
                 emit RoundUnitInfo(true, statueNoList[i], ourUnits[i].hp, ourUnits[i].atk, ourUnits[i].def, ourUnits[i].crt, ourUnits[i].avd);
             }
             for(i = 0 ; i < enemyUnits.length ; i++) {
-                enemyUnits[i] = _getComputedMob(stageInfoList[stageNo][roundNo][i], 1);
+                enemyUnits[i] = _getComputedMob(stageInfoList[stageNo][roundNo][i], stageNo);
                 roundExp += expSpoiledByMob[stageInfoList[stageNo][roundNo][i]];
                 emit RoundUnitInfo(
                     false,
@@ -50,7 +50,7 @@ contract TGVStageClear is TGVItemShop
             if(victory) {
                 users[msg.sender].exp = users[msg.sender].exp.add(uint32(roundExp));
                 if(users[msg.sender].exp >= getRequiredExp(users[msg.sender].level)) users[msg.sender].level = users[msg.sender].level.add(1);
-                users[msg.sender].soul = users[msg.sender].soul.add(uint32(enemyUnits.length));
+                users[msg.sender].sorbiote = users[msg.sender].sorbiote.add(uint32(enemyUnits.length));
                 emit RoundResult(true, roundExp, enemyUnits.length);
             } else {
                 emit RoundResult(false, 0, 0);
@@ -132,10 +132,7 @@ contract TGVStageClear is TGVItemShop
             rawAtk.add(getExtraValueByEquip(statueNo, 2, equipInfo.atkEquipLevel)),
             rawDef.add(getExtraValueByEquip(statueNo, 3, equipInfo.defEquipLevel)),
             rawCrt.add(getExtraValueByEquip(statueNo, 4, equipInfo.crtEquipLevel)),
-            rawAvd.add(getExtraValueByEquip(statueNo, 5, equipInfo.avdEquipLevel)),
-            statueInfoList[statueNo].skillFactor,
-            statueInfoList[statueNo].skillChargerSize,
-            statueInfoList[statueNo].skillMultiTargetable
+            rawAvd.add(getExtraValueByEquip(statueNo, 5, equipInfo.avdEquipLevel))
         );
     }
 
@@ -151,10 +148,7 @@ contract TGVStageClear is TGVItemShop
             rawAtk,
             rawDef,
             rawCrt,
-            rawAvd,
-            mobInfoList[mobNo].skillFactor,
-            mobInfoList[mobNo].skillChargerSize,
-            mobInfoList[mobNo].skillMultiTargetable
+            rawAvd
         );
     }
 }

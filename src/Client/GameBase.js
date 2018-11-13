@@ -5,6 +5,7 @@ import * as web3Actions from 'store/modules/web3Module';
 import * as userActions from 'store/modules/userModule';
 import * as gameActions from 'store/modules/gameModule';
 import * as appActions from 'store/modules/appModule';
+import * as forgeActions from 'store/modules/forgeModule';
 import IntroScreen from './IntroScreen';
 import GameMain from './GameMain';
 import Animated from 'animated';
@@ -29,7 +30,7 @@ class GameBase extends Component {
     load = async () => {
         this.props.AppActions.setPreloader(true);
         try {
-            await this.loadGame();
+            await this.initGame();
             this.loadResources();
         } catch (err) {
             console.error(err);
@@ -37,16 +38,30 @@ class GameBase extends Component {
         }
     }
 
-    loadGame = async() => {
-        let res = await this.props.Web3Actions.fetchWeb3();
-        const web3 = res.value;
+    initGame = async() => {
+        // load web3
+        const { value: web3 } = await this.props.Web3Actions.fetchWeb3();
         this.setState({ selectedAddress: web3.eth.coinbase, networkVersion: web3.version.network });
         web3.currentProvider.publicConfigStore.on('update', this.onPublicConfigUpdate);
         this.props.UserActions.fetchFinney(web3);
-        res = await this.props.Web3Actions.fetchTGV(web3);
-        const TGV = res.value;
-        await this.props.GameActions.fetchGameData(TGV);
+        // load TGV
+        const { value: TGV } = await this.props.Web3Actions.fetchTGV(web3);
+        this.setEventHandler(TGV);
+        // load game data
+        const { value: gameData } = await this.props.GameActions.fetchGameData(TGV);
+        this.props.ForgeActions.initForgeStatus(gameData.maxStatue + 1);
+        // load user data
         await this.props.UserActions.fetchUserData(TGV, web3.eth.coinbase);
+    }
+
+    setEventHandler = TGV => {
+        TGV.RoundResult({}, { fromBlock: 0, toBlock: 'latest' }, (err, log) => {
+            if(!err) {
+                console.log(log);
+            } else {
+                console.error(err);
+            }
+        });
     }
     
     onPublicConfigUpdate = async ({ selectedAddress, networkVersion }) => {
@@ -101,6 +116,56 @@ class GameBase extends Component {
         .add("statue0_equip_def1", require("../images/statue/0/equip/def/chain.svg"))
         .add("statue0_equip_def2", require("../images/statue/0/equip/def/heart.svg"))
         .add("statue0_equip_def3", require("../images/statue/0/equip/def/moon.svg"))
+        .add("statue1_body", require("../images/statue/0/body.svg"))
+        .add("statue1_equip_hp1", require("../images/statue/0/equip/hp/fedora.svg"))
+        .add("statue1_equip_hp2", require("../images/statue/0/equip/hp/ribbon.svg"))
+        .add("statue1_equip_hp3", require("../images/statue/0/equip/hp/snapback.svg"))
+        .add("statue1_equip_atk1", require("../images/statue/0/equip/atk/emerald.svg"))
+        .add("statue1_equip_atk2", require("../images/statue/0/equip/atk/ruby.svg"))
+        .add("statue1_equip_atk3", require("../images/statue/0/equip/atk/sapphire.svg"))
+        .add("statue1_equip_def1", require("../images/statue/0/equip/def/chain.svg"))
+        .add("statue1_equip_def2", require("../images/statue/0/equip/def/heart.svg"))
+        .add("statue1_equip_def3", require("../images/statue/0/equip/def/moon.svg"))
+        .add("statue2_body", require("../images/statue/2/body.svg"))
+        .add("statue2_equip_hp1", require("../images/statue/0/equip/hp/fedora.svg"))
+        .add("statue2_equip_hp2", require("../images/statue/0/equip/hp/ribbon.svg"))
+        .add("statue2_equip_hp3", require("../images/statue/0/equip/hp/snapback.svg"))
+        .add("statue2_equip_atk1", require("../images/statue/0/equip/atk/emerald.svg"))
+        .add("statue2_equip_atk2", require("../images/statue/0/equip/atk/ruby.svg"))
+        .add("statue2_equip_atk3", require("../images/statue/0/equip/atk/sapphire.svg"))
+        .add("statue2_equip_def1", require("../images/statue/0/equip/def/chain.svg"))
+        .add("statue2_equip_def2", require("../images/statue/0/equip/def/heart.svg"))
+        .add("statue2_equip_def3", require("../images/statue/0/equip/def/moon.svg"))
+        .add("statue3_body", require("../images/statue/3/body.svg"))
+        .add("statue3_equip_hp1", require("../images/statue/0/equip/hp/fedora.svg"))
+        .add("statue3_equip_hp2", require("../images/statue/0/equip/hp/ribbon.svg"))
+        .add("statue3_equip_hp3", require("../images/statue/0/equip/hp/snapback.svg"))
+        .add("statue3_equip_atk1", require("../images/statue/0/equip/atk/emerald.svg"))
+        .add("statue3_equip_atk2", require("../images/statue/0/equip/atk/ruby.svg"))
+        .add("statue3_equip_atk3", require("../images/statue/0/equip/atk/sapphire.svg"))
+        .add("statue3_equip_def1", require("../images/statue/3/equip/def/chain.svg"))
+        .add("statue3_equip_def2", require("../images/statue/3/equip/def/heart.svg"))
+        .add("statue3_equip_def3", require("../images/statue/3/equip/def/moon.svg"))
+        .add("statue4_body", require("../images/statue/4/body.svg"))
+        .add("statue4_equip_hp1", require("../images/statue/0/equip/hp/fedora.svg"))
+        .add("statue4_equip_hp2", require("../images/statue/0/equip/hp/ribbon.svg"))
+        .add("statue4_equip_hp3", require("../images/statue/0/equip/hp/snapback.svg"))
+        .add("statue4_equip_atk1", require("../images/statue/0/equip/atk/emerald.svg"))
+        .add("statue4_equip_atk2", require("../images/statue/0/equip/atk/ruby.svg"))
+        .add("statue4_equip_atk3", require("../images/statue/0/equip/atk/sapphire.svg"))
+        .add("statue4_equip_def1", require("../images/statue/0/equip/def/chain.svg"))
+        .add("statue4_equip_def2", require("../images/statue/0/equip/def/heart.svg"))
+        .add("statue4_equip_def3", require("../images/statue/0/equip/def/moon.svg"))
+        .add("statue5_body", require("../images/statue/0/body.svg"))
+        .add("statue5_equip_hp1", require("../images/statue/0/equip/hp/fedora.svg"))
+        .add("statue5_equip_hp2", require("../images/statue/0/equip/hp/ribbon.svg"))
+        .add("statue5_equip_hp3", require("../images/statue/0/equip/hp/snapback.svg"))
+        .add("statue5_equip_atk1", require("../images/statue/0/equip/atk/emerald.svg"))
+        .add("statue5_equip_atk2", require("../images/statue/0/equip/atk/ruby.svg"))
+        .add("statue5_equip_atk3", require("../images/statue/0/equip/atk/sapphire.svg"))
+        .add("statue5_equip_def1", require("../images/statue/0/equip/def/chain.svg"))
+        .add("statue5_equip_def2", require("../images/statue/0/equip/def/heart.svg"))
+        .add("statue5_equip_def3", require("../images/statue/0/equip/def/moon.svg"))
         .add("mob1", require("../images/mob/1.svg"))
         .add("mob2", require("../images/mob/2.svg"))
         .add("mob3", require("../images/mob/3.svg"))
@@ -222,15 +287,16 @@ class GameBase extends Component {
 }
 
 export default connect(
-    (state) => ({
+    state => ({
         web3: state.web3Module.web3,
         TGV: state.web3Module.TGV,
     }),
-    (dispatch) => ({
+    dispatch => ({
         UserActions: bindActionCreators(userActions, dispatch),
         GameActions: bindActionCreators(gameActions, dispatch),
         Web3Actions: bindActionCreators(web3Actions, dispatch),
         AppActions: bindActionCreators(appActions, dispatch),
+        ForgeActions: bindActionCreators(forgeActions, dispatch),
     })
 )(GameBase);
 

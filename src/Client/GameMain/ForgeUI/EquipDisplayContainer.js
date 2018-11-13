@@ -1,201 +1,152 @@
-import React, { Component, Fragment } from 'react';
-import { Container, Text } from 'react-pixi-fiber';
+import React, { Component } from 'react';
+import { Container } from 'react-pixi-fiber';
 import Box from 'Client/Components/Box';
 import Statue from 'Client/Components/Statue';
-import FlatButton from 'Client/Components/FlatButton';
 import { connect } from 'react-redux';
 import { bindActionCreators } from 'redux';
 import * as userActions from 'store/modules/userModule';
 import * as gameActions from 'store/modules/gameModule';
 import * as appActions from 'store/modules/appModule';
+import * as forgeActions from 'store/modules/forgeModule';
 import * as TGVApi from 'utils/TGVApi';
+import EquipDisplay from './EquipDisplay';
+
+const lookNames = {
+    hp: ['페도라', '리본장식모자', '스냅백'],
+    atk: ['에메랄드 펜던트', '루비 펜던트', '사파이어 펜던트'],
+    def: ['체인 이어링', '하트장식 이어링', '블루문 이어링'],
+}
+
+const sleep = ms => new Promise(resolve => setTimeout(resolve, ms));
 
 class EquipDisplayContainer extends Component {
 
-    state = {
-        blacksmithMessage: '',
-    }
+    toFinney = bigNumber => bigNumber.c[0]/10;
 
-    toFinney = (bigNumber) => bigNumber.c[0]/10;
-
-    buyEquip = async (statueNo, part, look) => {
+    buyEquip = async (part, look) => {
+        const { currentSelectedStatue: statueNo } = this.props;
         try {
-            this.setState({ blacksmithMessage: '조금만 기다려보게나! 뚝딱 만들어 주겠네.' });
-            this.props.GameActions.setBlacksmithWorking(true);
-            let fee = await this.props.TGV.basicFee.call();
-            fee = this.toFinney(fee);
+            const fee = this.toFinney(await this.props.TGV.basicFee.call());
+            this.props.ForgeActions.startWorking({ statueNo: statueNo, part: part, message: '조금만 기다려보게나! 뚝딱 만들어 주겠네.' });
             await this.props.TGV.buyEquip(statueNo, part, look, 0, {
                 from: this.props.web3.eth.coinbase,
                 value: this.props.web3.toWei(fee, 'finney')
             });
-            this.setState({ blacksmithMessage: '다됐네! 이제 착용을 해보면 되겠군. 조금만 기다려보게.' });
-            while(true) {
-                const newUserData = await TGVApi.getUserData(this.props.TGV, this.props.web3.eth.coinbase);
-                if(JSON.stringify(newUserData.statues[statueNo].equip) !== JSON.stringify(this.props.userData.statues[statueNo].equip)) {
-                    this.props.UserActions.syncFetchUserData(newUserData);
-                    break;
-                }
-            }
+            this.props.ForgeActions.setMessage({ statueNo: statueNo, part: part, message: '다됐네! 이제 착용을 해보면 되겠군. 잠시만 기다려보게.' });
+            await this.checkEquipUpgraded(statueNo, part);
         } catch(err) {
             console.error(err);
         } finally {
-            this.props.GameActions.setBlacksmithWorking(false);
+            this.props.ForgeActions.finishWorking({ statueNo: statueNo, part: part });
         }
     }
 
-    upgradeEquip = async (statueNo, part, currentLevel) => {
-        let fee = await this.props.TGV.getUpgradeCost(statueNo, part, currentLevel);
-        const soul = fee[0].c[0];
-        fee = this.toFinney(fee[1]);
-        if(soul > this.props.userData.soul) {
-            window.Materialize.toast("영혼의 결정이 " + soul + "개 필요합니다.", 1500);
-            return;
-        }
+    upgradeEquip = async (part, currentLevel) => {
+        const { currentSelectedStatue: statueNo } = this.props;
         try {
-            this.setState({ blacksmithMessage: '조금만 기다려보게나! 뚝딱 만들어 주겠네.' });
-            this.props.GameActions.setBlacksmithWorking(true);
+            let fee = await this.props.TGV.getUpgradeCost(statueNo, part, currentLevel);
+            const sorbiote = fee[0].c[0];
+            fee = this.toFinney(fee[1]);
+            if(sorbiote > this.props.userData.sorbiote) {
+                window.Materialize.toast("영혼의 결정이 " + sorbiote + "개 필요합니다.", 1500);
+                return;
+            }
+            this.props.ForgeActions.startWorking({ statueNo: statueNo, part: part, message: '조금만 기다려보게나! 뚝딱 만들어 주겠네.' });
             await this.props.TGV.upgradeEquip(statueNo, part, currentLevel, {
                 from: this.props.web3.eth.coinbase,
                 value: this.props.web3.toWei(fee, 'finney')
             });
-            this.setState({ blacksmithMessage: '다됐네! 이제 착용을 해보면 되겠군. 조금만 기다려보게.' });
-            while(true) {
-                const newUserData = await TGVApi.getUserData(this.props.TGV, this.props.web3.eth.coinbase);
-                if(JSON.stringify(newUserData.statues[statueNo].equip) !== JSON.stringify(this.props.userData.statues[statueNo].equip)) {
-                    this.props.UserActions.syncFetchUserData(newUserData);
-                    break;
-                }
-            }
+            this.props.ForgeActions.setMessage({ statueNo: statueNo, part: part, message: '다됐네! 이제 착용을 해보면 되겠군. 잠시만 기다려보게.' });
+            await this.checkEquipUpgraded(statueNo, part);
         } catch(err) {
             console.error(err);
         } finally {
-            this.props.GameActions.setBlacksmithWorking(false);
+            this.props.ForgeActions.finishWorking({ statueNo: statueNo, part: part });
+        }
+    }
+
+    checkEquipUpgraded = async (statueNo, part) => {
+        while(true) {
+            await sleep(1000);
+            const newUserData = await TGVApi.getUserData(this.props.TGV, this.props.web3.eth.coinbase);
+            let oldLevel, newLevel;
+            if(part===1) {
+                oldLevel = this.props.userData.statues[statueNo].equip.hp.level;
+                newLevel = newUserData.statues[statueNo].equip.hp.level;
+            } else if(part===2) {
+                oldLevel = this.props.userData.statues[statueNo].equip.atk.level;
+                newLevel = newUserData.statues[statueNo].equip.atk.level;
+            } else if(part===3) {
+                oldLevel = this.props.userData.statues[statueNo].equip.def.level;
+                newLevel = newUserData.statues[statueNo].equip.def.level;
+            }
+            if(oldLevel !== newLevel) {
+                this.props.UserActions.syncFetchUserData(newUserData);
+                break;
+            }
         }
     }
 
     render() {
-        const { width, height } = this.props;
+        const { width, height, currentSelectedStatue } = this.props;
         const { hp, atk, def } = this.props.userData.statues[this.props.currentSelectedStatue].equip;
+        const EquipDisplaySize = { w: width*4/14, h: height/5 };
         return (
             <Container {...this.props}>
                 <Box
                     width={width}
                     height={height}
                     color={0x0}
-                    alpha={0.7} />
-                {hp.level > 0
-                ? <FlatButton
-                    x={width*2/3}
+                    alpha={0.5} />
+                <EquipDisplay
+                    x={width/14}
                     y={height/7}
-                    width={width/10*3}
-                    height={height/4}
-                    text={`+${hp.level} 모자\n현재: HP +${hp.value}\n강화: HP +${hp.nextValue}`}
-                    onClick={() => this.upgradeEquip(this.props.currentSelectedStatue, 1, hp.level)} />
-                : <Fragment>
-                    <FlatButton
-                        x={width*2/3}
-                        y={height/7}
-                        width={width/10*3}
-                        height={height/12}
-                        text={'페도라'}
-                        onClick={() => this.buyEquip(this.props.currentSelectedStatue, 1, 1)} />
-                    <FlatButton
-                        x={width*2/3}
-                        y={height/7 + height/12}
-                        width={width/10*3}
-                        height={height/12}
-                        text={'리본장식 모자'}
-                        onClick={() => this.buyEquip(this.props.currentSelectedStatue, 1, 2)} />
-                    <FlatButton
-                        x={width*2/3}
-                        y={height/7 + height/6}
-                        width={width/10*3}
-                        height={height/12}
-                        text={'스냅백'}
-                        onClick={() => this.buyEquip(this.props.currentSelectedStatue, 1, 3)} />
-                </Fragment>
-                }
-                {atk.level > 0
-                ? <FlatButton
-                    x={width*2/3}
-                    y={height/7*4}
-                    width={width/10*3}
-                    height={height/4}
-                    text={`+${atk.level} 펜던트\n현재: 공격력 +${atk.value}\n강화: 공격력 +${atk.nextValue}`}
-                    onClick={() => this.upgradeEquip(this.props.currentSelectedStatue, 2, atk.level)} />
-                : <Fragment>
-                    <FlatButton
-                        x={width*2/3}
-                        y={height/7*4}
-                        width={width/10*3}
-                        height={height/12}
-                        text={'에메랄드 펜던트'}
-                        onClick={() => this.buyEquip(this.props.currentSelectedStatue, 2, 1)} />
-                    <FlatButton
-                        x={width*2/3}
-                        y={height/7*4 + height/12}
-                        width={width/10*3}
-                        height={height/12}
-                        text={'루비 펜던트'}
-                        onClick={() => this.buyEquip(this.props.currentSelectedStatue, 2, 2)} />
-                    <FlatButton
-                        x={width*2/3}
-                        y={height/7*4 + height/6}
-                        width={width/10*3}
-                        height={height/12}
-                        text={'사파이어 펜던트'}
-                        onClick={() => this.buyEquip(this.props.currentSelectedStatue, 2, 3)} />
-                </Fragment>
-                }
-                {def.level > 0
-                ? <FlatButton
-                    x={width/10}
-                    y={height/4}
-                    width={width/10*3}
-                    height={height/4}
-                    text={`+${def.level} 이어링\n현재: 방어력 +${def.value}\n강화: 방어력 +${def.nextValue}`}
-                    onClick={() => this.upgradeEquip(this.props.currentSelectedStatue, 3, def.level)} />
-                : <Fragment>
-                    <FlatButton
-                        x={width/10}
-                        y={height/4}
-                        width={width/10*3}
-                        height={height/12}
-                        text={'체인 이어링'}
-                        onClick={() => this.buyEquip(this.props.currentSelectedStatue, 3, 1)} />
-                    <FlatButton
-                        x={width/10}
-                        y={height/4 + height/12}
-                        width={width/10*3}
-                        height={height/12}
-                        text={'하트 장식 이어링'}
-                        onClick={() => this.buyEquip(this.props.currentSelectedStatue, 3, 2)} />
-                    <FlatButton
-                        x={width/10}
-                        y={height/4 + height/6}
-                        width={width/10*3}
-                        height={height/12}
-                        text={'블루문'}
-                        onClick={() => this.buyEquip(this.props.currentSelectedStatue, 3, 3)} />
-                </Fragment>
-                }
+                    width={EquipDisplaySize.w}
+                    height={EquipDisplaySize.h}
+                    equip={hp}
+                    isWorking={this.props.forgeStatus[currentSelectedStatue][0].isWorking}
+                    message={this.props.forgeStatus[currentSelectedStatue][0].message}
+                    partName='머리장식'
+                    valueName='HP'
+                    lookNames={lookNames.hp}
+                    onBuyEquip={look => this.buyEquip(1, look)}
+                    onUpgradeEquip={() => this.upgradeEquip(1, hp.level)} />
+                <EquipDisplay
+                    x={width*9/14}
+                    y={height/7}
+                    width={EquipDisplaySize.w}
+                    height={EquipDisplaySize.h}
+                    equip={atk}
+                    isWorking={this.props.forgeStatus[currentSelectedStatue][1].isWorking}
+                    message={this.props.forgeStatus[currentSelectedStatue][1].message}
+                    partName='펜던트'
+                    valueName='공격력'
+                    lookNames={lookNames.atk}
+                    onBuyEquip={look => this.buyEquip(2, look)}
+                    onUpgradeEquip={() => this.upgradeEquip(2, atk.level)} />
+                <EquipDisplay
+                    x={width/14}
+                    y={height/2}
+                    width={EquipDisplaySize.w}
+                    height={EquipDisplaySize.h}
+                    equip={def}
+                    isWorking={this.props.forgeStatus[currentSelectedStatue][2].isWorking}
+                    message={this.props.forgeStatus[currentSelectedStatue][2].message}
+                    partName='이어링'
+                    valueName='방어력'
+                    lookNames={lookNames.def}
+                    onBuyEquip={look => this.buyEquip(3, look)}
+                    onUpgradeEquip={() => this.upgradeEquip(3, def.level)} />
                 <Statue
                     x={width/2}
                     y={height*3/4}
                     no={this.props.currentSelectedStatue}
-                    scale={1.4}
+                    scale={1.2}
                     eye={this.props.userData.defaultStatueLook.eye}
                     hair={this.props.userData.defaultStatueLook.hair}
                     hpEquipLook={this.props.userData.statues[this.props.currentSelectedStatue].equip.hp.look}
                     atkEquipLook={this.props.userData.statues[this.props.currentSelectedStatue].equip.atk.look}
                     defEquipLook={this.props.userData.statues[this.props.currentSelectedStatue].equip.def.look} />
-                {this.props.isBlacksmithWorking && <Container
-                    width={width}
-                    height={height}
-                    interactive>
-                    <Box width={width} height={height} alpha={0.5} />
-                    <Text text={this.state.blacksmithMessage} anchor={[0.5, 0.5]} x={width/2} y={height/2} style={{ fill: 0xffffff, fontSize: 16 }}/>
-                </Container>}
             </Container>
         );
     }
@@ -207,11 +158,12 @@ export default connect(
         TGV: state.web3Module.TGV,
         gameData: state.gameModule.gameData,
         userData: state.userModule.userData,
-        isBlacksmithWorking: state.gameModule.isBlacksmithWorking,
+        forgeStatus: state.forgeModule.forgeStatus,
     }),
     dispatch => ({
         UserActions: bindActionCreators(userActions, dispatch),
         GameActions: bindActionCreators(gameActions, dispatch),
         AppActions: bindActionCreators(appActions, dispatch),
+        ForgeActions: bindActionCreators(forgeActions, dispatch),
     }),
 )(EquipDisplayContainer);

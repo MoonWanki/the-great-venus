@@ -61,7 +61,7 @@ class StatueDisplayRoller extends Component {
                     y={this.props.height}
                     no={i}
                     scale={1.4}
-                    tint={0x010101}
+                    tint={0xFFFFFF}
                     hpEquipLook={0}
                     atkEquipLook={0}
                     defEquipLook={0} />

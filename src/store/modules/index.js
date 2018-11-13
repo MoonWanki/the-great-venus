@@ -4,5 +4,6 @@ import web3Module from './web3Module';
 import appModule from './appModule';
 import gameModule from './gameModule';
 import canvasModule from './canvasModule';
+import forgeModule from './forgeModule';
 
-export default combineReducers({ web3Module, userModule, appModule, gameModule, canvasModule });
+export default combineReducers({ web3Module, userModule, appModule, gameModule, canvasModule, forgeModule });

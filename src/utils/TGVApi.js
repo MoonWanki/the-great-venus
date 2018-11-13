@@ -4,7 +4,7 @@ const getUser = async (TGV, address) => {
         name: user[0],
         rank: Number(user[1].c[0]),
         exp: Number(user[2].c[0]),
-        soul: Number(user[3].c[0]),
+        sorbiote: Number(user[3].c[0]),
         level: Number(user[4].c[0]),
         lastStage: Number(user[5].c[0]),
         numStatues: Number(user[6].c[0]),
@@ -127,9 +127,6 @@ const getStatueInfoList = async (TGV, maxStatue) => {
             def: statueInfo[2].c[0],
             crt: statueInfo[3].c[0],
             avd: statueInfo[4].c[0],
-            skillFactor: statueInfo[5].c[0],
-            skillChargerSize: statueInfo[6].c[0],
-            skillMultiTargetable: statueInfo[7],
         }
     });
 }
@@ -147,9 +144,6 @@ const getMobInfoList = async (TGV, maxMob) => {
             def: mobInfo[2].c[0],
             crt: mobInfo[3].c[0],
             avd: mobInfo[4].c[0],
-            skillFactor: mobInfo[5].c[0],
-            skillChargerSize: mobInfo[6].c[0],
-            skillMultiTargetable: mobInfo[7],
         }
     });
 }
@@ -186,7 +180,7 @@ export const getEquipConfig = async (TGV) => {
             costByPart = await Promise.all(costByPart);
             extraValueByPart = await Promise.all(extraValueByPart);
             costByStatue.push(costByPart.map(cost=>({
-                soul: cost[0].c[0],
+                sorbiote: cost[0].c[0],
                 fee: toFinney(cost[1]),
             })));
             extraValueByStatue.push(extraValueByPart.map(value=>value.c[0]));
@@ -202,13 +196,13 @@ export const getEquipConfig = async (TGV) => {
 
 export const getItemShopInfo = async (TGV) => {
     const basicFee = await TGV.basicFee.call();
-    const basicSoul = await TGV.basicSoul.call();
+    const basicSorbiote = await TGV.basicSorbiote.call();
     const upgradeFeeDivFactor = await TGV.upgradeFeeDivFactor.call();
     const crtPrice = await TGV.crtPrice.call();
     const avdPrice = await TGV.avdPrice.call();
     return {
         basicFee: toFinney(basicFee),
-        basicSoul: basicSoul.c[0],
+        basicSorbiote: basicSorbiote.c[0],
         upgradeFeeDivFactor: upgradeFeeDivFactor.c[0],
         crtPrice: toFinney(crtPrice),
         avdPrice: toFinney(avdPrice),
@@ -316,7 +310,7 @@ export const clearStage = async (TGV, stageNo, statueNoList, coinbase) => {
                     attackResultList: attackResultList,
                     victory: args.victory,
                     exp: args.exp.c[0],
-                    soul: args.soul.c[0],
+                    sorbiote: args.sorbiote.c[0],
                 });
                 ourUnits = [];
                 enemyUnits = [];
