@@ -61,14 +61,6 @@ class ShowroomUI extends Component {
                     height={36}
                     text={'로비로 가기'}
                     onClick={this.props.onHomeButtonClick} />
-                {/* <AnimatedFlatButton
-                    x={100}
-                    y={offset.interpolate({ inputRange: [0, 1], outputRange: [height + this.props.contentY, height + this.props.contentY - 100] })}
-                    alpha={offset}
-                    width={280}
-                    height={60}
-                    text={"BLACKSMITH'S HOUSE"}
-                    onClick={this.props.onForgeButtonClick} /> */}
                 <AnimatedFlatButton
                     x={-this.props.contentX + 50}
                     y={offset.interpolate({ inputRange: [0, 1], outputRange: [height + this.props.contentY, height + this.props.contentY - 100] })}

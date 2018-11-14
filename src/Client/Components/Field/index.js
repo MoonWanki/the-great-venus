@@ -130,7 +130,12 @@ class Field extends Component {
             isEnemy
             data={unit}
             x={this.state.enemyUnitsPosition[i].x.interpolate({ inputRange: [0, 1], outputRange: [0, this.props.width]})}
-            y={this.state.enemyUnitsPosition[i].y.interpolate({ inputRange: [0, 1], outputRange: [0, this.props.height]})} />) // 상대방 룩, 장비 전달 필요
+            y={this.state.enemyUnitsPosition[i].y.interpolate({ inputRange: [0, 1], outputRange: [0, this.props.height]})}
+            eye={this.props.enemyData.defaultStatueLook.eye}
+            hair={this.props.enemyData.defaultStatueLook.hair}
+            hpEquipLook={this.props.enemyData.statues[unit.no].equip.hp.look}
+            atkEquipLook={this.props.enemyData.statues[unit.no].equip.atk.look}
+            defEquipLook={this.props.enemyData.statues[unit.no].equip.def.look} />)
         : this.state.enemyUnits.map((unit, i) => <AnimatedBattleUnit
             isMob
             isEnemy
@@ -149,7 +154,7 @@ class Field extends Component {
             <Container
                 interactive
                 mousemove={this.handleMouseMove}
-                alpha={this.props.offset}
+                alpha={this.props.offset || 1}
                 width={width}
                 height={height}
                 position={[

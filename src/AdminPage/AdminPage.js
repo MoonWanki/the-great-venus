@@ -21,6 +21,7 @@ class AdminPage extends Component {
             crt: '',
             avd: '',
             whatNo: '',
+            aquisitionStage: '',
         },
         mobInfoForm: {
             hp: '',
@@ -29,6 +30,7 @@ class AdminPage extends Component {
             crt: '',
             avd: '',
             whatNo: '',
+            exp: '',
         },
         roundInfoForm: {
             stageNo: '', roundNo: '',
@@ -194,15 +196,10 @@ class AdminPage extends Component {
         }
     }
 
-    addMobInfo = async () => {
-        const { hp, atk, def, crt, avd } = this.state.statueInfoForm;
-        if(!hp || !atk || !def || !crt || !avd) {
-            window.Materialize.toast('항목을 전부 입력해주세요!', 1500);
-            return;
-        }
+    increaseMaxStatue = async () => {
         try {
-            await this.props.TGV.addStatueInfo(hp, atk, def, crt, avd, 0, 0, false, 14, { from: this.props.web3.eth.coinbase });
-            window.Materialize.toast("석고상 정보를 추가합니다.", 1500);
+            await this.props.TGV.increaseMaxStatue({ from: this.props.web3.eth.coinbase });
+            window.Materialize.toast("석고상 종류를 확장합니다.", 1500);
             this.update();
         } catch(err) {
             console.error(err);
@@ -210,13 +207,13 @@ class AdminPage extends Component {
     }
 
     editStatueInfo = async (data) => {
-        const { whatNo, hp, atk, def, crt, avd } = this.state.statueInfoForm;
-        if(!whatNo || !hp || !atk || !def || !crt || !avd) {
+        const { whatNo, hp, atk, def, crt, avd, aquisitionStage } = this.state.statueInfoForm;
+        if(!whatNo || !hp || !atk || !def || !crt || !avd || !aquisitionStage) {
             window.Materialize.toast('항목을 전부 입력해주세요!', 1500);
             return;
         }
         try {
-            await this.props.TGV.editStatueInfo(whatNo, hp, atk, def, crt, avd, 0, 0, false, 14, { from: this.props.web3.eth.coinbase });
+            await this.props.TGV.editStatueInfo(whatNo, hp, atk, def, crt, avd, aquisitionStage, { from: this.props.web3.eth.coinbase });
             window.Materialize.toast("석고상 정보를 변경합니다.", 1500);
             this.update();
         } catch(err) {
@@ -224,15 +221,10 @@ class AdminPage extends Component {
         }
     }
 
-    addMobInfo = async () => {
-        const { hp, atk, def, crt, avd } = this.state.mobInfoForm;
-        if(!hp || !atk || !def || !crt || !avd) {
-            window.Materialize.toast('항목을 전부 입력해주세요!', 1500);
-            return;
-        }
+    increaseMaxMob = async () => {
         try {
-            await this.props.TGV.editMobInfo(hp, atk, def, crt, avd, 0, 0, false, 14, { from: this.props.web3.eth.coinbase });
-            window.Materialize.toast("몬스터 정보를 추가합니다.", 1500);
+            await this.props.TGV.increaseMaxMob({ from: this.props.web3.eth.coinbase });
+            window.Materialize.toast("몬스터 종류를 확장합니다.", 1500);
             this.update();
         } catch(err) {
             console.error(err);
@@ -240,13 +232,13 @@ class AdminPage extends Component {
     }
 
     editMobInfo = async () => {
-        const { whatNo, hp, atk, def, crt, avd } = this.state.mobInfoForm;
-        if(!whatNo || !hp || !atk || !def || !crt || !avd) {
+        const { whatNo, hp, atk, def, crt, avd, exp } = this.state.mobInfoForm;
+        if(!whatNo || !hp || !atk || !def || !crt || !avd || !exp) {
             window.Materialize.toast('항목을 전부 입력해주세요!', 1500);
             return;
         }
         try {
-            await this.props.TGV.editMobInfo(whatNo, hp, atk, def, crt, avd, 0, 0, false, 14, { from: this.props.web3.eth.coinbase });
+            await this.props.TGV.editMobInfo(whatNo, hp, atk, def, crt, avd, exp, { from: this.props.web3.eth.coinbase });
             window.Materialize.toast("몬스터 정보를 변경합니다.", 1500);
             this.update();
         } catch(err) {
@@ -467,18 +459,19 @@ class AdminPage extends Component {
                     <div className="admin-gamedata-segment">
                         <p className="admin-gamedata-segment-title">~ 석상 ~</p>
                         <Row>
-                            <Input s={4} label="HP" onChange={(e, v)=>this.setState({ statueInfoForm: {...statueInfoForm, hp: v}})} />
+                            <Input s={2} label="HP" onChange={(e, v)=>this.setState({ statueInfoForm: {...statueInfoForm, hp: v}})} />
                             <Input s={2} label="ATK" onChange={(e, v)=>this.setState({ statueInfoForm: {...statueInfoForm, atk: v}})} />
                             <Input s={2} label="DEF" onChange={(e, v)=>this.setState({ statueInfoForm: {...statueInfoForm, def: v}})} />
                             <Input s={2} label="CRT" onChange={(e, v)=>this.setState({ statueInfoForm: {...statueInfoForm, crt: v}})} />
                             <Input s={2} label="AVD" onChange={(e, v)=>this.setState({ statueInfoForm: {...statueInfoForm, avd: v}})} />
+                            <Input s={2} label="Stage" onChange={(e, v)=>this.setState({ statueInfoForm: {...statueInfoForm, aquisitionStage: v}})} />
                         </Row>
                         <Row>
                             <Input s={2} placeholder="몇" onChange={(e, v)=>this.setState({ statueInfoForm: {...statueInfoForm, whatNo: v}})} />
                             번 석상을
                             <Button floating flat className='amber' waves='light' icon='edit' onClick={this.editStatueInfo} />
                             또는 신규 석상을
-                            <Button floating flat className='light-green' waves='light' icon='add' onClick={this.addStatueInfo} />
+                            <Button floating flat className='light-green' waves='light' icon='add' onClick={this.increaseMaxStatue} />
                         </Row>
                         <Table striped bordered>
                             <thead>
@@ -494,18 +487,19 @@ class AdminPage extends Component {
                     <div className="admin-gamedata-segment">
                         <p className="admin-gamedata-segment-title">~ 몬스터 ~</p>
                         <Row>
-                            <Input s={4} label="HP" onChange={(e, v)=>this.setState({ mobInfoForm: {...mobInfoForm, hp: v}})} />
+                            <Input s={2} label="HP" onChange={(e, v)=>this.setState({ mobInfoForm: {...mobInfoForm, hp: v}})} />
                             <Input s={2} label="ATK" onChange={(e, v)=>this.setState({ mobInfoForm: {...mobInfoForm, atk: v}})} />
                             <Input s={2} label="DEF" onChange={(e, v)=>this.setState({ mobInfoForm: {...mobInfoForm, def: v}})} />
                             <Input s={2} label="CRT" onChange={(e, v)=>this.setState({ mobInfoForm: {...mobInfoForm, crt: v}})} />
                             <Input s={2} label="AVD" onChange={(e, v)=>this.setState({ mobInfoForm: {...mobInfoForm, avd: v}})} />
+                            <Input s={2} label="exp" onChange={(e, v)=>this.setState({ mobInfoForm: {...mobInfoForm, exp: v}})} />
                         </Row>
                         <Row>
                             <Input s={2} placeholder="몇" onChange={(e, v)=>this.setState({ mobInfoForm: {...mobInfoForm, whatNo: v}})} />
                             번 몬스터를
                             <Button floating flat className='amber' waves='light' icon='edit' onClick={this.editMobInfo} />
                             또는 신규 몬스터를
-                            <Button floating flat className='light-green' waves='light' icon='add' onClick={this.addMobInfo} />
+                            <Button floating flat className='light-green' waves='light' icon='add' onClick={this.increaseMaxMob} />
                         </Row>
                         <Table striped bordered>
                             <thead>

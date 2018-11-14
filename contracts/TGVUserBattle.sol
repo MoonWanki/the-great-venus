@@ -6,18 +6,17 @@ contract TGVUserBattle is TGVStageClear
 {
     using SafeMath for uint;
 
-    // event AttackResult1on1(bool way, uint damage, bool isCrt);
-    // event Result1on1(bool victory, uint ourIdx, uint enemyIdx);
+    event PvPResult(address indexed _from, address indexed _to, bool victory, uint lowRank, uint highRank);
 
     uint public nextRefundTime = block.timestamp;
     uint public refundPeriod = 15 minutes;
 
-    uint matchableRankGap = 10;
+    uint public matchableRankGap = 10;
 
-    uint cutForDiamond = 1;
-    uint cutForPlatinum = 3;
-    uint cutForGold = 7;
-    uint cutForSilver = 9;
+    uint public cutForDiamond = 1;
+    uint public cutForPlatinum = 3;
+    uint public cutForGold = 7;
+    uint public cutForSilver = 9;
 
     function refundFinney() public onlyOwner {
         require(numUsers >= 10 && block.timestamp > nextRefundTime);
@@ -45,13 +44,14 @@ contract TGVUserBattle is TGVStageClear
     }
 
     function matchWithPlayer(address opponentAddr) external {
+        require(opponentAddr != msg.sender);
         require(users[opponentAddr].rank < users[msg.sender].rank && users[msg.sender].rank - users[opponentAddr].rank <= matchableRankGap);
         uint i;
         bool victory;
+        uint32 myRank = users[msg.sender].rank;
+        uint32 enemyRank = users[opponentAddr].rank;
         Unit[] memory ourUnits = new Unit[](users[msg.sender].numStatues);
         Unit[] memory enemyUnits = new Unit[](users[opponentAddr].numStatues);
-        // ourUnits[ourUnits.length - 1] = _getComputedStatue(0, users[msg.sender].level, statueEquipInfo[msg.sender][0]);  
-        // enemyUnits[enemyUnits.length - 1] = _getComputedStatue(0, users[opponentAddr].level, statueEquipInfo[opponentAddr][0]);
         for(i = 0 ; i < ourUnits.length ; i++) {
             ourUnits[i] = _getComputedStatue(i, users[msg.sender].level, statueEquipInfo[msg.sender][i]);
             emit RoundUnitInfo(true, i, ourUnits[i].hp, ourUnits[i].atk, ourUnits[i].def, ourUnits[i].crt, ourUnits[i].avd);
@@ -62,50 +62,15 @@ contract TGVUserBattle is TGVStageClear
         }
         (victory,) = _runBattle(ourUnits, enemyUnits, 0);
         if(victory) {
-            uint32 myRank = users[msg.sender].rank;
-            uint32 enemyRank = users[opponentAddr].rank;
             users[opponentAddr].rank = myRank;
             users[msg.sender].rank = enemyRank;
             rankToOwner[myRank] = opponentAddr;
             rankToOwner[enemyRank] = msg.sender;
-            emit RoundResult(true, 0, 0);
+            emit PvPResult(msg.sender, opponentAddr, true, myRank, enemyRank);
         } else {
-            emit RoundResult(false, 0, 0);
+            emit PvPResult(msg.sender, opponentAddr, false, myRank, enemyRank);
         }
-        // win = _runBattleWithOtherUsers(ourUnits, enemyUnits, randNonce);
         users[msg.sender].randNonce++;
         users[opponentAddr].randNonce++;
     }
-
-    // function _runBattleWithOtherUsers(Unit[] memory ourUnits, Unit[] memory enemyUnits, uint nonce) internal returns(bool){
-    //     uint ourIdx = 0;
-    //     uint enemyIdx = 0;
-    //     uint randNonce = nonce;
-    //     bool win;
-    //     while(true){
-    //         (win, randNonce) = _1on1Battle(ourUnits[ourIdx], enemyUnits[enemyIdx], randNonce);
-    //         emit Result1on1(win, ourIdx, enemyIdx);
-    //         if(win) enemyIdx = enemyIdx.add(1);
-    //         if(!win) ourIdx = ourIdx.add(1);
-    //         if(ourIdx == ourUnits.length) return false;
-    //         if(enemyIdx == enemyUnits.length) return true;
-    //     }
-    // }
-    // function _1on1Battle(Unit memory ourUnit, Unit memory enemyUnit, uint nonce) internal returns(bool, uint){
-    //     bool isCrt;
-    //     uint damage;
-    //     uint randNonce = nonce;
-    //     while(true){
-    //         if(ourUnit.hp > 0){
-    //             (damage, isCrt, enemyUnit, randNonce) = _attack(ourUnit, enemyUnit, randNonce);
-    //             emit AttackResult1on1(true, damage, isCrt);
-    //         }
-    //         if(enemyUnit.hp > 0){
-    //             (damage, isCrt, ourUnit, randNonce) = _attack(enemyUnit, ourUnit, randNonce);
-    //             emit AttackResult1on1(false, damage, isCrt); 
-    //         }
-    //         if(ourUnit.hp == 0) return (false, randNonce);
-    //         if(enemyUnit.hp == 0) return (true, randNonce);
-    //     }
-    // } 
 }

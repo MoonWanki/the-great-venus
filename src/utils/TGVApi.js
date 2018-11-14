@@ -1,4 +1,4 @@
-const getUser = async (TGV, address) => {
+export const getUser = async (TGV, address) => {
     const user = await TGV.users.call(address);
     return {
         name: user[0],
@@ -323,16 +323,18 @@ export const clearStage = async (TGV, stageNo, statueNoList, coinbase) => {
 };
 
 export const matchWithPlayer = async (TGV, oppanentAddr, coinbase) => {
-    const res = await TGV.clearStage(oppanentAddr, { from: coinbase });
+    const res = await TGV.matchWithPlayer(oppanentAddr, { from: coinbase });
     console.log(res);
     let ourUnits = [];
     let enemyUnits = [];
     let attackResultList = [];
+    let PvPResult;
     res.logs.forEach(({ event, args }) => {
         switch(event) {
             case 'RoundUnitInfo':
                 if(args.isAlly) {
                     ourUnits.push({
+                        no: args.no.c[0],
                         hp: args.hp.c[0],
                         atk: args.atk.c[0],
                         def: args.def.c[0],
@@ -341,6 +343,7 @@ export const matchWithPlayer = async (TGV, oppanentAddr, coinbase) => {
                     });
                 } else {
                     enemyUnits.push({
+                        no: args.no.c[0],
                         hp: args.hp.c[0],
                         atk: args.atk.c[0],
                         def: args.def.c[0],
@@ -358,14 +361,45 @@ export const matchWithPlayer = async (TGV, oppanentAddr, coinbase) => {
                     isCrt: args.isCrt,
                 });
                 break;
-            case 'RoundResult':
-                return {
+            case 'PvPResult':
+                PvPResult = {
                     ourUnits: ourUnits,
                     enemyUnits: enemyUnits,
                     attackResultList: attackResultList,
                     victory: args.victory,
+                    highRank: args.highRank.c[0],
+                    lowRank: args.lowRank.c[0],
                 };
+                break;
             default: break;
         }
     });
+    return PvPResult;
 };
+
+const getQuota = async TGV => {
+    const res = await TGV.getQuota.call();
+    return {
+        diamond: toFinney(res[0]),
+        platinum: toFinney(res[1]),
+        gold: toFinney(res[2]),
+    }
+}
+
+export const getColosseumInfo = async TGV => {
+    const cutForDiamond = await TGV.cutForDiamond.call();
+    const cutForPlatinum = await TGV.cutForPlatinum.call();
+    const cutForGold = await TGV.cutForGold.call();
+    const cutForSilver = await TGV.cutForSilver.call();
+    const nextRefundTime = await TGV.nextRefundTime.call();
+    const refundPeriod = await TGV.refundPeriod.call();
+    return {
+        quota: await getQuota(TGV),
+        nextRefundTime: new Date(nextRefundTime.c[0]),
+        cutForDiamond: cutForDiamond.c[0],
+        cutForPlatinum: cutForPlatinum.c[0],
+        cutForGold: cutForGold.c[0],
+        cutForSilver: cutForSilver.c[0],
+        refundPeriod: refundPeriod.c[0],
+    }
+}

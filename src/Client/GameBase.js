@@ -55,7 +55,7 @@ class GameBase extends Component {
     }
 
     setEventHandler = TGV => {
-        TGV.RoundResult({}, { fromBlock: 0, toBlock: 'latest' }, (err, log) => {
+        TGV.PvPResult({}, { fromBlock: 0, toBlock: 'latest' }, (err, log) => {
             if(!err) {
                 console.log(log);
             } else {
@@ -94,6 +94,7 @@ class GameBase extends Component {
         this.context.app.loader
         .add("intro_credit1", require("../images/intro_credit1.png"))
         .add("intro_credit2", require("../images/intro_credit2.png"))
+        .add("btn_setting", require("../images/ui/btn_setting.svg"))
         .add("statue0_body", require("../images/statue/0/body.svg"))
         .add("statue0_ear1", require("../images/statue/0/ear/1.svg"))
         .add("statue0_ear2", require("../images/statue/0/ear/2.svg"))
@@ -205,6 +206,7 @@ class GameBase extends Component {
         .add("bg_forge1", require("../images/background/forge/1.jpg"))
         .add("bg_colosseum_lobby", require("../images/background/colosseum/lobby/1.jpg"))
         .add("stage_field_loading_screen", require("../images/intro.jpg"))
+        .add("pvp_loading_screen", require("../images/intro.jpg"))
         .add("bg_field1_1_1", require("../images/background/field/1/1/1.png"))
         .add("bg_field1_1_2", require("../images/background/field/1/1/2.png"))
         .add("bg_field1_1_3", require("../images/background/field/1/1/3.png"))

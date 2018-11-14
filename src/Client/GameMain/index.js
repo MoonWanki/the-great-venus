@@ -16,7 +16,6 @@ import { Sprite } from 'react-pixi-fiber';
 import { bindActionCreators } from 'redux';
 import * as userActions from 'store/modules/userModule';
 import * as appActions from 'store/modules/appModule';
-import FlatButton from 'Client/Components/FlatButton';
 
 const slideDuration = 1500;
 const skySlideDuration = 15000;
@@ -311,13 +310,14 @@ class GameMain extends Component {
                 <LobbyUI
                     offset={this.state.lobbyUIOffset}
                     {...this.props} />
-                <FlatButton
-                    x={this.props.width + this.props.contentX - 120}
+                <Sprite
+                    interactive
+                    cursor="pointer"
+                    x={this.props.width + this.props.contentX - 20}
                     y={-this.props.contentY + 20}
-                    width={80}
-                    height={30}
-                    text={'설정'}
-                    onClick={this.turnOnSettingUI} />
+                    anchor={[1, 0]}
+                    texture={this.context.app.loader.resources.btn_setting.texture}
+                    click={this.turnOnSettingUI} />
                 {this.state.settingUIOn && <SettingUI
                     offset={this.state.settingUIOffset}
                     onDismiss={this.turnOffSettingUI}

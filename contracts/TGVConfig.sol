@@ -26,17 +26,7 @@ contract TGVConfig is TGVUserBattle {
         stageInfoList[1][3].push(1);
         stageInfoList[1][3].push(1);
         stageInfoList[1][3].push(2);
-        stageInfoList[2][1].push(1);
-        stageInfoList[2][1].push(1);
-        stageInfoList[2][1].push(1);
-        stageInfoList[2][2].push(1);
-        stageInfoList[2][2].push(1);
-        stageInfoList[2][2].push(1);
-        stageInfoList[2][3].push(1);
-        stageInfoList[2][3].push(1);
-        stageInfoList[2][3].push(1);
-        stageInfoList[2][3].push(2);
-        maxStage = 2;
+        maxStage = 1;
         
         statueAcquisitionStage[1] = 2; // Haetae
     }

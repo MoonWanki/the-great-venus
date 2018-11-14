@@ -39,8 +39,7 @@ class StatueDisplayRoller extends Component {
                     hpEquipLook={this.props.userData.statues[i].equip.hp.look}
                     atkEquipLook={this.props.userData.statues[i].equip.atk.look}
                     defEquipLook={this.props.userData.statues[i].equip.def.look} />
-            }
-            else if(i < this.props.userData.numStatues) {
+            } else if(i < this.props.userData.numStatues) {
                 return <Statue
                     key={i}
                     interactive
@@ -61,7 +60,7 @@ class StatueDisplayRoller extends Component {
                     y={this.props.height}
                     no={i}
                     scale={1.4}
-                    tint={0xFFFFFF}
+                    tint={0x010101}
                     hpEquipLook={0}
                     atkEquipLook={0}
                     defEquipLook={0} />
