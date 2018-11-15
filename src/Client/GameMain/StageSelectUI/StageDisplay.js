@@ -116,7 +116,7 @@ class StageDisplay extends Component {
                     data={roundResult}
                     onFinish={this.onFinishRound} />}
                 {this.state.roundVictoryModalOn && <Modal
-                    text={`${this.state.currentRound}라운드 클리어!\n\n영혼의 결정 ${roundResult.sorbiote}개를 얻었습니다.\n경험치를 ${roundResult.exp} 얻었습니다.`}
+                    text={`${this.state.currentRound}라운드 클리어!\n\n소비오트 ${roundResult.sorbiote}개를 얻었습니다.\n경험치를 ${roundResult.exp} 얻었습니다.`}
                     width={500}
                     height={300}
                     buttonText={'다음'}

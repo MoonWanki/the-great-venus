@@ -10,7 +10,7 @@ import _ from 'lodash';
 class StatueSelector extends Component {
 
     renderThumbnails = () => _.times(this.props.gameData.maxStatue + 1, i => {
-        const circle = new PIXI.Graphics();
+        let circle = new PIXI.Graphics();
         circle.clear();
         circle.beginFill(0x0);
         circle.drawCircle(

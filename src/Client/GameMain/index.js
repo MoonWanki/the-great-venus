@@ -307,9 +307,9 @@ class GameMain extends Component {
                     anchor={[0.5, 0.5]} />
                 }
                 {this.renderInnerUI()}
-                <LobbyUI
+                {this.state.lobbyUIOn && <LobbyUI
                     offset={this.state.lobbyUIOffset}
-                    {...this.props} />
+                    {...this.props} />}
                 <Sprite
                     interactive
                     cursor="pointer"
