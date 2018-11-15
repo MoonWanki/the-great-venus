@@ -42,6 +42,7 @@ class BattleUnit extends Component {
                 : <Statue
                     no={this.props.data.no}
                     skin={1}
+                    scale={this.props.isEnemy ? [-1, 1] : 1}
                     eye={this.props.eye}
                     hair={this.props.hair}
                     hpEquipLook={this.props.hpEquipLook}

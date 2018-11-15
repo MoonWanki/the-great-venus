@@ -12,7 +12,7 @@ class Leaderboard extends Component {
             let color;
             switch(this.getTier(user.rank)) {
                 case 'diamond': color = 0xFBFDFF; break;
-                case 'platinum': color = 0xd9f5f9; break;
+                case 'platinum': color = 0xb0f5f9; break;
                 case 'gold': color = 0xFFD700; break;
                 case 'silver': color = 0xC0C0C0; break;
                 case 'bronze': color = 0x996515; break;
@@ -30,10 +30,10 @@ class Leaderboard extends Component {
 
     getTier = rank => {
         const { cutForDiamond, cutForPlatinum, cutForGold, cutForSilver } = this.props.colosseumInfo;
-        if(rank >= cutForDiamond) return 'diamond';
-        else if(rank >= cutForPlatinum) return 'platinum';
-        else if(rank >= cutForGold) return 'gold';
-        else if(rank >= cutForSilver) return 'silver';
+        if(rank <= cutForDiamond) return 'diamond';
+        else if(rank <= cutForPlatinum) return 'platinum';
+        else if(rank <= cutForGold) return 'gold';
+        else if(rank <= cutForSilver) return 'silver';
         else return 'bronze';
     }
 
@@ -43,6 +43,10 @@ class Leaderboard extends Component {
             <Container x={this.props.x} y={this.props.y} width={this.props.width} height={this.props.height}>
                 <Box width={width} height={height} alpha={0.5} />
                 {this.renderUserList()}
+                {this.props.isUpdating && <Container interactive>
+                    <Box width={width} height={height} alpha={0.5} />
+                    <Text text={'업데이트 중입니다...'} style={{ fill: 0xFFFFFF, fontSize: 16, align: 'center' }} anchor={[0.5, 0.5]} x={width/2} y={height/2} />
+                </Container> }
             </Container>
         );
     }

@@ -47,7 +47,7 @@ class ColosseumUI extends Component {
             const upperTenPlayersAddrList = await Promise.all(_.times(10, i=>this.props.TGV.rankToOwner.call(from + i)));
             const upperTenPlayers = await Promise.all(upperTenPlayersAddrList.map(addr => TGVApi.getUser(this.props.TGV, addr)));
             const colosseumInfo = await TGVApi.getColosseumInfo(this.props.TGV);
-            this.props.web3.eth.getBlock('latest', (err, i) => this.setRefundTimer(i.timestamp, colosseumInfo.nextRefundTime));
+            this.props.web3.eth.getBlock('latest', (err, i) => this.setRefundTimer(i.timestamp, colosseumInfo.nextRefundTime.getTime()));
             this.setState({
                 leaderboard: upperTenPlayers.map((info, i) => ({ ...info, addr: upperTenPlayersAddrList[i] })),
                 colosseumInfo: colosseumInfo,
@@ -60,13 +60,18 @@ class ColosseumUI extends Component {
     }
 
     setRefundTimer = (now, to) => {
+        console.log('now: ' + now + ' nextRefundTime: ' + to);
         if(to < now) {
             this.setState({ refundTimeLeft: "환급이 진행되고 있습니다!" });
             return;
         }
-        const timeLeft = new Date(to - now);
-        this.setState({ refundTimeLeft: timeLeft.toTimeString()});
-        setTimeout(() => this.setRefundTimer(now - 1000, to));
+        const timeLeft = to - now;
+        const days = Math.floor(timeLeft/86400);
+        const hours = Math.floor(timeLeft/3600)%24;
+        const minutes = Math.floor(timeLeft/60)%60;
+        const seconds = timeLeft%60;
+        this.setState({ refundTimeLeft: `환급까지 ${days}일 ${hours}시간 ${minutes}분 ${seconds}초 남았습니다!`});
+        setTimeout(() => this.setRefundTimer(now + 1, to), 1000);
     }
 
     onCompareSpec = idx => {
@@ -128,6 +133,7 @@ class ColosseumUI extends Component {
                     y={height/6}
                     width={width*6/20}
                     height={height*4/6}
+                    isUpdating={this.state.isUpdating}
                     colosseumInfo={this.state.colosseumInfo}
                     refundTimeLeft={this.state.refundTimeLeft} />
                 <Leaderboard
@@ -135,6 +141,7 @@ class ColosseumUI extends Component {
                     y={height/6}
                     width={width*5/20}
                     height={height*4/6}
+                    isUpdating={this.state.isUpdating}
                     leaderboard={this.state.leaderboard}
                     colosseumInfo={this.state.colosseumInfo}
                     onCompareSpec={this.onCompareSpec}

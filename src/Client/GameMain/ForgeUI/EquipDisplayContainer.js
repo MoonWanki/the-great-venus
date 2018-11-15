@@ -33,7 +33,7 @@ class EquipDisplayContainer extends Component {
                 value: this.props.web3.toWei(fee, 'finney')
             });
             this.props.ForgeActions.setMessage({ statueNo: statueNo, part: part, message: '다됐네! 이제 착용을 해보면 되겠군. 잠시만 기다려보게.' });
-            await this.checkEquipUpgraded(statueNo, part);
+            await this.checkEquipUpgraded(statueNo, part, 0);
         } catch(err) {
             console.error(err);
         } finally {
@@ -42,42 +42,41 @@ class EquipDisplayContainer extends Component {
     }
 
     upgradeEquip = async (part, currentLevel) => {
-        const { currentSelectedStatue: statueNo } = this.props;
+        const { currentSelectedStatue: statueNo, userData, finney, TGV } = this.props;
+        let fee = await TGV.getUpgradeCost(statueNo, part, currentLevel);
+        const sorbiote = fee[0].c[0];
+        fee = this.toFinney(fee[1]);
+        if(sorbiote > userData.sorbiote || fee > finney) {
+            window.Materialize.toast("소비오트가 " + sorbiote + "개 필요합니다.", 1500);
+            return;
+        }
         try {
-            let fee = await this.props.TGV.getUpgradeCost(statueNo, part, currentLevel);
-            const sorbiote = fee[0].c[0];
-            fee = this.toFinney(fee[1]);
-            if(sorbiote > this.props.userData.sorbiote) {
-                window.Materialize.toast("영혼의 결정이 " + sorbiote + "개 필요합니다.", 1500);
-                return;
-            }
+            this.props.UserActions.syncFetchUserData({ ...userData, sorbiote: userData.sorbiote - sorbiote });
             this.props.ForgeActions.startWorking({ statueNo: statueNo, part: part, message: '조금만 기다려보게나! 뚝딱 만들어 주겠네.' });
             await this.props.TGV.upgradeEquip(statueNo, part, currentLevel, {
                 from: this.props.web3.eth.coinbase,
                 value: this.props.web3.toWei(fee, 'finney')
             });
             this.props.ForgeActions.setMessage({ statueNo: statueNo, part: part, message: '다됐네! 이제 착용을 해보면 되겠군. 잠시만 기다려보게.' });
-            await this.checkEquipUpgraded(statueNo, part);
+            await this.checkEquipUpgraded(statueNo, part, currentLevel);
         } catch(err) {
             console.error(err);
+            this.props.UserActions.syncFetchUserData({ ...userData, sorbiote: userData.sorbiote });
         } finally {
             this.props.ForgeActions.finishWorking({ statueNo: statueNo, part: part });
         }
     }
 
-    checkEquipUpgraded = async (statueNo, part) => {
+    checkEquipUpgraded = async (statueNo, part, oldLevel) => {
         while(true) {
             await sleep(1000);
             const newUserData = await TGVApi.getUserData(this.props.TGV, this.props.web3.eth.coinbase);
-            let oldLevel, newLevel;
+            let newLevel;
             if(part===1) {
-                oldLevel = this.props.userData.statues[statueNo].equip.hp.level;
                 newLevel = newUserData.statues[statueNo].equip.hp.level;
             } else if(part===2) {
-                oldLevel = this.props.userData.statues[statueNo].equip.atk.level;
                 newLevel = newUserData.statues[statueNo].equip.atk.level;
             } else if(part===3) {
-                oldLevel = this.props.userData.statues[statueNo].equip.def.level;
                 newLevel = newUserData.statues[statueNo].equip.def.level;
             }
             if(oldLevel !== newLevel) {
@@ -159,6 +158,7 @@ export default connect(
         gameData: state.gameModule.gameData,
         userData: state.userModule.userData,
         forgeStatus: state.forgeModule.forgeStatus,
+        finney: state.userModule.finney,
     }),
     dispatch => ({
         UserActions: bindActionCreators(userActions, dispatch),

@@ -145,6 +145,10 @@ class Statue extends Component {
         ],
     }
 
+    componentDidMount = () => {
+        this.forceUpdate();
+    }
+
     render() {
         const statue = this.state.statues[this.props.no];
         return (
@@ -154,8 +158,8 @@ class Statue extends Component {
                 scale={this.props.scale || 1}
                 interactive={this.props.interactive || false}
                 click={this.props.click || null}
-                cursor={this.props.interactive ? 'pointer' : 'default'}
-                mask={this.props.mask || null}>
+                mask={this.props.mask || null}
+                cursor={this.props.interactive ? 'pointer' : 'default'}>
                 <Sprite
                     tint={this.props.tint || 0xffffff}
                     anchor={[0.5, 1]}

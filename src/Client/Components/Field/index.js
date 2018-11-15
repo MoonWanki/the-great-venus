@@ -16,20 +16,20 @@ const unitAttackMotionEasing = [
 
 const ourUnitsPosition = [
     { x: 18/50, y: 17/20 },
-    { x: 15/50, y: 15/20 },
-    { x: 14/50, y: 17/20 },
-    { x: 11/50, y: 15/20 },
-    { x: 10/50, y: 17/20 },
     { x: 19/50, y: 15/20 },
+    { x: 14/50, y: 17/20 },
+    { x: 15/50, y: 15/20 },
+    { x: 10/50, y: 17/20 },
+    { x: 11/50, y: 15/20 },
 ];
 
 const enemyUnitsPosition = [
-    { x: 31/50, y: 15/20 },
     { x: 32/50, y: 17/20 },
-    { x: 35/50, y: 15/20 },
+    { x: 31/50, y: 15/20 },
     { x: 36/50, y: 17/20 },
-    { x: 39/50, y: 15/20 },
+    { x: 35/50, y: 15/20 },
     { x: 40/50, y: 17/20 },
+    { x: 39/50, y: 15/20 },
 ]
 
 class Field extends Component {
@@ -78,8 +78,8 @@ class Field extends Component {
         for(let i=0 ; i<this.props.data.attackResultList.length ; i++) {
             const { way, from, to, damage, isCrt } = this.props.data.attackResultList[i];
             if(way) {
-                Animated.timing(this.state.ourUnitsPosition[from], { toValue: enemyUnitsPosition[to], duration: 150, easing: unitAttackMotionEasing[0] }).start();
-                await this.sleep(150);
+                Animated.timing(this.state.ourUnitsPosition[from], { toValue: enemyUnitsPosition[to], duration: 120, easing: unitAttackMotionEasing[0] }).start();
+                await this.sleep(100);
                 this.showDamage(damage, isCrt, enemyUnitsPosition[to]);
                 this.setState({
                     enemyUnits: this.state.enemyUnits.map((unit, i)=>
@@ -87,21 +87,21 @@ class Field extends Component {
                     )
                 });
                 if(this.state.enemyUnits[to].hp < damage) {
-                    
+                    // 소비오트 등장이라도 시켜주든지
                 }
-                Animated.timing(this.state.ourUnitsPosition[from], { toValue: ourUnitsPosition[from], duration: 850, easing: unitAttackMotionEasing[1] }).start();
-                await this.sleep(850);
+                Animated.timing(this.state.ourUnitsPosition[from], { toValue: ourUnitsPosition[from], duration: 900, easing: unitAttackMotionEasing[1] }).start();
+                await this.sleep(900);
             } else {
-                Animated.timing(this.state.enemyUnitsPosition[from], { toValue: ourUnitsPosition[to], duration: 150, easing: unitAttackMotionEasing[0] }).start();
-                await this.sleep(150);
+                Animated.timing(this.state.enemyUnitsPosition[from], { toValue: ourUnitsPosition[to], duration: 120, easing: unitAttackMotionEasing[0] }).start();
+                await this.sleep(100);
                 this.showDamage(damage, isCrt, ourUnitsPosition[to]);
                 this.setState({
                     ourUnits: this.state.ourUnits.map((unit, i)=>
                         i===to ? {...unit, hp: damage > unit.hp ? 0 : unit.hp - damage} : unit
                     )
                 });
-                Animated.timing(this.state.enemyUnitsPosition[from], { toValue: enemyUnitsPosition[from], duration: 850, easing: unitAttackMotionEasing[1] }).start();
-                await this.sleep(850);
+                Animated.timing(this.state.enemyUnitsPosition[from], { toValue: enemyUnitsPosition[from], duration: 900, easing: unitAttackMotionEasing[1] }).start();
+                await this.sleep(900);
             }
         }
         this.props.onFinish();
@@ -113,36 +113,69 @@ class Field extends Component {
         Animated.timing(this.state.damageView.position.y, { toValue: position.y - 0.32, duration: 1200 }).start();
     }
 
-    renderOurUnits = () => this.state.ourUnits.map((unit, i) => <AnimatedBattleUnit
-        key={i}
-        data={unit}
-        x={this.state.ourUnitsPosition[i].x.interpolate({ inputRange: [0, 1], outputRange: [0, this.props.width]})}
-        y={this.state.ourUnitsPosition[i].y.interpolate({ inputRange: [0, 1], outputRange: [0, this.props.height]})}
-        eye={this.props.userData.defaultStatueLook.eye}
-        hair={this.props.userData.defaultStatueLook.hair}
-        hpEquipLook={this.props.userData.statues[unit.no].equip.hp.look}
-        atkEquipLook={this.props.userData.statues[unit.no].equip.atk.look}
-        defEquipLook={this.props.userData.statues[unit.no].equip.def.look} />)
+    renderOurUnits = () => {
+        let upperUnits = [], lowerUnits = [];
+        for(let i=0 ; i<this.state.ourUnits.length ; i++) {
+            if(i%2) { // upper
+                upperUnits.push(<AnimatedBattleUnit
+                    data={this.state.ourUnits[i]}
+                    x={this.state.ourUnitsPosition[i].x.interpolate({ inputRange: [0, 1], outputRange: [0, this.props.width]})}
+                    y={this.state.ourUnitsPosition[i].y.interpolate({ inputRange: [0, 1], outputRange: [0, this.props.height]})}
+                    eye={this.props.userData.defaultStatueLook.eye}
+                    hair={this.props.userData.defaultStatueLook.hair}
+                    hpEquipLook={this.props.userData.statues[this.state.ourUnits[i].no].equip.hp.look}
+                    atkEquipLook={this.props.userData.statues[this.state.ourUnits[i].no].equip.atk.look}
+                    defEquipLook={this.props.userData.statues[this.state.ourUnits[i].no].equip.def.look} />
+                );
+            } else {
+                lowerUnits.push(<AnimatedBattleUnit
+                    data={this.state.ourUnits[i]}
+                    x={this.state.ourUnitsPosition[i].x.interpolate({ inputRange: [0, 1], outputRange: [0, this.props.width]})}
+                    y={this.state.ourUnitsPosition[i].y.interpolate({ inputRange: [0, 1], outputRange: [0, this.props.height]})}
+                    eye={this.props.userData.defaultStatueLook.eye}
+                    hair={this.props.userData.defaultStatueLook.hair}
+                    hpEquipLook={this.props.userData.statues[this.state.ourUnits[i].no].equip.hp.look}
+                    atkEquipLook={this.props.userData.statues[this.state.ourUnits[i].no].equip.atk.look}
+                    defEquipLook={this.props.userData.statues[this.state.ourUnits[i].no].equip.def.look} />
+                );
+            }
+        }
+        return upperUnits.concat(lowerUnits);
+    }
     
-    renderEnemyUnits = () => this.props.isColosseum ?
-        this.state.enemyUnits.map((unit, i) => <AnimatedBattleUnit
-            key={i}
-            isEnemy
-            data={unit}
-            x={this.state.enemyUnitsPosition[i].x.interpolate({ inputRange: [0, 1], outputRange: [0, this.props.width]})}
-            y={this.state.enemyUnitsPosition[i].y.interpolate({ inputRange: [0, 1], outputRange: [0, this.props.height]})}
-            eye={this.props.enemyData.defaultStatueLook.eye}
-            hair={this.props.enemyData.defaultStatueLook.hair}
-            hpEquipLook={this.props.enemyData.statues[unit.no].equip.hp.look}
-            atkEquipLook={this.props.enemyData.statues[unit.no].equip.atk.look}
-            defEquipLook={this.props.enemyData.statues[unit.no].equip.def.look} />)
-        : this.state.enemyUnits.map((unit, i) => <AnimatedBattleUnit
-            isMob
-            isEnemy
-            key={i}
-            data={unit}
-            x={this.state.enemyUnitsPosition[i].x.interpolate({ inputRange: [0, 1], outputRange: [0, this.props.width]})}
-            y={this.state.enemyUnitsPosition[i].y.interpolate({ inputRange: [0, 1], outputRange: [0, this.props.height]})} />)
+    renderEnemyUnits = () => {
+        let upperUnits = [], lowerUnits = [];
+        for(let i=0 ; i<this.state.enemyUnits.length ; i++) {
+            if(i%2) { // upper
+                upperUnits.push(<AnimatedBattleUnit
+                    isEnemy
+                    isMob={!this.props.isColosseum}
+                    data={this.state.enemyUnits[i]}
+                    x={this.state.enemyUnitsPosition[i].x.interpolate({ inputRange: [0, 1], outputRange: [0, this.props.width]})}
+                    y={this.state.enemyUnitsPosition[i].y.interpolate({ inputRange: [0, 1], outputRange: [0, this.props.height]})}
+                    eye={this.props.isColosseum && this.props.enemyData.defaultStatueLook.eye}
+                    hair={this.props.isColosseum && this.props.enemyData.defaultStatueLook.hair}
+                    hpEquipLook={this.props.isColosseum && this.props.enemyData.statues[this.state.enemyUnits[i].no].equip.hp.look}
+                    atkEquipLook={this.props.isColosseum && this.props.enemyData.statues[this.state.enemyUnits[i].no].equip.atk.look}
+                    defEquipLook={this.props.isColosseum && this.props.enemyData.statues[this.state.enemyUnits[i].no].equip.def.look} />
+                );
+            } else {
+                lowerUnits.push(<AnimatedBattleUnit
+                    isEnemy
+                    isMob={!this.props.isColosseum}
+                    data={this.state.enemyUnits[i]}
+                    x={this.state.enemyUnitsPosition[i].x.interpolate({ inputRange: [0, 1], outputRange: [0, this.props.width]})}
+                    y={this.state.enemyUnitsPosition[i].y.interpolate({ inputRange: [0, 1], outputRange: [0, this.props.height]})}
+                    eye={this.props.isColosseum && this.props.enemyData.defaultStatueLook.eye}
+                    hair={this.props.isColosseum && this.props.enemyData.defaultStatueLook.hair}
+                    hpEquipLook={this.props.isColosseum && this.props.enemyData.statues[this.state.enemyUnits[i].no].equip.hp.look}
+                    atkEquipLook={this.props.isColosseum && this.props.enemyData.statues[this.state.enemyUnits[i].no].equip.atk.look}
+                    defEquipLook={this.props.isColosseum && this.props.enemyData.statues[this.state.enemyUnits[i].no].equip.def.look} />
+                );
+            }
+        }
+        return upperUnits.concat(lowerUnits);
+    }
     
     handleMouseMove = e => {
         this.setState({ mousePosition: e.data.global });

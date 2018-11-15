@@ -71,7 +71,7 @@ class EquipDisplay extends Component {
                 </Container>
                 }
                 {isWorking && <Fragment>
-                    <Box width={width} height={height*2/3} alpha={0.5} />
+                    <Box interactive width={width} height={height*2/3} alpha={0.5} />
                     <AnimatedBox color={0xFFFFFF} x={this.state.borderPointPosition[0].x} y={this.state.borderPointPosition[0].y} width={4} height={4} />
                     <AnimatedBox color={0xFFFFFF} x={this.state.borderPointPosition[1].x} y={this.state.borderPointPosition[1].y} width={4} height={4} />
                 </Fragment>}
