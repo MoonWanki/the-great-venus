@@ -5,7 +5,8 @@ import { connect } from 'react-redux';
 
 const textStyle = {
     fill: 0xFFFFFF,
-    fontSize: 16
+    fontSize: 16,
+    fontFamily: 'Nanum Gothic',
 }
 
 class RewardDisplay extends Component {
@@ -23,7 +24,7 @@ class RewardDisplay extends Component {
                 </Container>}
                 {this.props.isUpdating && <Container interactive>
                     <Box width={width} height={height} alpha={0.5} />
-                    <Text text={'업데이트 중입니다...'} style={{ fill: 0xFFFFFF, fontSize: 16, align: 'center' }} anchor={[0.5, 0.5]} x={width/2} y={height/2} />
+                    <Text style={{ ...textStyle, align: 'center' }} text='업데이트 중입니다...' anchor={[0.5, 0.5]} x={width/2} y={height/2} />
                 </Container> }
             </Container>
         );

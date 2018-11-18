@@ -107,7 +107,7 @@ class StageSelectUI extends Component {
                         text={this.state.loadingScreenMessage}
                         x={width/2}
                         y={height/2 + 60}
-                        style={{ fill: 0xffffff, fontSize: 16, align: 'center' }} />
+                        style={{ fill: 0xffffff, fontSize: 16, align: 'center', fontFamily: 'Nanum Gothic' }} />
                 </Container>}
             </Fragment>
         );

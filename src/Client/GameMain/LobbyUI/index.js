@@ -2,14 +2,14 @@ import React, { Component, Fragment } from 'react';
 import Animated from 'animated';
 import ProfileContainer from './ProfileContainer';
 import { connect } from 'react-redux';
-// import Dashboard from './Dashboard';
+import Dashboard from './Dashboard';
 
 const AnimatedProfileContainer = Animated.createAnimatedComponent(ProfileContainer);
 
 class LobbyUI extends Component {
 
     render() {
-        const { offset, width } = this.props;
+        const { offset, width, height } = this.props;
         const profileContainerSize = { w: width/6, h: width/18 }
         return (
             <Fragment>
@@ -19,7 +19,11 @@ class LobbyUI extends Component {
                     alpha={offset}
                     width={profileContainerSize.w}
                     height={profileContainerSize.h} />
-                {/* <Dashboard /> */}
+                <Dashboard
+                    x={-this.props.contentX}
+                    y={height - this.props.contentY}
+                    width={500}
+                    height={150} />
             </Fragment>
         );
     }

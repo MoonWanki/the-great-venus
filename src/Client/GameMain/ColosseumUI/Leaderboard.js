@@ -20,8 +20,8 @@ class Leaderboard extends Component {
             }
             return <Container key={i}>
                 <Box x={2} y={i*height/10 + 2} width={width} height={height/10 - 4} alpha={0.3} color={color}/>
-                <Text x={2} y={i*height/10 + 2} text={user.rank} style={{ fill: 0xFFFFFF, fontSize: 16 }} />
-                <Text x={width/3} y={i*height/10 + 2} text={`Lv.${user.level} ${user.name}`} style={{ fill: 0xFFFFFF, fontSize: 16 }} />
+                <Text x={2} y={i*height/10 + 2} text={user.rank} style={{ fill: 0xFFFFFF, fontSize: 16, fontFamily: 'Nanum Gothic' }} />
+                <Text x={width/3} y={i*height/10 + 2} text={`Lv.${user.level} ${user.name}`} style={{ fill: 0xFFFFFF, fontSize: 16, fontFamily: 'Nanum Gothic' }} />
                 <FlatButton x={width*4/6} y={i*height/10 + 2} width={width/6 - 2} height={height/10 - 4} text={'정보'} onClick={()=>this.props.onCompareSpec(i)} />
                 <FlatButton x={width*5/6} y={i*height/10 + 2} width={width/6 - 2} height={height/10 - 4} text={'싸우자'} onClick={()=>this.props.onFight(i)} />
             </Container>
@@ -45,7 +45,7 @@ class Leaderboard extends Component {
                 {this.renderUserList()}
                 {this.props.isUpdating && <Container interactive>
                     <Box width={width} height={height} alpha={0.5} />
-                    <Text text={'업데이트 중입니다...'} style={{ fill: 0xFFFFFF, fontSize: 16, align: 'center' }} anchor={[0.5, 0.5]} x={width/2} y={height/2} />
+                    <Text text={'업데이트 중입니다...'} style={{ fill: 0xFFFFFF, fontSize: 16, align: 'center', fontFamily: 'Nanum Gothic' }} anchor={[0.5, 0.5]} x={width/2} y={height/2} />
                 </Container> }
             </Container>
         );

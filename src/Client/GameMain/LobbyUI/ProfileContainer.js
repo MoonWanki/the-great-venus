@@ -5,6 +5,8 @@ import * as PIXI from 'pixi.js';
 import Statue from 'Client/Components/Statue';
 import PercentageBar from 'Client/Components/PercentageBar';
 
+const textStyle = { fill: 0xffffff, fontSize: 16, fontFamily: 'Nanum Gothic' };
+
 class ProfileContainer extends Component {
 
     getMask = () => {
@@ -15,6 +17,8 @@ class ProfileContainer extends Component {
         circle.endFill();
         return circle;
     }
+
+    getExpPercentage = () => ((this.props.userData.exp - this.props.userData.preRequiredExp) / (this.props.userData.requiredExp[0] - this.props.userData.preRequiredExp) * 100).toFixed(2);
 
     render() {
         const { height, userData } = this.props;
@@ -32,10 +36,10 @@ class ProfileContainer extends Component {
                     defEquipLook={userData.statues[0].equip.def.look}
                     mask={this.getMask()}
                     anchor={[0, 0]} />
-                <Text x={90} text={`Lv. ${userData.level}  ${userData.name}`} style={{ fill: 0xffffff, fontSize: 20 }} />
-                <PercentageBar color={0xDDCC33} x={90} y={height*3/10} width={200} height={10} value={userData.expPercentage} maxValue={100} />
-                <Text x={90} y={height*2/4} text={`소비오트 ${userData.sorbiote}개`} style={{ fill: 0xffffff, fontSize: 16 }} />
-                <Text x={90} y={height*3/4} text={`이더리움 ${this.props.finney.toLocaleString()} FINNEY`} style={{ fill: 0xffffff, fontSize: 16 }} />
+                <Text x={90} text={`Lv. ${userData.level}  ${userData.name}`} style={{ ...textStyle, fontSize: 20 }} />
+                <PercentageBar color={0xDDCC33} x={90} y={height*3/10} width={200} height={10} value={this.getExpPercentage()} maxValue={100} />
+                <Text x={90} y={height*2/4} text={`소비오트 ${userData.sorbiote}개`} style={textStyle} />
+                <Text x={90} y={height*3/4} text={`이더리움 ${this.props.finney.toLocaleString()} FINNEY`} style={textStyle} />
             </Container>
         );
     }

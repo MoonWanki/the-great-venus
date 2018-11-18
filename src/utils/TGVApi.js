@@ -252,14 +252,13 @@ export const getUserData = async (TGV, address) => {
     const statueEquipInfo = await getStatueEquipInfo(TGV, address, user.numStatues);
     let statueSpecList = [];
     for(let i=0 ; i<user.numStatues ; i++) statueSpecList.push(await getStatueSpec(TGV, user.level, i, statueEquipInfo[i]));
-    const requiredExp = await getRequiredExp(TGV, user.level);
+    const requiredExp = await Promise.all([getRequiredExp(TGV, user.level), getRequiredExp(TGV, user.level + 1)]);
     const preRequiredExp = user.level > 1 ? await getRequiredExp(TGV, user.level - 1) : 0;
-    const percentage = (user.exp - preRequiredExp) / (requiredExp - preRequiredExp) * 100;
     return {
         ...user,
         statues: statueSpecList,
         requiredExp: requiredExp,
-        expPercentage: percentage.toFixed(2),
+        preRequiredExp: preRequiredExp,
         defaultStatueLook: await getDefaultStatueLook(TGV, address),
     }
 }

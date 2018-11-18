@@ -6,6 +6,7 @@ import * as userActions from 'store/modules/userModule';
 import * as gameActions from 'store/modules/gameModule';
 import * as appActions from 'store/modules/appModule';
 import * as forgeActions from 'store/modules/forgeModule';
+import * as eventActions from 'store/modules/eventModule';
 import IntroScreen from './IntroScreen';
 import GameMain from './GameMain';
 import Animated from 'animated';
@@ -34,6 +35,7 @@ class GameBase extends Component {
             this.loadResources();
         } catch (err) {
             console.error(err);
+        } finally {
             this.props.AppActions.setPreloader(false);
         }
     }
@@ -46,7 +48,7 @@ class GameBase extends Component {
         this.props.UserActions.fetchFinney(web3);
         // load TGV
         const { value: TGV } = await this.props.Web3Actions.fetchTGV(web3);
-        this.setEventHandler(TGV);
+        this.setPvPEventHandler(TGV, web3.eth.coinbase);
         // load game data
         const { value: gameData } = await this.props.GameActions.fetchGameData(TGV);
         this.props.ForgeActions.initForgeStatus(gameData.maxStatue + 1);
@@ -54,12 +56,21 @@ class GameBase extends Component {
         await this.props.UserActions.fetchUserData(TGV, web3.eth.coinbase);
     }
 
-    setEventHandler = TGV => {
-        TGV.PvPResult({}, { fromBlock: 0, toBlock: 'latest' }, (err, log) => {
+    setPvPEventHandler = (TGV, coinbase) => {
+        TGV.PvPResult({ _from: coinbase }, { fromBlock: 0, toBlock: 'latest' }, (err, log) => {
             if(!err) {
-                console.log(log);
-            } else {
-                console.error(err);
+                this.props.EventActions.addToEventStore(log.args);
+            }
+        });
+        // 누군가 나한테 덤빈 전체 히스토리
+        TGV.PvPResult({ _to: coinbase, }, { fromBlock: 0, toBlock: 'latest' }, (err, log) => {
+            if(!err) {
+                this.props.EventActions.addToEventStore(log.args);
+            }
+        });
+        TGV.PvPResult({ _to: coinbase, }, (err, log) => {
+            if(!err) {
+                this.props.EventActions.addToDashboard(log.args._from + '이(가) 나한테 덤빔');
             }
         });
     }
@@ -287,7 +298,6 @@ class GameBase extends Component {
                 loadingProgress: 100,
                 isReady: true
             });
-            this.props.AppActions.setPreloader(false);
             this.dismissIntroScreen();
         });
     }
@@ -304,6 +314,7 @@ export default connect(
         Web3Actions: bindActionCreators(web3Actions, dispatch),
         AppActions: bindActionCreators(appActions, dispatch),
         ForgeActions: bindActionCreators(forgeActions, dispatch),
+        EventActions: bindActionCreators(eventActions, dispatch),
     })
 )(GameBase);
 

@@ -56,6 +56,9 @@ class ColosseumUI extends Component {
         } catch (err) {
             console.error(err);
             this.setState({ isUpdating: false });
+        } finally {
+            // console.log('abcd')
+            // setTimeout(this.update, 1000);
         }
     }
 

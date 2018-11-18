@@ -45,7 +45,7 @@ class IntroScreen extends Component {
         text={text}
         x={this.props.width/2}
         y={this.props.height/2 + 60}
-        style={{ fill: 0xffffff, fontSize: 16, align: 'center' }} />
+        style={{ fill: 0xffffff, fontSize: 16, align: 'center', fontFamily: 'Nanum Gothic' }} />
 
     render() {
         return (
