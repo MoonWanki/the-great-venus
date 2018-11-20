@@ -6,10 +6,11 @@ contract TGVUserBattle is TGVStageClear
 {
     using SafeMath for uint;
 
-    event PvPResult(address indexed _from, address indexed _to, bool victory, uint lowRank, uint highRank);
+    event PvPResult(address indexed _from, address indexed _to, string userName, string opponentName, bool victory, uint finalUserRank, uint finalOpponentRank);
+    event Refund(uint quotaForDiamond, uint quotaForPlatinum, uint quotaForGold);
 
     uint public nextRefundTime = block.timestamp;
-    uint public refundPeriod = 15 minutes;
+    uint public refundPeriod = 1 hours;
 
     uint public matchableRankGap = 10;
 
@@ -18,7 +19,7 @@ contract TGVUserBattle is TGVStageClear
     uint public cutForGold = 7;
     uint public cutForSilver = 9;
 
-    function refundFinney() public onlyOwner {
+    function refund() public onlyOwner {
         require(numUsers >= 10 && block.timestamp > nextRefundTime);
         uint i = 1;
         uint quotaForDiamond;
@@ -26,12 +27,14 @@ contract TGVUserBattle is TGVStageClear
         uint quotaForGold;
         (quotaForDiamond, quotaForPlatinum, quotaForGold) = getQuota();
         owner.transfer(address(this).balance/20);
+        emit Refund(quotaForDiamond, quotaForPlatinum, quotaForGold);
         for(;i<=cutForDiamond;) rankToOwner[i++].transfer(quotaForDiamond);
         for(;i<=cutForPlatinum/10;) rankToOwner[i++].transfer(quotaForPlatinum);
         for(;i<=cutForGold;) rankToOwner[i++].transfer(quotaForGold);
         cutForDiamond = numUsers.div(10);
         cutForPlatinum = numUsers.mul(3).div(10);
         cutForGold = numUsers.mul(7).div(10);
+        cutForGold = numUsers.mul(9).div(10);
         nextRefundTime = block.timestamp + refundPeriod;
     }
 
@@ -54,11 +57,11 @@ contract TGVUserBattle is TGVStageClear
         Unit[] memory enemyUnits = new Unit[](users[opponentAddr].numStatues);
         for(i = 0 ; i < ourUnits.length ; i++) {
             ourUnits[i] = _getComputedStatue(i, users[msg.sender].level, statueEquipInfo[msg.sender][i]);
-            emit RoundUnitInfo(true, i, ourUnits[i].hp, ourUnits[i].atk, ourUnits[i].def, ourUnits[i].crt, ourUnits[i].avd);
+            _emitRoundUnitInfo(true, i, ourUnits[i]);
         }
         for(i = 0 ; i < enemyUnits.length ; i++) {
             enemyUnits[i] = _getComputedStatue(i, users[opponentAddr].level, statueEquipInfo[opponentAddr][i]);
-            emit RoundUnitInfo(false, i, enemyUnits[i].hp, enemyUnits[i].atk, enemyUnits[i].def, enemyUnits[i].crt, enemyUnits[i].avd);
+            _emitRoundUnitInfo(false, i, enemyUnits[i]);
         }
         (victory,) = _runBattle(ourUnits, enemyUnits, 0);
         if(victory) {
@@ -66,11 +69,16 @@ contract TGVUserBattle is TGVStageClear
             users[msg.sender].rank = enemyRank;
             rankToOwner[myRank] = opponentAddr;
             rankToOwner[enemyRank] = msg.sender;
-            emit PvPResult(msg.sender, opponentAddr, true, myRank, enemyRank);
+            emit PvPResult(msg.sender, opponentAddr, users[msg.sender].name, users[opponentAddr].name, true, myRank, enemyRank);
         } else {
-            emit PvPResult(msg.sender, opponentAddr, false, myRank, enemyRank);
+            emit PvPResult(msg.sender, opponentAddr, users[msg.sender].name, users[opponentAddr].name, false, myRank, enemyRank);
         }
         users[msg.sender].randNonce++;
         users[opponentAddr].randNonce++;
+    }
+
+    function editRefundConfig(uint _refundPeriod, uint _matchableRankGap) external onlyOwner {
+        refundPeriod = _refundPeriod;
+        matchableRankGap = _matchableRankGap;
     }
 }

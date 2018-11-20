@@ -7,20 +7,20 @@ contract TGVItemShop is TGVBase {
     using SafeMath for uint;
     using SafeMath8 for uint8;
 
+    uint public basicFee = 1 finney;
+    uint public basicSorbiote = 10;
+    uint public upgradeSorbioteDivFactor = 8;
+    uint public crtPrice = 20 finney;
+    uint public avdPrice = 20 finney;
+
     uint public equipIncreaseDivFactor = 23;
     uint public equipBigIncreaseDivFactor = 6;
     uint public equipIncreasePowerDivFactor = 3;
     
-    uint public extraCrtPerEquipLevel = 10;
-    uint public extraAvdPerEquipLevel = 5;
+    uint public extraCrtPerEquipLevel = 20;
+    uint public extraAvdPerEquipLevel = 10;
 
-    uint public basicFee = 1 finney;
-    uint public basicSorbiote = 5;
-    uint public upgradeFeeDivFactor = 2;
-    uint public crtPrice = 10 finney;
-    uint public avdPrice = 10 finney;
-
-    function buyEquip(uint statueNo, uint part, uint8 look, uint8 beautyLevel) external payable {
+    function buyEquip(uint statueNo, uint part, uint8 look) external payable {
         require(part >= 1 && part <= 5);
         if(part == 1) {
             require(msg.value == basicFee);
@@ -35,20 +35,20 @@ contract TGVItemShop is TGVBase {
             statueEquipInfo[msg.sender][statueNo].defEquipLook = look;
             statueEquipInfo[msg.sender][statueNo].defEquipLevel = 1;
         } else if(part == 4) {
-            require(msg.value == crtPrice*beautyLevel);
+            require(msg.value == crtPrice);
             statueEquipInfo[msg.sender][statueNo].crtEquipLook = look;
-            statueEquipInfo[msg.sender][statueNo].crtEquipLevel = beautyLevel;
+            statueEquipInfo[msg.sender][statueNo].crtEquipLevel = 1;
         } else if(part == 5) {
-            require(msg.value == avdPrice*beautyLevel);
+            require(msg.value == avdPrice);
             statueEquipInfo[msg.sender][statueNo].avdEquipLook = look;
-            statueEquipInfo[msg.sender][statueNo].avdEquipLevel = beautyLevel;
+            statueEquipInfo[msg.sender][statueNo].avdEquipLevel = 1;
         }
     }
 
     function getUpgradeCost(uint statueNo, uint part, uint currentEquipLevel) public view returns(uint, uint) {
         require(part >= 1 && part <= 3 && currentEquipLevel > 0);
         return (
-            basicSorbiote.add((getExtraValueByEquip(statueNo, part, currentEquipLevel.add(1))-getExtraValueByEquip(statueNo, part, currentEquipLevel))/upgradeFeeDivFactor),
+            basicSorbiote.add((getExtraValueByEquip(statueNo, part, currentEquipLevel.add(1)).add(currentEquipLevel.mul(3))-getExtraValueByEquip(statueNo, part, currentEquipLevel))/upgradeSorbioteDivFactor),
             basicFee.mul(currentEquipLevel.sub(1)/10 + 1)
         );
     }
@@ -65,12 +65,28 @@ contract TGVItemShop is TGVBase {
         else if(part == 3) statueEquipInfo[msg.sender][statueNo].defEquipLevel = statueEquipInfo[msg.sender][statueNo].defEquipLevel.add(1);
     }
 
-    function editPriceList(uint _basicFee, uint _basicSorbiote, uint _upgradeFeeDivFactor, uint _crtPrice, uint _avdPrice) external onlyOwner {
+    function editForgeConfig(
+        uint _basicFee,
+        uint _basicSorbiote,
+        uint _upgradeSorbioteDivFactor,
+        uint _crtPrice,
+        uint _avdPrice,
+        uint _equipIncreaseDivFactor,
+        uint _equipBigIncreaseDivFactor,
+        uint _equipIncreasePowerDivFactor,
+        uint _extraCrtPerEquipLevel,
+        uint _extraAvdPerEquipLevel
+    ) external onlyOwner {
         basicFee = _basicFee;
         basicSorbiote = _basicSorbiote;
-        upgradeFeeDivFactor = _upgradeFeeDivFactor;
+        upgradeSorbioteDivFactor = _upgradeSorbioteDivFactor;
         crtPrice = _crtPrice;
         avdPrice = _avdPrice;
+        equipIncreaseDivFactor = _equipIncreaseDivFactor;
+        equipBigIncreaseDivFactor = _equipBigIncreaseDivFactor;
+        equipIncreasePowerDivFactor = _equipIncreasePowerDivFactor;
+        extraCrtPerEquipLevel = _extraCrtPerEquipLevel;
+        extraAvdPerEquipLevel = _extraAvdPerEquipLevel;
     }
 
     function getExtraValueByEquip(uint statueNo, uint part, uint equipLevel) public view returns (uint) {

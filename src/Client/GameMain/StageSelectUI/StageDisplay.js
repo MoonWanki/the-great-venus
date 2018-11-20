@@ -75,15 +75,15 @@ class StageDisplay extends Component {
     }
 
     applyRoundResult = () => {
-        const { sorbiote, exp, preRequiredExp, requiredExp, level } = this.props.userData;
+        const { sorbiote, exp, preRequiredExp, requiredExp, nextRequiredExp, level } = this.props.userData;
         const roundExp = this.props.stageResult.roundResultList[this.state.currentRound - 1].exp;
         const roundSorbiote = this.props.stageResult.roundResultList[this.state.currentRound - 1].sorbiote;
-        const isLevelUp = exp + roundExp >= requiredExp[0];
+        const isLevelUp = exp + roundExp >= requiredExp;
         this.props.UserActions.syncFetchUserData({
             ...this.props.userData,
             level: isLevelUp ? level + 1 : level,
-            preRequiredExp: isLevelUp ? requiredExp[0] : preRequiredExp,
-            requiredExp: isLevelUp ? [requiredExp[1], requiredExp[1]] : requiredExp,
+            preRequiredExp: isLevelUp ? requiredExp : preRequiredExp,
+            requiredExp: isLevelUp ? nextRequiredExp : requiredExp,
             exp: exp + roundExp,
             sorbiote: sorbiote + roundSorbiote
         });

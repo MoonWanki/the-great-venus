@@ -147,7 +147,7 @@ class AdminPage extends Component {
             let price = await this.props.TGV.crtPrice.call();
             price = this.toFinney(price) * level;
             window.Materialize.toast(price + ' FINNEY를 지불합니다.', 2500);
-            await this.props.TGV.buyEquip(statueNo, 4, look, level, {
+            await this.props.TGV.buyEquip(statueNo, 4, look, {
                 from: this.props.web3.eth.coinbase,
                 value: this.props.web3.toWei(price, 'finney')
             });
@@ -163,7 +163,7 @@ class AdminPage extends Component {
             let price = await this.props.TGV.avdPrice.call();
             price = this.toFinney(price) * level;
             window.Materialize.toast(price + ' FINNEY를 지불합니다.', 2500);
-            await this.props.TGV.buyEquip(statueNo, 5, look, level, {
+            await this.props.TGV.buyEquip(statueNo, 5, look, {
                 from: this.props.web3.eth.coinbase,
                 value: this.props.web3.toWei(price, 'finney')
             });

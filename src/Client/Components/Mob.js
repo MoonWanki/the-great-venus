@@ -10,6 +10,9 @@ class Statue extends Component {
             this.context.app.loader.resources.mob2,
             this.context.app.loader.resources.mob3,
             this.context.app.loader.resources.mob4,
+            this.context.app.loader.resources.mob5,
+            this.context.app.loader.resources.mob6,
+            this.context.app.loader.resources.mob7,
         ],
     }
 

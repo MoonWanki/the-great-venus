@@ -59,12 +59,17 @@ const getExtraValueByEquip = async (TGV, statueNo, part, equipLevel) => {
 }
 
 export const getStatueSpec = async (TGV, level, statueNo, equip) => {
-    const rawSpec = await getStatueRawSpec(TGV, statueNo, level);
-    const extraHpByEquip = await getExtraValueByEquip(TGV, statueNo, 1, equip.hpEquipLevel);
-    const extraAtkByEquip = await getExtraValueByEquip(TGV, statueNo, 2, equip.atkEquipLevel);
-    const extraDefByEquip = await getExtraValueByEquip(TGV, statueNo, 3, equip.defEquipLevel);
-    const extraCrtByEquip = await getExtraValueByEquip(TGV, statueNo, 4, equip.crtEquipLevel);
-    const extraAvdByEquip = await getExtraValueByEquip(TGV, statueNo, 5, equip.avdEquipLevel);
+    const [ rawSpec, extraHpByEquip, extraAtkByEquip, extraDefByEquip, extraCrtByEquip, extraAvdByEquip, nextExtraHpByEquip, nextExtraAtkByEquip, nextExtraDefByEquip ] = await Promise.all([
+        getStatueRawSpec(TGV, statueNo, level),
+        getExtraValueByEquip(TGV, statueNo, 1, equip.hpEquipLevel),
+        getExtraValueByEquip(TGV, statueNo, 2, equip.atkEquipLevel),
+        getExtraValueByEquip(TGV, statueNo, 3, equip.defEquipLevel),
+        getExtraValueByEquip(TGV, statueNo, 4, equip.crtEquipLevel),
+        getExtraValueByEquip(TGV, statueNo, 5, equip.avdEquipLevel),
+        getExtraValueByEquip(TGV, statueNo, 1, equip.hpEquipLevel + 1),
+        getExtraValueByEquip(TGV, statueNo, 2, equip.atkEquipLevel + 1),
+        getExtraValueByEquip(TGV, statueNo, 3, equip.defEquipLevel + 1),
+    ]);
     return {
         hp: rawSpec.hp + extraHpByEquip,
         hpDefault: rawSpec.hp,
@@ -86,19 +91,19 @@ export const getStatueSpec = async (TGV, level, statueNo, equip) => {
                 look: equip.hpEquipLook,
                 level: equip.hpEquipLevel,
                 value: extraHpByEquip,
-                nextValue: await getExtraValueByEquip(TGV, statueNo, 1, equip.hpEquipLevel + 1),
+                nextValue: nextExtraHpByEquip,
             },
             atk: {
                 look: equip.atkEquipLook,
                 level: equip.atkEquipLevel,
                 value: extraAtkByEquip,
-                nextValue: await getExtraValueByEquip(TGV, statueNo, 2, equip.atkEquipLevel + 1),
+                nextValue: nextExtraAtkByEquip,
             },
             def: {
                 look: equip.defEquipLook,
                 level: equip.defEquipLevel,
                 value: extraDefByEquip,
-                nextValue: await getExtraValueByEquip(TGV, statueNo, 3, equip.defEquipLevel + 1),
+                nextValue: nextExtraDefByEquip,
             },
             crt: {
                 look: equip.crtEquipLook,
@@ -197,34 +202,38 @@ export const getEquipConfig = async (TGV) => {
 export const getItemShopInfo = async (TGV) => {
     const basicFee = await TGV.basicFee.call();
     const basicSorbiote = await TGV.basicSorbiote.call();
-    const upgradeFeeDivFactor = await TGV.upgradeFeeDivFactor.call();
+    const upgradeSorbioteDivFactor = await TGV.upgradeSorbioteDivFactor.call();
     const crtPrice = await TGV.crtPrice.call();
     const avdPrice = await TGV.avdPrice.call();
     return {
         basicFee: toFinney(basicFee),
         basicSorbiote: basicSorbiote.c[0],
-        upgradeFeeDivFactor: upgradeFeeDivFactor.c[0],
+        upgradeFeeDivFactor: upgradeSorbioteDivFactor.c[0],
         crtPrice: toFinney(crtPrice),
         avdPrice: toFinney(avdPrice),
     }
 }
 
 export const getGameData = async (TGV) => {
-    const maxStatue = await TGV.maxStatue.call();
-    const maxMob = await TGV.maxMob.call();
-    const maxStage = await TGV.maxStage.call();
-    const statueInfoList = await getStatueInfoList(TGV, maxStatue);
-    const mobInfoList = await getMobInfoList(TGV, maxMob);
-    const stageInfoList = await getStageInfoList(TGV, maxStage);
-    const itemShopInfo = await getItemShopInfo(TGV);
+    const [ maxStatue, maxMob, maxStage ] = await Promise.all([
+        TGV.maxStatue.call(),
+        TGV.maxMob.call(),
+        TGV.maxStage.call(),
+    ]);
+    const [ statueInfoList, mobInfoList, stageInfoList, itemShopInfo] = await Promise.all([
+        getStatueInfoList(TGV, maxStatue),
+        getMobInfoList(TGV, maxMob),
+        getStageInfoList(TGV, maxStage),
+        getItemShopInfo(TGV),
+    ]);
     return {
         maxStatue: maxStatue.c[0],
         maxMob: maxMob.c[0],
         maxStage: maxStage.c[0],
-        statueInfoList: statueInfoList,
-        mobInfoList: mobInfoList,
-        stageInfoList: stageInfoList,
-        itemShopInfo: itemShopInfo,
+        statueInfoList,
+        mobInfoList,
+        stageInfoList,
+        itemShopInfo,
     }
 }
 
@@ -241,25 +250,26 @@ const getDefaultStatueLook = async (TGV, address) => {
     res = await TGV.defaultStatueLook.call(address, 2);
     const eye = res.c[0];
     return {
-        skin: skin,
-        hair: hair,
-        eye: eye,
+        skin,
+        hair,
+        eye,
     }
 }
 
 export const getUserData = async (TGV, address) => {
     const user = await getUser(TGV, address);
-    const statueEquipInfo = await getStatueEquipInfo(TGV, address, user.numStatues);
+    const [ statueEquipInfo, defaultStatueLook ] = await Promise.all([getStatueEquipInfo(TGV, address, user.numStatues), getDefaultStatueLook(TGV, address)]);
     let statueSpecList = [];
     for(let i=0 ; i<user.numStatues ; i++) statueSpecList.push(await getStatueSpec(TGV, user.level, i, statueEquipInfo[i]));
-    const requiredExp = await Promise.all([getRequiredExp(TGV, user.level), getRequiredExp(TGV, user.level + 1)]);
+    const [ requiredExp, nextRequiredExp ] = await Promise.all([getRequiredExp(TGV, user.level), getRequiredExp(TGV, user.level + 1)]);
     const preRequiredExp = user.level > 1 ? await getRequiredExp(TGV, user.level - 1) : 0;
     return {
         ...user,
         statues: statueSpecList,
-        requiredExp: requiredExp,
-        preRequiredExp: preRequiredExp,
-        defaultStatueLook: await getDefaultStatueLook(TGV, address),
+        requiredExp,
+        preRequiredExp,
+        nextRequiredExp,
+        defaultStatueLook,
     }
 }
 

@@ -1,6 +1,6 @@
 pragma solidity ^0.4.24;
 
-import "./TGVConfig.sol";
+import "./TGVUserBattle.sol";
 
-contract TGV is TGVConfig {
+contract TGV is TGVUserBattle {
 }

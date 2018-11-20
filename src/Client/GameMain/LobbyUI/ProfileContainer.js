@@ -18,7 +18,7 @@ class ProfileContainer extends Component {
         return circle;
     }
 
-    getExpPercentage = () => ((this.props.userData.exp - this.props.userData.preRequiredExp) / (this.props.userData.requiredExp[0] - this.props.userData.preRequiredExp) * 100).toFixed(2);
+    getExpPercentage = () => ((this.props.userData.exp - this.props.userData.preRequiredExp) / (this.props.userData.requiredExp - this.props.userData.preRequiredExp) * 100).toFixed(2);
 
     render() {
         const { height, userData } = this.props;

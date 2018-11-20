@@ -23,13 +23,13 @@ export default class PriceListModal extends Component {
                         <tr key={j}>
                             <th>{level}</th>
                             <td>{equipConfig.extraValueTable[statueNo][0][j]}</td>
-                            <td>{j===0 ? '-' : equipConfig.upgradeCostTable[statueNo][0][j-1].soul}</td>
+                            <td>{j===0 ? '-' : equipConfig.upgradeCostTable[statueNo][0][j-1].sorbiote}</td>
                             <td>{j===0 ? basicFee : equipConfig.upgradeCostTable[statueNo][0][j-1].fee}</td>
                             <td>{equipConfig.extraValueTable[statueNo][1][j]}</td>
-                            <td>{j===0 ? '-' : equipConfig.upgradeCostTable[statueNo][1][j-1].soul}</td>
+                            <td>{j===0 ? '-' : equipConfig.upgradeCostTable[statueNo][1][j-1].sorbiote}</td>
                             <td>{j===0 ? basicFee : equipConfig.upgradeCostTable[statueNo][1][j-1].fee}</td>
                             <td>{equipConfig.extraValueTable[statueNo][2][j]}</td>
-                            <td>{j===0 ? '-' : equipConfig.upgradeCostTable[statueNo][2][j-1].soul}</td>
+                            <td>{j===0 ? '-' : equipConfig.upgradeCostTable[statueNo][2][j-1].sorbiote}</td>
                             <td>{j===0 ? basicFee : equipConfig.upgradeCostTable[statueNo][2][j-1].fee}</td>
                         </tr>)}
                     </tbody>

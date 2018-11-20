@@ -24,46 +24,43 @@ contract TGVStageClear is TGVItemShop
         uint roundNo = 1;
         uint roundExp;
         uint randNonce = 0;
+        User memory user = users[msg.sender];
         Unit[] memory ourUnits = new Unit[](statueNoList.length);
         while(true) {
             roundExp = 0;
             if(stageInfoList[stageNo][roundNo].length == 0) break;
             Unit[] memory enemyUnits = new Unit[](stageInfoList[stageNo][roundNo].length);
             for(i = 0 ; i < ourUnits.length ; i++) {
-                ourUnits[i] = _getComputedStatue(statueNoList[i], users[msg.sender].level, statueEquipInfo[msg.sender][statueNoList[i]]);
-                emit RoundUnitInfo(true, statueNoList[i], ourUnits[i].hp, ourUnits[i].atk, ourUnits[i].def, ourUnits[i].crt, ourUnits[i].avd);
+                ourUnits[i] = _getComputedStatue(statueNoList[i], user.level, statueEquipInfo[msg.sender][statueNoList[i]]);
+                _emitRoundUnitInfo(true, statueNoList[i], ourUnits[i]);
             }
             for(i = 0 ; i < enemyUnits.length ; i++) {
                 enemyUnits[i] = _getComputedMob(stageInfoList[stageNo][roundNo][i], stageNo);
                 roundExp += expSpoiledByMob[stageInfoList[stageNo][roundNo][i]];
-                emit RoundUnitInfo(
-                    false,
-                    stageInfoList[stageNo][roundNo][i],
-                    enemyUnits[i].hp,
-                    enemyUnits[i].atk,
-                    enemyUnits[i].def,
-                    enemyUnits[i].crt,
-                    enemyUnits[i].avd
-                );
+                _emitRoundUnitInfo(false, stageInfoList[stageNo][roundNo][i], enemyUnits[i]);
             }
             (victory, randNonce) = _runBattle(ourUnits, enemyUnits, randNonce);
             if(victory) {
-                users[msg.sender].exp = users[msg.sender].exp.add(uint32(roundExp));
-                if(users[msg.sender].exp >= getRequiredExp(users[msg.sender].level)) users[msg.sender].level = users[msg.sender].level.add(1);
-                users[msg.sender].sorbiote = users[msg.sender].sorbiote.add(uint32(enemyUnits.length));
+                user.exp = user.exp.add(uint32(roundExp));
+                if(user.exp >= getRequiredExp(user.level)) user.level = user.level.add(1);
+                user.sorbiote = user.sorbiote.add(uint32(enemyUnits.length));
                 emit RoundResult(true, roundExp, enemyUnits.length);
             } else {
                 emit RoundResult(false, 0, 0);
-                users[msg.sender].randNonce++;
-                return;
+                break;
             }
             roundNo++;
         }
-        users[msg.sender].randNonce++;
-        if(users[msg.sender].lastStage < stageNo) {
-            users[msg.sender].lastStage = uint16(stageNo);
-            if(statueAcquisitionStage[users[msg.sender].numStatues] == stageNo) users[msg.sender].numStatues = users[msg.sender].numStatues.add(1);
+        user.randNonce++;
+        if(victory && user.lastStage < stageNo) {
+            user.lastStage = uint32(stageNo);
+            if(statueAcquisitionStage[user.numStatues] == stageNo) user.numStatues = user.numStatues.add(1);
         }
+        users[msg.sender] = user;
+    }
+
+    function _emitRoundUnitInfo(bool isAlly, uint no, Unit unit) internal {
+        emit RoundUnitInfo(isAlly, no, unit.hp, unit.atk, unit.def, unit.crt, unit.avd);
     }
 
     function _runBattle(Unit[] memory ourUnits, Unit[] memory enemyUnits, uint nonce) internal returns(bool, uint) {
@@ -150,5 +147,11 @@ contract TGVStageClear is TGVItemShop
             rawCrt,
             rawAvd
         );
+    }
+
+    function editDamageFactor(uint _damageMulFactor, uint _damageDivFactor, uint _damageFlexibler) external onlyOwner {
+        damageMulFactor = _damageMulFactor;
+        damageDivFactor = _damageDivFactor;
+        damageFlexibler = _damageFlexibler;
     }
 }

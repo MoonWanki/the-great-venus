@@ -27,6 +27,7 @@ contract TGVBase {
 
     constructor() public {
         owner = msg.sender;
+        statueInfoList[0] = Unit(500, 150, 120, 10, 5);
     }
     
     modifier onlyOwner() {
@@ -66,12 +67,13 @@ contract TGVBase {
         rankToOwner[numUsers] = msg.sender;
     }
 
-    // returns required exp to reach given level
     function getRequiredExp(uint level) public pure returns(uint) {
-        uint sum = 0;
-        for(uint i = 1 ; i <= level ; i++)
+        uint increase = 100;
+        uint sum = 100;
+        for(uint i = 1 ; i < level ; i++)
         {
-            sum += (100*i);
+            increase = increase.mul(20/i + 21)/20;
+            sum = sum.add(increase);
         }
         return sum;
     }
@@ -100,13 +102,69 @@ contract TGVBase {
         return (stageInfoList[stageNo][1], stageInfoList[stageNo][2], stageInfoList[stageNo][3]);
     }
     
+    function editLevelIncreaseFactor(uint _levelIncreaseDivFactor) external onlyOwner {
+        levelIncreaseDivFactor = _levelIncreaseDivFactor;
+    }
+
+    function increaseMaxStatue() external onlyOwner {
+        maxStatue = maxStatue.add(1);
+    }
+
+    function increaseMaxMob() external onlyOwner {
+        maxMob = maxMob.add(1);
+    }
+
+    function increaseMaxStage() external onlyOwner {
+        maxStage = maxStage.add(1);
+    }
+
+    function editStatueInfo(
+        uint statueNo,
+        uint hp,
+        uint atk,
+        uint def,
+        uint crt,
+        uint avd,
+        uint acquisitionStage
+    ) external onlyOwner onlyValidStatueNo(statueNo) {
+        statueInfoList[statueNo].hp = hp;
+        statueInfoList[statueNo].atk = atk;
+        statueInfoList[statueNo].def = def;
+        statueInfoList[statueNo].crt = crt;
+        statueInfoList[statueNo].avd = avd;
+        statueAcquisitionStage[statueNo] = acquisitionStage;
+    }
+    
+    function editMobInfo(
+        uint mobNo,
+        uint hp,
+        uint atk,
+        uint def,
+        uint crt,
+        uint avd,
+        uint exp
+    ) external onlyOwner onlyValidMobNo(mobNo) {
+        mobInfoList[mobNo].hp = hp;
+        mobInfoList[mobNo].atk = atk;
+        mobInfoList[mobNo].def = def;
+        mobInfoList[mobNo].crt = crt;
+        mobInfoList[mobNo].avd = avd;
+        expSpoiledByMob[mobNo] = exp;
+    }
+
+    function editStageRoundInfo(uint stageNo, uint roundNo, uint[] mobNoList)
+    public onlyOwner onlyValidStageNo(stageNo) {
+        stageInfoList[stageNo][roundNo] = new uint[](mobNoList.length);
+        stageInfoList[stageNo][roundNo] = mobNoList;
+    }
+
     struct User {
         string name;
         uint32 rank;
         uint32 exp;
         uint32 sorbiote;
         uint32 level;
-        uint16 lastStage;
+        uint32 lastStage;
         uint8 numStatues;
         uint8 randNonce;
     }
