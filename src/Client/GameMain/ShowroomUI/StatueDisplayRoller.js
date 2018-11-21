@@ -27,18 +27,21 @@ class StatueDisplayRoller extends Component {
         return iterator.map(i => {
             if(i === 0)  {
                 return <Statue
-                    key={i}
+                    key={0}
                     interactive
                     click={()=>this.props.onClickStatue(i)}
                     x={this.props.width/2 + i*this.props.gapBetweenStatues}
                     y={this.props.height}
                     no={0}
                     scale={1.4}
+                    skin={this.props.userData.defaultStatueLook.skin}
                     eye={this.props.userData.defaultStatueLook.eye}
                     hair={this.props.userData.defaultStatueLook.hair}
-                    hpEquipLook={this.props.userData.statues[i].equip.hp.look}
-                    atkEquipLook={this.props.userData.statues[i].equip.atk.look}
-                    defEquipLook={this.props.userData.statues[i].equip.def.look} />
+                    hpEquipLook={this.props.userData.statues[0].equip.hp.look}
+                    atkEquipLook={this.props.userData.statues[0].equip.atk.look}
+                    defEquipLook={this.props.userData.statues[0].equip.def.look}
+                    crtEquipLook={this.props.userData.statues[0].equip.crt.look}
+                    avdEquipLook={this.props.userData.statues[0].equip.avd.look} />
             } else if(i < this.props.userData.numStatues) {
                 return <Statue
                     key={i}
@@ -50,7 +53,9 @@ class StatueDisplayRoller extends Component {
                     scale={1.4}
                     hpEquipLook={this.props.userData.statues[i].equip.hp.look}
                     atkEquipLook={this.props.userData.statues[i].equip.atk.look}
-                    defEquipLook={this.props.userData.statues[i].equip.def.look} />
+                    defEquipLook={this.props.userData.statues[i].equip.def.look}
+                    crtEquipLook={this.props.userData.statues[i].equip.crt.look}
+                    avdEquipLook={this.props.userData.statues[i].equip.avd.look} />
             } else {
                 return <Statue
                     key={i}

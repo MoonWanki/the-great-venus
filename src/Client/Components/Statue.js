@@ -2,6 +2,18 @@ import React, { Component, Fragment } from 'react'
 import { Sprite, Container } from 'react-pixi-fiber';
 import PropTypes from 'prop-types';
 
+const skinToTint = [
+    0xFFFFFF,
+    0xECECEC,
+    0xD9D9D9,
+];
+
+const avdEquipLookToTint = [
+    0xFFFFFF,
+    0xD0D0D0,
+    0xB0B0B0,
+]
+
 class Statue extends Component {
 
     state = {
@@ -151,6 +163,7 @@ class Statue extends Component {
 
     render() {
         const statue = this.state.statues[this.props.no];
+        const tint = this.props.avdEquipLook ? avdEquipLookToTint[this.props.avdEquipLook - 1] : this.props.no===0 ? skinToTint[this.props.skin] : 0xffffff;
         return (
             <Container
                 x={this.props.x || 0}
@@ -161,22 +174,22 @@ class Statue extends Component {
                 mask={this.props.mask || null}
                 cursor={this.props.interactive ? 'pointer' : 'default'}>
                 <Sprite
-                    tint={this.props.tint || 0xffffff}
+                    tint={this.props.tint || tint}
                     anchor={this.props.anchor || [0.5, 1]}
                     texture={statue.body.texture} />
                 {this.props.no===0 && // if user statue
                     <Fragment>
                         <Sprite
                             anchor={this.props.anchor || [0.5, 1]}
-                            tint={this.props.tint || 0xffffff}
+                            tint={this.props.tint || tint}
                             texture={statue.look.eye[this.props.eye].texture} />
                         <Sprite
                             anchor={this.props.anchor || [0.5, 1]}
-                            tint={this.props.tint || 0xffffff}
+                            tint={this.props.tint || tint}
                             texture={statue.look.hair[this.props.hair].texture} />
                         <Sprite
                             anchor={this.props.anchor || [0.5, 1]}
-                            tint={this.props.tint || 0xffffff}
+                            tint={this.props.tint || tint}
                             texture={statue.look.ear.texture} />
                     </Fragment>
                 }

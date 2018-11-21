@@ -243,12 +243,9 @@ const getRequiredExp = async (TGV, level) => {
 }
 
 const getDefaultStatueLook = async (TGV, address) => {
-    let res = await TGV.defaultStatueLook.call(address, 0);
-    const skin = res.c[0];
-    res = await TGV.defaultStatueLook.call(address, 1);
-    const hair = res.c[0];
-    res = await TGV.defaultStatueLook.call(address, 2);
-    const eye = res.c[0];
+    const { c: [ skin ] } = await TGV.defaultStatueLook.call(address, 0);
+    const { c: [ hair ] } = await TGV.defaultStatueLook.call(address, 1);
+    const { c: [ eye ] } = await TGV.defaultStatueLook.call(address, 2);
     return {
         skin,
         hair,
@@ -376,8 +373,10 @@ export const matchWithPlayer = async (TGV, oppanentAddr, coinbase) => {
                     enemyUnits: enemyUnits,
                     attackResultList: attackResultList,
                     victory: args.victory,
-                    highRank: args.highRank.c[0],
-                    lowRank: args.lowRank.c[0],
+                    userName: args.userName,
+                    opponentName: args.opponentName,
+                    finalUserRank: args.finalUserRank.c[0],
+                    finalOpponentRank: args.finalOpponentRank.c[0],
                 };
                 break;
             default: break;

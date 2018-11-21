@@ -141,11 +141,14 @@ class EquipDisplayContainer extends Component {
                     y={height*3/4}
                     no={this.props.currentSelectedStatue}
                     scale={1.2}
+                    skin={this.props.userData.defaultStatueLook.skin}
                     eye={this.props.userData.defaultStatueLook.eye}
                     hair={this.props.userData.defaultStatueLook.hair}
                     hpEquipLook={this.props.userData.statues[this.props.currentSelectedStatue].equip.hp.look}
                     atkEquipLook={this.props.userData.statues[this.props.currentSelectedStatue].equip.atk.look}
-                    defEquipLook={this.props.userData.statues[this.props.currentSelectedStatue].equip.def.look} />
+                    defEquipLook={this.props.userData.statues[this.props.currentSelectedStatue].equip.def.look}
+                    crtEquipLook={this.props.userData.statues[this.props.currentSelectedStatue].equip.crt.look}
+                    avdEquipLook={this.props.userData.statues[this.props.currentSelectedStatue].equip.avd.look} />
             </Container>
         );
     }

@@ -2,7 +2,7 @@ import React, { Component } from 'react';
 import { Container, Text } from 'react-pixi-fiber';
 import Animated from 'animated';
 import Easing from 'animated/lib/Easing';
-import BattleUnit from '../BattleUnit';
+import BattleUnit from './BattleUnit';
 import * as PIXI from 'pixi.js';
 import { connect } from 'react-redux';
 
@@ -121,6 +121,7 @@ class Field extends Component {
                     data={this.state.ourUnits[i]}
                     x={this.state.ourUnitsPosition[i].x.interpolate({ inputRange: [0, 1], outputRange: [0, this.props.width]})}
                     y={this.state.ourUnitsPosition[i].y.interpolate({ inputRange: [0, 1], outputRange: [0, this.props.height]})}
+                    skin={this.props.userData.defaultStatueLook.skin}
                     eye={this.props.userData.defaultStatueLook.eye}
                     hair={this.props.userData.defaultStatueLook.hair}
                     hpEquipLook={this.props.userData.statues[this.state.ourUnits[i].no].equip.hp.look}
@@ -132,6 +133,7 @@ class Field extends Component {
                     data={this.state.ourUnits[i]}
                     x={this.state.ourUnitsPosition[i].x.interpolate({ inputRange: [0, 1], outputRange: [0, this.props.width]})}
                     y={this.state.ourUnitsPosition[i].y.interpolate({ inputRange: [0, 1], outputRange: [0, this.props.height]})}
+                    skin={this.props.userData.defaultStatueLook.skin}
                     eye={this.props.userData.defaultStatueLook.eye}
                     hair={this.props.userData.defaultStatueLook.hair}
                     hpEquipLook={this.props.userData.statues[this.state.ourUnits[i].no].equip.hp.look}
@@ -153,6 +155,7 @@ class Field extends Component {
                     data={this.state.enemyUnits[i]}
                     x={this.state.enemyUnitsPosition[i].x.interpolate({ inputRange: [0, 1], outputRange: [0, this.props.width]})}
                     y={this.state.enemyUnitsPosition[i].y.interpolate({ inputRange: [0, 1], outputRange: [0, this.props.height]})}
+                    skin={this.props.isColosseum && this.props.enemyData.defaultStatueLook.skin}
                     eye={this.props.isColosseum && this.props.enemyData.defaultStatueLook.eye}
                     hair={this.props.isColosseum && this.props.enemyData.defaultStatueLook.hair}
                     hpEquipLook={this.props.isColosseum && this.props.enemyData.statues[this.state.enemyUnits[i].no].equip.hp.look}
@@ -166,6 +169,7 @@ class Field extends Component {
                     data={this.state.enemyUnits[i]}
                     x={this.state.enemyUnitsPosition[i].x.interpolate({ inputRange: [0, 1], outputRange: [0, this.props.width]})}
                     y={this.state.enemyUnitsPosition[i].y.interpolate({ inputRange: [0, 1], outputRange: [0, this.props.height]})}
+                    skin={this.props.isColosseum && this.props.enemyData.defaultStatueLook.skin}
                     eye={this.props.isColosseum && this.props.enemyData.defaultStatueLook.eye}
                     hair={this.props.isColosseum && this.props.enemyData.defaultStatueLook.hair}
                     hpEquipLook={this.props.isColosseum && this.props.enemyData.statues[this.state.enemyUnits[i].no].equip.hp.look}
