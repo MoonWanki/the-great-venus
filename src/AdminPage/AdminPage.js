@@ -356,9 +356,9 @@ class AdminPage extends Component {
                                                     <Dropdown trigger={
                                                         <Button floating flat className='amber' waves='light' icon='add_shopping_cart' />
                                                     }>
-                                                    <NavItem onClick={() => this.buyEquip(i, 1, 1)}>중절모</NavItem>
-                                                    <NavItem onClick={() => this.buyEquip(i, 1, 2)}>텍사스카우보이모자</NavItem>
-                                                    <NavItem onClick={() => this.buyEquip(i, 1, 3)}>힙합 스냅백</NavItem>
+                                                    <NavItem onClick={() => this.buyEquip(i, 1, 1)}>모자1</NavItem>
+                                                    <NavItem onClick={() => this.buyEquip(i, 1, 2)}>모자2</NavItem>
+                                                    <NavItem onClick={() => this.buyEquip(i, 1, 3)}>모자3</NavItem>
                                                     </Dropdown>
                                                 }</td>
                                             </tr>
@@ -372,9 +372,9 @@ class AdminPage extends Component {
                                                     <Dropdown trigger={
                                                         <Button floating flat className='amber' waves='light' icon='add_shopping_cart' />
                                                     }>
-                                                    <NavItem onClick={() => this.buyEquip(i, 2, 1)}>루비 펜던트</NavItem>
-                                                    <NavItem onClick={() => this.buyEquip(i, 2, 2)}>사파이어 펜던트</NavItem>
-                                                    <NavItem onClick={() => this.buyEquip(i, 2, 3)}>에메랄드 펜던트</NavItem>
+                                                    <NavItem onClick={() => this.buyEquip(i, 2, 1)}>펜던트1</NavItem>
+                                                    <NavItem onClick={() => this.buyEquip(i, 2, 2)}>펜던트2</NavItem>
+                                                    <NavItem onClick={() => this.buyEquip(i, 2, 3)}>펜던트3</NavItem>
                                                     </Dropdown>
                                                 }</td>
                                             </tr>
@@ -388,9 +388,9 @@ class AdminPage extends Component {
                                                     <Dropdown trigger={
                                                         <Button floating flat className='amber' waves='light' icon='add_shopping_cart' />
                                                     }>
-                                                    <NavItem onClick={() => this.buyEquip(i, 3, 1)}>블루문 이어링</NavItem>
-                                                    <NavItem onClick={() => this.buyEquip(i, 3, 2)}>해골 이어링</NavItem>
-                                                    <NavItem onClick={() => this.buyEquip(i, 3, 3)}>합금도금 이어링</NavItem>
+                                                    <NavItem onClick={() => this.buyEquip(i, 3, 1)}>이어링1</NavItem>
+                                                    <NavItem onClick={() => this.buyEquip(i, 3, 2)}>이어링2</NavItem>
+                                                    <NavItem onClick={() => this.buyEquip(i, 3, 3)}>이어링3</NavItem>
                                                     </Dropdown>
                                                 }</td>
                                             </tr>
@@ -404,9 +404,9 @@ class AdminPage extends Component {
                                                     <Dropdown trigger={
                                                         <Button floating flat className='amber' waves='light' icon='add_shopping_cart' />
                                                     }>
-                                                    <NavItem onClick={() => this.buyAura(i, 1, 1)}>불멸의 오오라 (+5%)</NavItem>
-                                                    <NavItem onClick={() => this.buyAura(i, 2, 1)}>냉기의 오오라 (+5%)</NavItem>
-                                                    <NavItem onClick={() => this.buyAura(i, 3, 2)}>다크 오오라 (+10%)</NavItem>
+                                                    <NavItem onClick={() => this.buyAura(i, 1, 1)}>오오라1</NavItem>
+                                                    <NavItem onClick={() => this.buyAura(i, 2, 1)}>오오라2</NavItem>
+                                                    <NavItem onClick={() => this.buyAura(i, 3, 2)}>오오라3</NavItem>
                                                     </Dropdown>
                                                 }</td>
                                             </tr>
@@ -420,9 +420,9 @@ class AdminPage extends Component {
                                                     <Dropdown trigger={
                                                         <Button floating flat className='amber' waves='light' icon='add_shopping_cart' />
                                                     }>
-                                                    <NavItem onClick={() => this.buySkin(i, 1, 1)}>네이비 페인트 (+5%)</NavItem>
-                                                    <NavItem onClick={() => this.buySkin(i, 2, 1)}>그린블루 페인트 (+5%)</NavItem>
-                                                    <NavItem onClick={() => this.buySkin(i, 3, 2)}>얼룩무늬 페인트 (+10%)</NavItem>
+                                                    <NavItem onClick={() => this.buySkin(i, 1, 1)}>스킨1</NavItem>
+                                                    <NavItem onClick={() => this.buySkin(i, 2, 1)}>스킨2</NavItem>
+                                                    <NavItem onClick={() => this.buySkin(i, 3, 2)}>스킨3</NavItem>
                                                     </Dropdown>
                                                 }</td>
                                             </tr>
@@ -476,11 +476,11 @@ class AdminPage extends Component {
                         <Table striped bordered>
                             <thead>
                                 <tr>
-                                    <th>No.</th><th>HP</th><th>ATK</th><th>DEF</th><th>CRT</th><th>AVD</th>
+                                    <th>No.</th><th>HP</th><th>ATK</th><th>DEF</th><th>CRT</th><th>AVD</th><th>Stage</th>
                                 </tr>
                             </thead>
                             <tbody>
-                                {gameData.statueInfoList.map((unit, i) => <tr key={i}><th>{i}</th><td>{unit.hp}</td><td>{unit.atk}</td><td>{unit.def}</td><td>{unit.crt}%</td><td>{unit.avd}%</td></tr>)}
+                                {gameData.statueInfoList.map((unit, i) => <tr key={i}><th>{i}</th><td>{unit.hp}</td><td>{unit.atk}</td><td>{unit.def}</td><td>{unit.crt}%</td><td>{unit.avd}%</td><td>{unit.aquisitionStage}</td></tr>)}
                             </tbody>
                         </Table>
                     </div>
@@ -504,11 +504,11 @@ class AdminPage extends Component {
                         <Table striped bordered>
                             <thead>
                                 <tr>
-                                    <th>No.</th><th>HP</th><th>ATK</th><th>DEF</th><th>CRT</th><th>AVD</th>
+                                    <th>No.</th><th>HP</th><th>ATK</th><th>DEF</th><th>CRT</th><th>AVD</th><th>EXP</th>
                                 </tr>
                             </thead>
                             <tbody>
-                                {gameData.mobInfoList.map((unit, i) => <tr key={i}><th>{i+1}</th><td>{unit.hp}</td><td>{unit.atk}</td><td>{unit.def}</td><td>{unit.crt}%</td><td>{unit.avd}%</td></tr>)}
+                                {gameData.mobInfoList.map((unit, i) => <tr key={i}><th>{i+1}</th><td>{unit.hp}</td><td>{unit.atk}</td><td>{unit.def}</td><td>{unit.crt}%</td><td>{unit.avd}%</td><td>{unit.exp}</td></tr>)}
                             </tbody>
                         </Table>
                     </div>

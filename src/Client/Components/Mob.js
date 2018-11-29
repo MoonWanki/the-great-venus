@@ -2,7 +2,7 @@ import React, { Component } from 'react'
 import { Sprite, Container } from 'react-pixi-fiber';
 import PropTypes from 'prop-types';
 
-class Statue extends Component {
+class Mob extends Component {
 
     state = {
         mobs: [
@@ -33,8 +33,8 @@ class Statue extends Component {
         )
     }
 }
-export default Statue;
+export default Mob;
 
-Statue.contextTypes = {
+Mob.contextTypes = {
     app: PropTypes.object,
 };

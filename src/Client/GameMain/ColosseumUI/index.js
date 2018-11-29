@@ -88,7 +88,6 @@ class ColosseumUI extends Component {
             this.props.AppActions.setPreloader(true);
             const PvPResult = await TGVApi.matchWithPlayer(this.props.TGV, enemyAddr, this.props.web3.eth.coinbase);
             const enemyData = await TGVApi.getUserData(this.props.TGV, enemyAddr);
-            console.log(enemyData);
             this.showPvPDisplay(enemyData, PvPResult);
         } catch(err) {
             console.error(err);
@@ -155,7 +154,7 @@ class ColosseumUI extends Component {
                     alpha={offset}
                     width={200}
                     height={36}
-                    text={'BACK TO SHOWROOM'}
+                    text={'쇼룸으로 가기'}
                     onClick={this.props.onBackButtonClick} />
                 {this.state.PvPDisplayOn && <AnimatedPvPDisplay
                     width={width}

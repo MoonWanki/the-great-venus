@@ -5,6 +5,7 @@ import StatueDisplayRoller from './StatueDisplayRoller';
 import Easing from 'animated/lib/Easing';
 import StatueSpecView from './StatueSpecView';
 import { connect } from 'react-redux';
+import PropTypes from 'prop-types';
 
 const statueDisplayRollerEasing = Easing.bezier(0.1, 0.8, 0.3, 1);
 const AnimatedFlatButton = Animated.createAnimatedComponent(FlatButton);
@@ -46,43 +47,33 @@ class ShowroomUI extends Component {
                     onMousewheel={this.onMousewheel}
                     onClickStatue={this.onClickStatue} />
                 <StatueSpecView
-                    x={width/2 - 100}
-                    y={height*13/20}
-                    alpha={1}
-                    width={200}
-                    height={180}
+                    x={width/2}
+                    y={height*31/40}
                     currentSelectedStatue={this.props.currentSelectedStatue}
                     onClick={this.props.onForgeButtonClick} />
                 <AnimatedFlatButton
-                    x={width/2 - 90}
-                    y={offset.interpolate({ inputRange: [0, 1], outputRange: [this.props.contentY, -this.props.contentY + 20] })}
+                    x={width/2}
+                    y={offset.interpolate({ inputRange: [0, 1], outputRange: [-this.props.contentY - 50, -this.props.contentY + 50] })}
                     alpha={offset}
-                    width={180}
-                    height={36}
                     text={'로비로 가기'}
                     onClick={this.props.onHomeButtonClick} />
                 <AnimatedFlatButton
-                    x={-this.props.contentX + 50}
-                    y={offset.interpolate({ inputRange: [0, 1], outputRange: [height + this.props.contentY, height + this.props.contentY - 100] })}
+                    x={-this.props.contentX + 150}
+                    y={offset.interpolate({ inputRange: [0, 1], outputRange: [height + this.props.contentY + 100, height + this.props.contentY - 100] })}
                     alpha={offset}
-                    width={100}
-                    height={36}
                     text={'뷰티 샵'}
                     onClick={()=>window.Materialize.toast("준비 중입니다.", 1500)} />
                 <AnimatedFlatButton
-                    x={offset.interpolate({ inputRange: [0, 1], outputRange: [width + this.props.contentX, width + this.props.contentX - 400] })}
-                    y={height + this.props.contentY - 240}
+                    texture={[this.context.app.loader.resources.btn_start.texture, this.context.app.loader.resources.btn_start_hover.texture]}
+                    x={offset.interpolate({ inputRange: [0, 1], outputRange: [width + this.props.contentX + 220, width + this.props.contentX - 220] })}
+                    y={height + this.props.contentY - 200}
                     alpha={offset}
-                    width={320}
-                    height={120}
-                    text={'스테이지 입장'}
                     onClick={this.props.onStageSelectButtonClick} />
                 <AnimatedFlatButton
-                    x={offset.interpolate({ inputRange: [0, 1], outputRange: [width + this.props.contentX, width + this.props.contentX - 400] })}
-                    y={height + this.props.contentY - 100}
+                    texture={[this.context.app.loader.resources.btn_long.texture, this.context.app.loader.resources.btn_long_hover.texture]}
+                    x={offset.interpolate({ inputRange: [0, 1], outputRange: [width + this.props.contentX + 220, width + this.props.contentX - 220] })}
+                    y={height + this.props.contentY - 70}
                     alpha={offset}
-                    width={320}
-                    height={60}
                     text={'지하 투기장'}
                     onClick={this.props.onColosseumButtonClick} />
             </Fragment>
@@ -98,3 +89,7 @@ export default connect(
         contentY: state.canvasModule.contentY,
     }),
 )(ShowroomUI);
+
+ShowroomUI.contextTypes = {
+    app: PropTypes.object,
+}

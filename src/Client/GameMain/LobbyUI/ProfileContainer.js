@@ -1,11 +1,12 @@
 import React, { Component } from 'react';
-import { Container, Text } from 'react-pixi-fiber';
+import { Container, Text, Sprite } from 'react-pixi-fiber';
 import { connect } from 'react-redux';
 import * as PIXI from 'pixi.js';
 import Statue from 'Client/Components/Statue';
 import PercentageBar from 'Client/Components/PercentageBar';
+import PropTypes from 'prop-types';
 
-const textStyle = { fill: 0xffffff, fontSize: 16, fontFamily: 'Nanum Gothic' };
+const textStyle = { fill: 0xffffff, fontSize: 14, fontFamily: ['Noto Sans KR', 'sans-serif'] };
 
 class ProfileContainer extends Component {
 
@@ -13,7 +14,7 @@ class ProfileContainer extends Component {
         let circle = new PIXI.Graphics();
         circle.clear();
         circle.beginFill(0x0);
-        circle.drawCircle(40, 40, 40*Math.sqrt(2));
+        circle.drawCircle(54, 51, 63);
         circle.endFill();
         return circle;
     }
@@ -25,9 +26,11 @@ class ProfileContainer extends Component {
         const expPercentage = this.getExpPercentage();
         return (
             <Container {...this.props}>
+                <Sprite
+                    texture={this.context.app.loader.resources.profile_container.texture} />
                 <Statue
-                    x={-40}
-                    y={-40}
+                    x={-20}
+                    y={-20}
                     no={0}
                     scale={0.7}
                     hair={userData.defaultStatueLook.hair}
@@ -40,11 +43,11 @@ class ProfileContainer extends Component {
                     avdEquipLook={userData.statues[0].equip.avd.look}
                     mask={this.getMask()}
                     anchor={[0, 0]} />
-                <Text x={90} y={4} text={`Lv. ${userData.level}  ${userData.name}`} style={{ ...textStyle, fontSize: 20 }} />
-                <PercentageBar color={0xf2c629} x={90} y={30} width={160} height={18} value={expPercentage} maxValue={100} />
-                <Text x={100} y={32} text={`${userData.exp}/${userData.requiredExp} (${expPercentage}%)`} style={{ ...textStyle, fontSize: 14 }} />
-                <Text x={90} y={60} text={`소비오트 ${userData.sorbiote}`} style={textStyle} />
-                <Text x={90} y={80} text={`이더리움 ${this.props.finney.toLocaleString()}`} style={textStyle} />
+                <Text x={128} y={4} text={`Lv. ${userData.level}  ${userData.name}`} style={{ ...textStyle, fontSize: 16 }} />
+                <PercentageBar color={0xe2b010} x={130} y={26} width={140} height={16} value={expPercentage} maxValue={100} />
+                <Text anchor={[0.5, 0]} x={200} y={26} text={`${userData.exp}/${userData.requiredExp} (${expPercentage}%)`} style={{ ...textStyle, fontSize: 12 }} />
+                <Text anchor={[1, 0]} x={270} y={50} text={`${userData.sorbiote}`} style={textStyle} />
+                <Text anchor={[1, 0]} x={270} y={83} text={`${this.props.finney.toLocaleString()}`} style={textStyle} />
             </Container>
         );
     }
@@ -56,3 +59,7 @@ export default connect(
         finney: state.userModule.finney
     })
 )(ProfileContainer);
+
+ProfileContainer.contextTypes = {
+    app: PropTypes.object,
+}

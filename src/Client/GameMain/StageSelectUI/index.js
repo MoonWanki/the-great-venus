@@ -91,7 +91,7 @@ class StageSelectUI extends Component {
                     alpha={offset}
                     width={180}
                     height={36}
-                    text={'BACK TO SHOWROOM'}
+                    text={'쇼룸으로 가기'}
                     onClick={this.props.onBackButtonClick} />
                 {this.state.stageDisplayOn && <AnimatedStageDisplay
                     width={width}

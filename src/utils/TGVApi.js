@@ -122,33 +122,33 @@ export const getStatueSpec = async (TGV, level, statueNo, equip) => {
 const getStatueInfoList = async (TGV, maxStatue) => {
     let promises = [];
     for(let i=0 ; i<=maxStatue ; i++) {
-        promises.push(TGV.statueInfoList.call(i));
+        promises.push(Promise.all([TGV.statueInfoList.call(i), TGV.statueAcquisitionStage.call(i)]));
     }
     const res = await Promise.all(promises);
-    return res.map(statueInfo => {
-        return {
-            hp: statueInfo[0].c[0],
-            atk: statueInfo[1].c[0],
-            def: statueInfo[2].c[0],
-            crt: statueInfo[3].c[0],
-            avd: statueInfo[4].c[0],
-        }
-    });
+    return res.map(([ statueInfo, aquisitionStage ]) => ({
+        hp: statueInfo[0].c[0],
+        atk: statueInfo[1].c[0],
+        def: statueInfo[2].c[0],
+        crt: statueInfo[3].c[0],
+        avd: statueInfo[4].c[0],
+        aquisitionStage: aquisitionStage.c[0],
+    }));
 }
 
 const getMobInfoList = async (TGV, maxMob) => {
     let promises = [];
     for(let i=1 ; i<=maxMob ; i++) {
-        promises.push(TGV.mobInfoList.call(i));
+        promises.push(Promise.all([TGV.mobInfoList.call(i), TGV.expSpoiledByMob.call(i)]));
     }
     const res = await Promise.all(promises);
-    return res.map(mobInfo => {
+    return res.map(([ mobInfo, exp ]) => {
         return {
             hp: mobInfo[0].c[0],
             atk: mobInfo[1].c[0],
             def: mobInfo[2].c[0],
             crt: mobInfo[3].c[0],
             avd: mobInfo[4].c[0],
+            exp: exp.c[0],
         }
     });
 }

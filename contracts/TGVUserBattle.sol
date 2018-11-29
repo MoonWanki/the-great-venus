@@ -34,7 +34,7 @@ contract TGVUserBattle is TGVStageClear
         cutForDiamond = numUsers.div(10);
         cutForPlatinum = numUsers.mul(3).div(10);
         cutForGold = numUsers.mul(7).div(10);
-        cutForGold = numUsers.mul(9).div(10);
+        cutForSilver = numUsers.mul(9).div(10);
         nextRefundTime = block.timestamp + refundPeriod;
     }
 

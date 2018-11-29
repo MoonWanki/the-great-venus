@@ -42,16 +42,6 @@ contract TGVBase {
     function transferOwnership(address newOwner) public onlyOwner {
         if (newOwner != address(0)) owner = newOwner;
     }
-
-    modifier onlyValidStatueNo(uint _no) {
-        require(_no >= 0 && _no <= maxStatue);
-        _;
-    }
-
-    modifier onlyValidMobNo(uint _no) {
-        require(_no > 0 && _no <= maxMob);
-        _;
-    }
     
     modifier onlyValidStageNo(uint _no) {
         require(_no > 0 && _no <= maxStage);
@@ -126,7 +116,8 @@ contract TGVBase {
         uint crt,
         uint avd,
         uint acquisitionStage
-    ) external onlyOwner onlyValidStatueNo(statueNo) {
+    ) external onlyOwner {
+        require(statueNo >= 0 && statueNo <= maxStatue);
         statueInfoList[statueNo].hp = hp;
         statueInfoList[statueNo].atk = atk;
         statueInfoList[statueNo].def = def;
@@ -143,7 +134,8 @@ contract TGVBase {
         uint crt,
         uint avd,
         uint exp
-    ) external onlyOwner onlyValidMobNo(mobNo) {
+    ) external onlyOwner {
+        require(mobNo > 0 && mobNo <= maxMob);
         mobInfoList[mobNo].hp = hp;
         mobInfoList[mobNo].atk = atk;
         mobInfoList[mobNo].def = def;
