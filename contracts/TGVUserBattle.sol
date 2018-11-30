@@ -10,14 +10,14 @@ contract TGVUserBattle is TGVStageClear
     event Refund(uint quotaForDiamond, uint quotaForPlatinum, uint quotaForGold);
 
     uint public nextRefundTime = block.timestamp;
-    uint public refundPeriod = 1 hours;
+    uint public refundPeriod = 1 days;
 
     uint public matchableRankGap = 10;
 
     uint public cutForDiamond = 1;
     uint public cutForPlatinum = 3;
-    uint public cutForGold = 7;
-    uint public cutForSilver = 9;
+    uint public cutForGold = 6;
+    uint public cutForSilver = 8;
 
     function refund() public onlyOwner {
         require(numUsers >= 10 && block.timestamp > nextRefundTime);
@@ -29,20 +29,20 @@ contract TGVUserBattle is TGVStageClear
         owner.transfer(address(this).balance/20);
         emit Refund(quotaForDiamond, quotaForPlatinum, quotaForGold);
         for(;i<=cutForDiamond;) rankToOwner[i++].transfer(quotaForDiamond);
-        for(;i<=cutForPlatinum/10;) rankToOwner[i++].transfer(quotaForPlatinum);
+        for(;i<=cutForPlatinum;) rankToOwner[i++].transfer(quotaForPlatinum);
         for(;i<=cutForGold;) rankToOwner[i++].transfer(quotaForGold);
         cutForDiamond = numUsers.div(10);
         cutForPlatinum = numUsers.mul(3).div(10);
-        cutForGold = numUsers.mul(7).div(10);
-        cutForSilver = numUsers.mul(9).div(10);
+        cutForGold = numUsers.mul(6).div(10);
+        cutForSilver = numUsers.mul(8).div(10);
         nextRefundTime = block.timestamp + refundPeriod;
     }
 
     function getQuota() public view returns(uint, uint, uint) {
         return (
-            address(this).balance.div(numUsers).mul(2),
-            address(this).balance.div(numUsers),
-            address(this).balance.div(numUsers)/2
+            address(this).balance/5/cutForDiamond,
+            address(this).balance/4/(cutForPlatinum - cutForDiamond),
+            address(this).balance/5/(cutForGold - cutForPlatinum)
         );
     }
 

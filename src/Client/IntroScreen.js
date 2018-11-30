@@ -41,7 +41,7 @@ class IntroScreen extends Component {
     }
 
     getLoadingMessage = text => <Text
-        anchor={[0.5, 0.5]}
+        anchor={[0.5, 0]}
         text={text}
         x={this.props.width/2}
         y={this.props.height/2 + 60}

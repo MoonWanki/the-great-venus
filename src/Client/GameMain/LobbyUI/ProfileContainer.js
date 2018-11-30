@@ -43,9 +43,9 @@ class ProfileContainer extends Component {
                     avdEquipLook={userData.statues[0].equip.avd.look}
                     mask={this.getMask()}
                     anchor={[0, 0]} />
-                <Text x={128} y={4} text={`Lv. ${userData.level}  ${userData.name}`} style={{ ...textStyle, fontSize: 16 }} />
-                <PercentageBar color={0xe2b010} x={130} y={26} width={140} height={16} value={expPercentage} maxValue={100} />
-                <Text anchor={[0.5, 0]} x={200} y={26} text={`${userData.exp}/${userData.requiredExp} (${expPercentage}%)`} style={{ ...textStyle, fontSize: 12 }} />
+                <Text x={130} y={4} text={`Lv. ${userData.level}  ${userData.name}`} style={{ ...textStyle, fontSize: 16 }} />
+                <PercentageBar color={0xe2b010} x={132} y={25} width={140} height={15} value={expPercentage} maxValue={100} />
+                <Text anchor={[0.5, 0]} x={202} y={25} text={`${userData.exp}/${userData.requiredExp} (${expPercentage}%)`} style={{ ...textStyle, fontSize: 12, fontFamily: 'Nanum Gothic' }} />
                 <Text anchor={[1, 0]} x={270} y={50} text={`${userData.sorbiote}`} style={textStyle} />
                 <Text anchor={[1, 0]} x={270} y={83} text={`${this.props.finney.toLocaleString()}`} style={textStyle} />
             </Container>

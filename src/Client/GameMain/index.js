@@ -218,8 +218,9 @@ class GameMain extends Component {
     }
     
     turnOnSettingUI = () => {
-        this.setState({ settingUIOn: true });
-        Animated.timing(this.state.settingUIOffset, { toValue: 1, duration: UIFadeInDuration, easing: UIFadeEasing }).start();
+        window.Materialize.toast("준비 중입니다.", 1500);
+        // this.setState({ settingUIOn: true });
+        // Animated.timing(this.state.settingUIOffset, { toValue: 1, duration: UIFadeInDuration, easing: UIFadeEasing }).start();
     }
 
     turnOffSettingUI = () => {

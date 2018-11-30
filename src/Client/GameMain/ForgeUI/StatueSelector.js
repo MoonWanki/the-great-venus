@@ -2,32 +2,50 @@ import React, { Component } from 'react';
 import { Container } from 'react-pixi-fiber';
 import Box from 'Client/Components/Box';
 import FlatButton from 'Client/Components/FlatButton';
-// import Statue from 'Client/Components/Statue';
 import { connect } from 'react-redux';
-// import * as PIXI from 'pixi.js';
 import _ from 'lodash';
+import PropTypes from 'prop-types';
 
 class StatueSelector extends Component {
 
     renderThumbnails = () => _.times(this.props.gameData.maxStatue + 1, i => {
         if(i===0) {
-            return <FlatButton key={i} x={10} y={10} width={this.props.width/2 - 20} height={this.props.width/2 - 20} text={i} onClick={()=>this.props.onClickStatue(i)} />     
+            return <FlatButton
+                key={i}
+                x={this.props.width/2}
+                y={50}
+                text={this.props.userData.name}
+                onClick={()=>this.props.onClickStatue(i)}
+                texture={[this.context.app.loader.resources.btn_long.texture, this.context.app.loader.resources.btn_long_hover.texture]} />     
         } else if(i < this.props.userData.numStatues) {
-            return <FlatButton key={i} x={10 + (i%2 ? this.props.width/2 : 0)} y={10 + Math.floor(i/2)*this.props.width/2} width={this.props.width/2 - 20} height={this.props.width/2 - 20} text={i} onClick={()=>this.props.onClickStatue(i)} />     
+            return <FlatButton
+                key={i}
+                x={this.props.width/2}
+                y={50 + i*80}
+                text={this.props.userData.statues[i].name}
+                onClick={()=>this.props.onClickStatue(i)}
+                texture={[this.context.app.loader.resources.btn_long.texture, this.context.app.loader.resources.btn_long_hover.texture]} />     
         } else {
-            return <FlatButton key={i} x={10 + (i%2 ? this.props.width/2 : 0)} y={10 + Math.floor(i/2)*this.props.width/2} width={this.props.width/2 - 20} height={this.props.width/2 - 20} text={'?'} />
+            return <FlatButton
+                key={i}
+                x={this.props.width/2}
+                y={50 + i*80}
+                text={'???'}
+                disabled
+                texture={[this.context.app.loader.resources.btn_long.texture, this.context.app.loader.resources.btn_long.texture]} />
         }
     });
 
     render() {
-        const { x, y, width, height } = this.props;
+        const { width, height } = this.props;
         return (
-            <Container x={x} y={y} width={width} height={height} alpha={1}>
+            <Container {...this.props}>
                 <Box
                     width={width}
                     height={height}
                     color={0x0}
-                    alpha={0.3} />
+                    alpha={0.5}
+                    borderColor={0xFFFFFF} />
                 {this.renderThumbnails()}
             </Container>
         );
@@ -40,3 +58,7 @@ export default connect(
         gameData: state.gameModule.gameData,
     }),
 )(StatueSelector);
+
+StatueSelector.contextTypes = {
+    app: PropTypes.object,
+}

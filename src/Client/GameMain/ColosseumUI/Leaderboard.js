@@ -2,11 +2,12 @@ import React, { Component } from 'react';
 import { Container, Text } from 'react-pixi-fiber';
 import Box from 'Client/Components/Box';
 import FlatButton from 'Client/Components/FlatButton';
+import PropTypes from 'prop-types';
 
 class Leaderboard extends Component {
 
     renderUserList = () => {
-        const { width, height } = this.props;
+        const { width } = this.props;
         return this.props.leaderboard.map((user, i) => {
             if(user.level===0) return null;
             let color;
@@ -19,11 +20,17 @@ class Leaderboard extends Component {
                 default: break;
             }
             return <Container key={i}>
-                <Box x={2} y={i*height/10 + 2} width={width} height={height/10 - 4} alpha={0.3} color={color}/>
-                <Text x={2} y={i*height/10 + 2} text={user.rank} style={{ fill: 0xFFFFFF, fontSize: 16, fontFamily: 'Nanum Gothic' }} />
-                <Text x={width/3} y={i*height/10 + 2} text={`Lv.${user.level} ${user.name}`} style={{ fill: 0xFFFFFF, fontSize: 16, fontFamily: 'Nanum Gothic' }} />
-                <FlatButton x={width*4/6} y={i*height/10 + 2} width={width/6 - 2} height={height/10 - 4} text={'정보'} onClick={()=>this.props.onCompareSpec(i)} />
-                <FlatButton x={width*5/6} y={i*height/10 + 2} width={width/6 - 2} height={height/10 - 4} text={'싸우자'} onClick={()=>this.props.onFight(i)} />
+                <Box y={i*60} width={width} height={53} alpha={0.7} borderColor={color}/>
+                <Text anchor={[0, 0.5]} x={10} y={27 + i*60} text={`${user.rank}위`} style={{ fill: 0xFFFFFF, fontSize: 16, fontFamily: 'Nanum Gothic' }} />
+                <Text anchor={[0, 0.5]} x={60} y={27 + i*60} text={`Lv.${user.level} ${user.name}`} style={{ fill: 0xFFFFFF, fontSize: 16, fontFamily: 'Nanum Gothic' }} />
+                <FlatButton
+                    x={322} y={28 + i*60}
+                    texture={[this.context.app.loader.resources.icon_info.texture, this.context.app.loader.resources.icon_info_hover.texture]}
+                    onClick={()=>this.props.onCompareSpec(i)} />
+                <FlatButton
+                    x={372} y={28 + i*60}
+                    texture={[this.context.app.loader.resources.icon_match.texture, this.context.app.loader.resources.icon_match_hover.texture]}
+                    onClick={()=>this.props.onFight(i)} />
             </Container>
         })
     }
@@ -41,10 +48,9 @@ class Leaderboard extends Component {
         const { width, height } = this.props;
         return (
             <Container x={this.props.x} y={this.props.y} width={this.props.width} height={this.props.height}>
-                <Box width={width} height={height} alpha={0.5} />
                 {this.renderUserList()}
                 {this.props.isUpdating && <Container interactive>
-                    <Box width={width} height={height} alpha={0.5} />
+                    <Box width={width} height={height} alpha={0.7} borderColor={0xFFFFFF} />
                     <Text text={'업데이트 중입니다...'} style={{ fill: 0xFFFFFF, fontSize: 16, align: 'center', fontFamily: 'Nanum Gothic' }} anchor={[0.5, 0.5]} x={width/2} y={height/2} />
                 </Container> }
             </Container>
@@ -53,3 +59,7 @@ class Leaderboard extends Component {
 }
 
 export default Leaderboard;
+
+Leaderboard.contextTypes = {
+    app: PropTypes.object,
+}

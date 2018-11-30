@@ -78,7 +78,7 @@ class ColosseumUI extends Component {
     }
 
     onCompareSpec = idx => {
-
+        window.Materialize.toast("준비 중입니다.", 1500);
     }
 
     onFight = async idx => {
@@ -131,29 +131,27 @@ class ColosseumUI extends Component {
         return (
             <Fragment>
                 <RewardDisplay
-                    x={width*4/20}
-                    y={height/6}
-                    width={width*6/20}
-                    height={height*4/6}
+                    x={width/2 - 410}
+                    y={height/2 - 300}
+                    width={400}
+                    height={600}
                     isUpdating={this.state.isUpdating}
                     colosseumInfo={this.state.colosseumInfo}
                     refundTimeLeft={this.state.refundTimeLeft} />
                 <Leaderboard
-                    x={width*11/20}
-                    y={height/6}
-                    width={width*5/20}
-                    height={height*4/6}
+                    x={width/2 + 10}
+                    y={height/2 - 300}
+                    width={400}
+                    height={600}
                     isUpdating={this.state.isUpdating}
                     leaderboard={this.state.leaderboard}
                     colosseumInfo={this.state.colosseumInfo}
                     onCompareSpec={this.onCompareSpec}
                     onFight={this.onFight} />
                 <AnimatedFlatButton
-                    x={-this.props.contentX + 20}
-                    y={offset.interpolate({ inputRange: [0, 1], outputRange: [height + this.props.contentY, height + this.props.contentY - 86] })}
+                    x={-this.props.contentX + 150}
+                    y={offset.interpolate({ inputRange: [0, 1], outputRange: [height + this.props.contentY + 60, height + this.props.contentY - 60] })}
                     alpha={offset}
-                    width={200}
-                    height={36}
                     text={'쇼룸으로 가기'}
                     onClick={this.props.onBackButtonClick} />
                 {this.state.PvPDisplayOn && <AnimatedPvPDisplay

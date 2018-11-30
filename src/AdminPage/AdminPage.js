@@ -450,6 +450,16 @@ class AdminPage extends Component {
                 </div>
 
                 <div className='admin-navbar'>
+                    <h5>ADVANCE</h5>
+                </div>
+                <div>
+                    <Row>
+                        <Button onClick={this.onRefund}>Refund</Button>
+                        <Button onClick={this.onKill}>SELF DESTRUCT</Button>
+                    </Row>
+                </div>
+
+                <div className='admin-navbar'>
                     <h5>GAME CONFIG</h5>
                     <div className='admin-navbar-button' onClick={this.loadGameData}><Icon>refresh</Icon></div>
                     <h6 className='admin-navbar-button'>{isGamePending && 'Loading...'}</h6>

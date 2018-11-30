@@ -10,6 +10,7 @@ import PropTypes from 'prop-types';
 const statueDisplayRollerEasing = Easing.bezier(0.1, 0.8, 0.3, 1);
 const AnimatedFlatButton = Animated.createAnimatedComponent(FlatButton);
 const AnimatedStatueDisplayRoller = Animated.createAnimatedComponent(StatueDisplayRoller);
+const AnimatedStatueSpecView = Animated.createAnimatedComponent(StatueSpecView);
 
 class ShowroomUI extends Component {
 
@@ -42,13 +43,14 @@ class ShowroomUI extends Component {
                     y={this.props.backgroundOffset.interpolate({ inputRange: [-1, 1], outputRange: [-height, height]})}
                     width={width}
                     height={height*13/20}
-                    alpha={this.props.offset}
+                    alpha={offset}
                     gapBetweenStatues={gapBetweenStatues}
                     onMousewheel={this.onMousewheel}
                     onClickStatue={this.onClickStatue} />
-                <StatueSpecView
+                <AnimatedStatueSpecView
                     x={width/2}
                     y={height*31/40}
+                    alpha={offset}
                     currentSelectedStatue={this.props.currentSelectedStatue}
                     onClick={this.props.onForgeButtonClick} />
                 <AnimatedFlatButton
@@ -59,7 +61,7 @@ class ShowroomUI extends Component {
                     onClick={this.props.onHomeButtonClick} />
                 <AnimatedFlatButton
                     x={-this.props.contentX + 150}
-                    y={offset.interpolate({ inputRange: [0, 1], outputRange: [height + this.props.contentY + 100, height + this.props.contentY - 100] })}
+                    y={offset.interpolate({ inputRange: [0, 1], outputRange: [height + this.props.contentY + 60, height + this.props.contentY - 60] })}
                     alpha={offset}
                     text={'뷰티 샵'}
                     onClick={()=>window.Materialize.toast("준비 중입니다.", 1500)} />

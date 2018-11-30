@@ -17,13 +17,10 @@ class SettingUI extends Component {
         return (
             <Container interactive width={width} height={height} click={this.props.onDismiss}>
                 <AnimatedBlackBox
-                    color={0x0}
-                    x={0}
-                    y={0}
                     width={width}
                     height={height}
                     alpha={offset.interpolate({ inputRange: [0, 1], outputRange: [0, 0.5] })} />
-                <AnimatedContainer interactive click={()=>console.log('ff')} width={settingBoxSize.w}
+                <AnimatedContainer interactive width={settingBoxSize.w}
                         height={settingBoxSize.h} alpha={offset}>
                     <AnimatedBlackBox
                         color={0x0}
@@ -35,8 +32,6 @@ class SettingUI extends Component {
                     <AnimatedFlatButton
                         x={width/2 - 50}
                         y={height/2 + settingBoxSize.h/2 - 36 - 10}
-                        width={100}
-                        height={36}
                         text={'CLOSE'}
                         onClick={this.props.onDismiss} />
                 </AnimatedContainer>

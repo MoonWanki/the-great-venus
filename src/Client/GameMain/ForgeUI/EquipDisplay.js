@@ -1,10 +1,27 @@
 import React, { Component, Fragment } from 'react';
-import { Container, Text } from 'react-pixi-fiber';
+import { Container, Text, Sprite } from 'react-pixi-fiber';
 import Box from 'Client/Components/Box';
 import FlatButton from 'Client/Components/FlatButton';
 import Animated from 'animated';
+import PropTypes from 'prop-types';
 
-const AnimatedBox = Animated.createAnimatedComponent(Box);
+const textStyle = {
+    fill: 0xffffff,
+    fontSize: 16,
+    fontFamily: 'Nanum gothic',
+};
+
+const lookNames = {
+    'HP': ['페도라', '리본장식모자', '스냅백'],
+    'ATK': ['에메랄드 펜던트', '루비 펜던트', '사파이어 펜던트'],
+    'DEF': ['체인 이어링', '하트장식 이어링', '블루문 이어링'],
+}
+
+const equipTypes = {
+    'HP': '머리장식',
+    'ATK': '펜던트',
+    'DEF': '이어링',
+}
 
 const sleep = ms => new Promise(resolve => setTimeout(resolve, ms));
 
@@ -15,6 +32,24 @@ class EquipDisplay extends Component {
             new Animated.ValueXY({ x: 0, y: 0 }),
             new Animated.ValueXY({ x: this.props.width- 4, y: this.props.height*2/3 - 4 }),
         ]
+    }
+
+    equipIconTextures = {
+        'HP': [
+            this.context.app.loader.resources.icon_equip_hp1.texture,
+            this.context.app.loader.resources.icon_equip_hp2.texture,
+            this.context.app.loader.resources.icon_equip_hp3.texture,
+        ],
+        'ATK': [
+            this.context.app.loader.resources.icon_equip_atk1.texture,
+            this.context.app.loader.resources.icon_equip_atk2.texture,
+            this.context.app.loader.resources.icon_equip_atk3.texture,
+        ],
+        'DEF': [
+            this.context.app.loader.resources.icon_equip_def1.texture,
+            this.context.app.loader.resources.icon_equip_def2.texture,
+            this.context.app.loader.resources.icon_equip_def3.texture,
+        ],
     }
 
     componentDidMount = () => {
@@ -39,49 +74,55 @@ class EquipDisplay extends Component {
     }
 
     render() {
-        const { width, height, isWorking, valueName, lookNames } = this.props;
+        const { isWorking, partName, message } = this.props;
         const { value, level, look } = this.props.equip;
         return (
             <Container {...this.props}>
-                <Text text={this.props.partName} anchor={[0, 1]} style={{ fill: 0xffffff, fontSize: 16 }} />
-                {level ? // 강화
-                    <Container interactive width={width} height={height*2/3}>
-                        <Box width={width} height={height*2/3} alpha={0.5} />
-                        <Text x={width/3} y={15} text={`+${level} ${lookNames[look - 1]}\n\n${valueName} +${value}`} style={{ fill: 0xffffff, fontSize: 16 }}/>
-                    </Container>
-                : <Container interactive width={width} height={height*2/3}>
-                    <FlatButton
-                        x={0}
-                        width={width/3}
-                        height={height*2/3}
-                        text={this.props.lookNames[0]}
-                        onClick={() => this.props.onBuyEquip(1)} />
-                    <FlatButton
-                        x={width/3}
-                        width={width/3}
-                        height={height*2/3}
-                        text={this.props.lookNames[1]}
-                        onClick={() => this.props.onBuyEquip(2)} />
-                    <FlatButton
-                        x={width*2/3}
-                        width={width/3}
-                        height={height*2/3}
-                        text={this.props.lookNames[2]}
-                        onClick={() => this.props.onBuyEquip(3)} />
+                <Text y={-4} text={equipTypes[partName]} anchor={[0, 1]} style={{ ...textStyle, fontSize: 20, fontStyle: 'bold', fontFamily: 'Noto Sans KR' }} />
+                <Container interactive>
+                    <Box width={240} height={70} alpha={0.5} borderColor={0xFFFFFF} />
+                    <Sprite
+                        x={6} y={4}
+                        texture={level ? this.equipIconTextures[partName][look - 1] : this.context.app.loader.resources.icon_equip_none.texture} />
+                    <Text x={74} y={10} text={level ? `+${level} ${lookNames[partName][look - 1]}\n\n${partName} +${value}` : '장비를 장착하세요!'} style={textStyle}/>
                 </Container>
+                {level ? // 강화
+                    <FlatButton
+                        scale={0.8}
+                        disabled={isWorking}
+                        texture={[this.context.app.loader.resources.btn_long.texture, this.context.app.loader.resources.btn_long_hover.texture]}
+                        x={120} y={110}
+                        text={isWorking ? message : '강화'}
+                        onClick={this.props.onUpgradeEquip} />
+                : isWorking ?
+                    <FlatButton
+                        scale={0.8}
+                        disabled
+                        texture={[this.context.app.loader.resources.btn_long.texture, this.context.app.loader.resources.btn_long_hover.texture]}
+                        x={120} y={110}
+                        text={message} />
+                    : <Fragment>
+                        <FlatButton
+                            x={30} y={110}
+                            texture={[this.equipIconTextures[partName][0], this.equipIconTextures[partName][0]]}
+                            onClick={() => this.props.onBuyEquip(1)} />
+                        <FlatButton
+                            x={120} y={110}
+                            texture={[this.equipIconTextures[partName][1], this.equipIconTextures[partName][1]]}
+                            onClick={() => this.props.onBuyEquip(2)} />
+                        <FlatButton
+                            x={210} y={110}
+                            texture={[this.equipIconTextures[partName][2], this.equipIconTextures[partName][2]]}
+                            onClick={() => this.props.onBuyEquip(3)} />
+                    </Fragment>
                 }
-                {isWorking && <Fragment>
-                    <Box interactive width={width} height={height*2/3} alpha={0.5} />
-                    <AnimatedBox color={0xFFFFFF} x={this.state.borderPointPosition[0].x} y={this.state.borderPointPosition[0].y} width={4} height={4} />
-                    <AnimatedBox color={0xFFFFFF} x={this.state.borderPointPosition[1].x} y={this.state.borderPointPosition[1].y} width={4} height={4} />
-                </Fragment>}
-                {level ?
-                    isWorking ? <FlatButton y={height*2/3 + 4} width={width} height={height/3} text={'강화중입니다...'} onClick={null}/>
-                        : <FlatButton y={height*2/3 + 4} width={width} height={height/3} text={'강화'} onClick={this.props.onUpgradeEquip}/>
-                    :isWorking && <FlatButton y={height*2/3 + 4} width={width} height={height/3} text={'장착중입니다...'} />}
             </Container>
         );
     }
 }
 
 export default EquipDisplay;
+
+EquipDisplay.contextTypes = {
+    app: PropTypes.object,
+}

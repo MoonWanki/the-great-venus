@@ -86,11 +86,9 @@ class StageSelectUI extends Component {
             <Fragment>
                 {this.renderStageButtons()}
                 <AnimatedFlatButton
-                    x={-this.props.contentX + 100}
-                    y={offset.interpolate({ inputRange: [0, 1], outputRange: [height + this.props.contentY, height + this.props.contentY - 86] })}
+                    x={-this.props.contentX + 150}
+                    y={offset.interpolate({ inputRange: [0, 1], outputRange: [height + this.props.contentY + 60, height + this.props.contentY - 60] })}
                     alpha={offset}
-                    width={180}
-                    height={36}
                     text={'쇼룸으로 가기'}
                     onClick={this.props.onBackButtonClick} />
                 {this.state.stageDisplayOn && <AnimatedStageDisplay

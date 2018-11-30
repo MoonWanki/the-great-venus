@@ -1,10 +1,18 @@
 import React, { Component } from 'react';
-import { Container } from 'react-pixi-fiber';
+import { Container, Text } from 'react-pixi-fiber';
 import FlatButton from 'Client/Components/FlatButton';
 import Box from 'Client/Components/Box';
 import Animated from 'animated';
 
 const AnimatedFlatButton = Animated.createAnimatedComponent(FlatButton);
+
+const textStyle = {
+    fill: 0xffffff,
+    fontSize: 16,
+    align: 'center',
+    fontStyle: 'bold',
+    fontFamily: ['Noto Sans KR', 'sans-serif'],
+}
 
 class LookSelector extends Component {
     render() {
@@ -15,34 +23,33 @@ class LookSelector extends Component {
                     width={width}
                     height={height}
                     color={0x0}
-                    alpha={0.3} />
-                {['머리1', '머리2', '머리3', '머리4', '머리5'].map((name, i) => 
+                    alpha={0.3}
+                    borderColor={0xc0c0c0} />
+                <Text text={'스타일을 설정해주세요!'} anchor={[0.5, 0]} x={width/2} y={20} style={{ ...textStyle, fontSize: 20 }} />
+                <Text text={'헤어스타일'} anchor={[0.5, 0]} x={width*1/6} y={80} style={textStyle} />
+                {['더벅머리', '단발머리', '까까머리', '모히칸', '뽀글머리'].map((name, i) => 
                     <AnimatedFlatButton
                     key={i}
-                    x={110*i + 30}
-                    y={100}
-                    width={100}
-                    height={36}
+                    x={width*1/6}
+                    y={140 + 64*i}
                     text={name}
                     onClick={()=>this.props.onChange('hair', i)} />
                 )}
-                {['눈1', '눈2', '눈3', '눈4'].map((name, i) => 
+                <Text text={'눈'} anchor={[0.5, 0]} x={width/2} y={80} style={textStyle} />
+                {['정교한 눈', '각진 눈', '시크한 눈', '매서운 눈'].map((name, i) => 
                     <AnimatedFlatButton
                     key={i}
-                    x={110*i + 30}
-                    y={200}
-                    width={100}
-                    height={36}
+                    x={width/2}
+                    y={140 + 64*i}
                     text={name}
                     onClick={()=>this.props.onChange('eye', i)} />
                 )}
+                <Text text={'피부색'} anchor={[0.5, 0]} x={width*5/6} y={80} style={textStyle} />
                 {['연한 회색', '회색', '짙은 회색'].map((name, i) => 
                     <AnimatedFlatButton
                     key={i}
-                    x={110*i + 30}
-                    y={300}
-                    width={100}
-                    height={36}
+                    x={width*5/6}
+                    y={140 + 64*i}
                     text={name}
                     onClick={()=>this.props.onChange('skin', i)} />
                 )}

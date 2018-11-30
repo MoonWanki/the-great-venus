@@ -58,7 +58,16 @@ const getExtraValueByEquip = async (TGV, statueNo, part, equipLevel) => {
     return Number(res.c[0]);
 }
 
-export const getStatueSpec = async (TGV, level, statueNo, equip) => {
+const statueNameList = [
+    '',
+    '해태',
+    '로빈슨',
+    '줄리앙',
+    '아그리파',
+    '우는천사',
+]
+
+export const getStatueSpec = async (TGV, userName, level, statueNo, equip) => {
     const [ rawSpec, extraHpByEquip, extraAtkByEquip, extraDefByEquip, extraCrtByEquip, extraAvdByEquip, nextExtraHpByEquip, nextExtraAtkByEquip, nextExtraDefByEquip ] = await Promise.all([
         getStatueRawSpec(TGV, statueNo, level),
         getExtraValueByEquip(TGV, statueNo, 1, equip.hpEquipLevel),
@@ -71,6 +80,7 @@ export const getStatueSpec = async (TGV, level, statueNo, equip) => {
         getExtraValueByEquip(TGV, statueNo, 3, equip.defEquipLevel + 1),
     ]);
     return {
+        name: statueNo===0 ? userName : statueNameList[statueNo],
         hp: rawSpec.hp + extraHpByEquip,
         hpDefault: rawSpec.hp,
         hpExtra: extraHpByEquip,
@@ -257,7 +267,7 @@ export const getUserData = async (TGV, address) => {
     const user = await getUser(TGV, address);
     const [ statueEquipInfo, defaultStatueLook ] = await Promise.all([getStatueEquipInfo(TGV, address, user.numStatues), getDefaultStatueLook(TGV, address)]);
     let statueSpecList = [];
-    for(let i=0 ; i<user.numStatues ; i++) statueSpecList.push(await getStatueSpec(TGV, user.level, i, statueEquipInfo[i]));
+    for(let i=0 ; i<user.numStatues ; i++) statueSpecList.push(await getStatueSpec(TGV, user.name, user.level, i, statueEquipInfo[i]));
     const [ requiredExp, nextRequiredExp ] = await Promise.all([getRequiredExp(TGV, user.level), getRequiredExp(TGV, user.level + 1)]);
     const preRequiredExp = user.level > 1 ? await getRequiredExp(TGV, user.level - 1) : 0;
     return {

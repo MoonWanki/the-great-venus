@@ -14,20 +14,22 @@ export default class FlatButton extends Component {
         const buttonTextures = this.props.texture || [PIXI.Texture.fromImage(btn), PIXI.Texture.fromImage(btn_hover)];
         return (
             <Container
-                interactive
+                interactive={!this.props.disabled}
                 cursor='pointer'
                 click={this.props.onClick}
-                mouseover={()=>this.setState({ hover: true })}
-                mouseout={()=>this.setState({ hover: false })}
-                mousedown={()=>this.setState({ hover: false })}
-                mouseup={()=>this.setState({ hover: true })}
+                mouseover={this.props.disabled ? null : ()=>this.setState({ hover: true })}
+                mouseout={this.props.disabled ? null : ()=>this.setState({ hover: false })}
+                mousedown={this.props.disabled ? null : ()=>this.setState({ hover: false })}
+                mouseup={this.props.disabled ? null : ()=>this.setState({ hover: true })}
                 {...this.props}>
                 <Sprite
+                    tint={this.props.disabled ? 0x808080 : 0xFFFFFF}
                     anchor={[0.5, 0.5]}
                     texture={this.state.hover ? buttonTextures[1] : buttonTextures[0]}
                     position={[this.props.width/2, this.props.height/2]} />
                 <Text
                     anchor={[0.5, 0.5]}
+                    tint={this.props.disabled ? 0xA0A0A0 : 0xFFFFFF}
                     position={[this.props.width/2, this.props.height/2]}
                     text={this.props.text}
                     style={{ fill: 0xffffff, fontSize: 18, align: 'center', fontStyle: 'bold', fontFamily: ['Noto Sans KR', 'sans-serif'] }} />

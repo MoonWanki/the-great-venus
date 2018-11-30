@@ -110,24 +110,19 @@ class SignUpUI extends Component {
                     x={-this.props.contentX + 100}
                     y={this.state.lookSelectorOffset.interpolate({ inputRange: [0, 1], outputRange: [height + this.props.contentY - 86, height + this.props.contentY] })}
                     alpha={this.state.lookSelectorOffset.interpolate({ inputRange: [0, 1], outputRange: [1, 0] })}
-                    width={180}
-                    height={36}
                     text={'BACK'}
                     onClick={this.showCustomizer} />}
                 <AnimatedFlatButton
                     x={width + this.props.contentX - 280}
                     y={this.state.lookSelectorOffset.interpolate({ inputRange: [0, 1], outputRange: [height + this.props.contentY, height + this.props.contentY - 86] })}
                     alpha={this.state.lookSelectorOffset}
-                    width={180}
-                    height={36}
                     text={'DONE'}
                     onClick={this.onFinishCustomizing} />
                 <AnimatedFlatButton
                     x={width/2 - 100}
                     y={height*2/3}
                     alpha={this.state.lookSelectorOffset.interpolate({ inputRange: [0, 1], outputRange: [1, 0] })}
-                    width={200}
-                    height={70}
+                    disabled={this.state.isCreatingUser}
                     text={this.state.isCreatingUser ? 'PROCESSING...' : 'SIGN UP'}
                     onClick={this.state.isCreatingUser ? null : this.signUp} />
                 {this.state.isCreatingUser && <Container interactive>
@@ -137,7 +132,7 @@ class SignUpUI extends Component {
                         text={this.state.loadingMessage}
                         x={width/2}
                         y={height/2 + 60}
-                        style={{ fill: 0xffffff, fontSize: 16, align: 'center' }} />
+                        style={{ fill: 0xffffff, fontSize: 16, align: 'center', fontFamily: ['Noto Sans KR', 'sans-serif'] }} />
                 </Container>}
             </AnimatedContainer>
         );
