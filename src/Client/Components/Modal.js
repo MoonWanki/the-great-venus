@@ -1,9 +1,10 @@
 import React, { Component } from 'react';
-import { Container, Text } from 'react-pixi-fiber';
+import { Container, Text, Sprite } from 'react-pixi-fiber';
 import Box from 'Client/Components/Box';
 import FlatButton from 'Client/Components/FlatButton';
 import Animated from 'animated';
 import { connect } from 'react-redux';
+import * as PIXI from 'pixi.js';
 
 const AnimatedBox = Animated.createAnimatedComponent(Box);
 //const AnimatedFlatButton = Animated.createAnimatedComponent(FlatButton);
@@ -24,33 +25,24 @@ class Modal extends Component {
     }
     
     render() {
-        const { offset, width, height } = this.props;
         return (
-            <AnimatedContainer interactive width={this.props.contentWidth} height={this.props.contentHeight} alpha={offset}>
+            <AnimatedContainer interactive width={this.props.contentWidth} height={this.props.contentHeight} alpha={this.props.offset || 1}>
                 <AnimatedBox
                     width={this.props.contentWidth}
                     height={this.props.contentHeight}
                     alpha={0.5} />
                 <Container
-                    x={this.props.contentWidth/2 - width/2}
-                    y={this.props.contentHeight/2 - height/2}
-                    width={width}
-                    height={height}>
-                    <Box
-                        color={0x0}
-                        alpha={0.7}
-                        width={width}
-                        height={height} />
+                    x={this.props.contentWidth/2}
+                    y={this.props.contentHeight/2}>
+                    <Sprite
+                        anchor={[0.5, 0.5]}
+                        texture={PIXI.Texture.fromImage(require('images/ui/modal.png'))} />
                     <Text
                         anchor={[0.5, 0.5]}
-                        position={[width/2, height/2]}
                         text={this.props.text}
                         style={{ fill: 0xffffff, fontSize: 16, align: 'center', fontFamily: 'Nanum Gothic' }} />
                     <FlatButton
-                        x={width/2 - 50}
-                        y={height - 50}
-                        width={100}
-                        height={36}
+                        y={140}
                         text={this.props.buttonText}
                         onClick={this.props.onDismiss} />
                 </Container>

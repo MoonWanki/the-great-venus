@@ -9,14 +9,43 @@ import * as TGVApi from 'utils/TGVApi';
 import * as appActions from 'store/modules/appModule';
 import StageDisplay from './StageDisplay';
 import Easing from 'animated/lib/Easing';
-import { Container, Text } from 'react-pixi-fiber';
+import { Container, Text, CustomPIXIComponent } from 'react-pixi-fiber';
 import Box from 'Client/Components/Box';
+import PropTypes from 'prop-types';
+import * as PIXI from 'pixi.js';
 
 const stageDisplayFadeDuration = 500;
 const stageDisplayFadeEasing = Easing.bezier(0, 0.8, 0.3, 1);
 
+const AnimatedContainer = Animated.createAnimatedComponent(Container);
 const AnimatedFlatButton = Animated.createAnimatedComponent(FlatButton);
 const AnimatedStageDisplay = Animated.createAnimatedComponent(StageDisplay);
+
+const stageButtonPositions = [
+    [320, 816], [432, 694], [580, 586], [670, 502], [784, 430],
+    [916, 368], [1110, 348], [1270, 234], [1424, 216], [1570, 306],
+    [1504, 420], [1338, 542], [1534, 538], [1744, 586], [1484, 686],
+
+    [218, 746], [370, 700], [502, 600], [516, 478], [678, 404],
+    [750, 306], [1048, 280], [1230, 286], [1396, 276], [1482, 322],
+    [1550, 468], [1618, 554], [1472, 602], [1380, 656], [1522, 778],
+]
+
+const SideButton = CustomPIXIComponent({
+    customDisplayObject: () => new PIXI.Graphics(),
+    customApplyProps: (instance, oldProps, newProps) => {
+        const { x, y } = newProps;
+        instance.clear();
+        instance.beginFill(0x0);
+        instance.moveTo(x, y - 60);
+        instance.lineTo(x, y + 60);
+        if(newProps.reverse) instance.lineTo(x + 40, y);
+        else instance.lineTo(x - 40, y);
+        instance.lineTo(x, y - 60);
+        instance.endFill();
+        instance.alpha = 0.5;
+    },
+}, 'SideButton');
 
 class StageSelectUI extends Component {
 
@@ -26,6 +55,7 @@ class StageSelectUI extends Component {
         stageDisplayOn: false,
         stageDisplayOffset: new Animated.Value(0),
         stageResult: null,
+        mousePosition: new PIXI.Point(this.props.width/2, this.props.height/2),
     }
 
     clearStage = async (stageNo, units) => {
@@ -73,18 +103,62 @@ class StageSelectUI extends Component {
         }
     }
 
-    renderStageButtons = () => _.times(this.props.gameData.maxStage, i => {
-        if(i <= this.props.userData.lastStage)
-            return <FlatButton key={i} x={400 + i%5*150} y={300 + Math.floor(i/5)*150} width={100} height={100} text={i+1} onClick={() => this.clearStage(i+1, _.times(this.props.userData.numStatues))} />
-        else
-            return <FlatButton key={i} x={400 + i%5*150} y={300 + Math.floor(i/5)*150} width={100} height={100} text={`${i+1}\n(LOCKED)`} />
+    renderStageButtons = () => _.times(15, i => {
+        const stageNo = 15*(this.props.stageSelectTheme - 1) + i + 1;
+        if(stageNo <= this.props.gameData.maxStage) {
+            if(stageNo <= this.props.userData.lastStage + 1)
+                return <FlatButton
+                    key={stageNo}
+                    x={stageButtonPositions[stageNo - 1][0] + (this.state.mousePosition.x - this.props.width/2) * 0.002}
+                    y={stageButtonPositions[stageNo - 1][1] + (this.state.mousePosition.y - this.props.height/2) * 0.002}
+                    text={stageNo}
+                    textPosition={[-2, -3]}
+                    textStyle={{ fill: 0xffffff, fontSize: 24, align: 'center', fontStyle: 'bold', fontFamily: 'Noto Sans KR' }}
+                    texture={[
+                        this.context.app.loader.resources[`btn_stageselect_${this.props.stageSelectTheme}`].texture,
+                        this.context.app.loader.resources[`btn_stageselect_${this.props.stageSelectTheme}_hover`].texture
+                    ]}
+                    onClick={() => this.clearStage(stageNo, _.times(this.props.userData.numStatues))} />
+            else
+                return <FlatButton
+                    key={stageNo}
+                    disabled
+                    x={stageButtonPositions[stageNo - 1][0] + (this.state.mousePosition.x - this.props.width/2) * 0.002}
+                    y={stageButtonPositions[stageNo - 1][1] + (this.state.mousePosition.y - this.props.height/2) * 0.002}
+                    text={stageNo}
+                    textPosition={[-2, -3]}
+                    textStyle={{ fill: 0xffffff, fontSize: 22, align: 'center', fontStyle: 'bold', fontFamily: 'Noto Sans KR' }}
+                    texture={[
+                        this.context.app.loader.resources[`btn_stageselect_disabled`].texture,
+                        this.context.app.loader.resources[`btn_stageselect_disabled`].texture
+                    ]} />
+        }
     });
+
+    handleMouseMove = e => {
+        this.setState({ mousePosition: e.data.global });
+    }
 
     render() {
         const { offset, width, height } = this.props;
         return (
             <Fragment>
-                {this.renderStageButtons()}
+                <AnimatedContainer
+                    interactive
+                    mousemove={this.handleMouseMove}
+                    alpha={offset}
+                    y={this.props.backgroundOffset.interpolate({ inputRange: [-1, 1], outputRange: [-height, height]})}
+                    width={width}
+                    height={height}>
+                    {this.renderStageButtons()}
+                </AnimatedContainer>
+                {this.props.stageSelectTheme > 1 && <Container interactive click={() => this.props.onStageSelectThemeChange(this.props.stageSelectTheme - 1)} cursor='pointer'>
+                    <SideButton x={-this.props.contentX + 60} y={height/2} />
+                </Container>}
+                {this.props.stageSelectTheme < 2 && <Container interactive click={() => this.props.onStageSelectThemeChange(this.props.stageSelectTheme + 1)} cursor='pointer'>
+                    <SideButton x={width + this.props.contentX - 60} y={height/2} reverse />
+                </Container>
+                }
                 <AnimatedFlatButton
                     x={-this.props.contentX + 150}
                     y={offset.interpolate({ inputRange: [0, 1], outputRange: [height + this.props.contentY + 60, height + this.props.contentY - 60] })}
@@ -100,11 +174,11 @@ class StageSelectUI extends Component {
                 {this.state.loadingScreenOn && <Container interactive>
                     <Box width={width} height={height} alpha={0.5} />
                     <Text
-                        anchor={[0.5, 0.5]}
+                        anchor={[0.5, 0]}
                         text={this.state.loadingScreenMessage}
                         x={width/2}
                         y={height/2 + 60}
-                        style={{ fill: 0xffffff, fontSize: 16, align: 'center', fontFamily: 'Nanum Gothic' }} />
+                        style={{ fill: 0xffffff, fontSize: 15, align: 'center', fontWeight: '300', fontFamily: 'Noto Sans KR' }} />
                 </Container>}
             </Fragment>
         );
@@ -125,3 +199,7 @@ export default connect(
         AppActions: bindActionCreators(appActions, dispatch),
     })
 )(StageSelectUI);
+
+StageSelectUI.contextTypes = {
+    app: PropTypes.object,
+}

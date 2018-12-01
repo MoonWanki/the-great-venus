@@ -17,7 +17,7 @@ class ForgeUI extends Component {
             <Fragment>
                 <AnimatedStatueSelector
                     x={width/2 - 600}
-                    y={height/2 - 250}
+                    y={offset.interpolate({ inputRange: [0, 1], outputRange: [height/2 - 150, height/2 - 250]})}
                     width={340}
                     height={500}
                     alpha={offset}
@@ -25,7 +25,7 @@ class ForgeUI extends Component {
                     onClickStatue={this.props.onClickStatue} />
                 <AnimatedEquipDisplayContainer
                     x={width/2 - 240}
-                    y={height/2 - 250}
+                    y={offset.interpolate({ inputRange: [0, 1], outputRange: [height/2 - 150, height/2 - 250]})}
                     width={840}
                     height={500}
                     alpha={offset}

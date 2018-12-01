@@ -91,7 +91,7 @@ class EquipDisplayContainer extends Component {
                     width={width}
                     height={height}
                     color={0x0}
-                    alpha={0.5} />
+                    alpha={0.6} />
                 <Sprite
                     anchor={[0.5, 0.5]}
                     x={width/2}

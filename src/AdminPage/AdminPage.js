@@ -449,7 +449,7 @@ class AdminPage extends Component {
                     {isGameLoaded && isUserLoaded && userData.level ? this.renderStageButtons() : null}
                 </div>
 
-                <div className='admin-navbar'>
+                {/* <div className='admin-navbar'>
                     <h5>ADVANCE</h5>
                 </div>
                 <div>
@@ -457,7 +457,7 @@ class AdminPage extends Component {
                         <Button onClick={this.onRefund}>Refund</Button>
                         <Button onClick={this.onKill}>SELF DESTRUCT</Button>
                     </Row>
-                </div>
+                </div> */}
 
                 <div className='admin-navbar'>
                     <h5>GAME CONFIG</h5>

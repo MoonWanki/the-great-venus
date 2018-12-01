@@ -44,7 +44,7 @@ class StatueSelector extends Component {
                     width={width}
                     height={height}
                     color={0x0}
-                    alpha={0.5}
+                    alpha={0.6}
                     borderColor={0xFFFFFF} />
                 {this.renderThumbnails()}
             </Container>

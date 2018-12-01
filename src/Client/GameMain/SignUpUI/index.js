@@ -107,23 +107,23 @@ class SignUpUI extends Component {
                     eye={this.state.statueEye}
                     hair={this.state.statueHair} />
                 {!this.state.isCreatingUser && <AnimatedFlatButton
-                    x={-this.props.contentX + 100}
-                    y={this.state.lookSelectorOffset.interpolate({ inputRange: [0, 1], outputRange: [height + this.props.contentY - 86, height + this.props.contentY] })}
+                    x={-this.props.contentX + 150}
+                    y={this.state.lookSelectorOffset.interpolate({ inputRange: [0, 1], outputRange: [height + this.props.contentY - 60, height + this.props.contentY + 60] })}
                     alpha={this.state.lookSelectorOffset.interpolate({ inputRange: [0, 1], outputRange: [1, 0] })}
                     text={'BACK'}
                     onClick={this.showCustomizer} />}
                 <AnimatedFlatButton
-                    x={width + this.props.contentX - 280}
-                    y={this.state.lookSelectorOffset.interpolate({ inputRange: [0, 1], outputRange: [height + this.props.contentY, height + this.props.contentY - 86] })}
+                    x={width + this.props.contentX - 150}
+                    y={this.state.lookSelectorOffset.interpolate({ inputRange: [0, 1], outputRange: [height + this.props.contentY + 60, height + this.props.contentY - 60] })}
                     alpha={this.state.lookSelectorOffset}
                     text={'DONE'}
                     onClick={this.onFinishCustomizing} />
                 <AnimatedFlatButton
-                    x={width/2 - 100}
-                    y={height*2/3}
+                    x={width/2}
+                    y={height*2/3 + 30}
                     alpha={this.state.lookSelectorOffset.interpolate({ inputRange: [0, 1], outputRange: [1, 0] })}
                     disabled={this.state.isCreatingUser}
-                    text={this.state.isCreatingUser ? 'PROCESSING...' : 'SIGN UP'}
+                    text={this.state.isCreatingUser ? '처리 중입니다...' : '완료'}
                     onClick={this.state.isCreatingUser ? null : this.signUp} />
                 {this.state.isCreatingUser && <Container interactive>
                     <Box width={width} height={height} alpha={0.5} />
@@ -132,7 +132,7 @@ class SignUpUI extends Component {
                         text={this.state.loadingMessage}
                         x={width/2}
                         y={height/2 + 60}
-                        style={{ fill: 0xffffff, fontSize: 16, align: 'center', fontFamily: ['Noto Sans KR', 'sans-serif'] }} />
+                        style={{ fill: 0xffffff, fontSize: 15, align: 'center', fontFamily: 'Noto Sans KR' }} />
                 </Container>}
             </AnimatedContainer>
         );

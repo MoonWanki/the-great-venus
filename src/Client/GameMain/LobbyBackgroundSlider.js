@@ -4,7 +4,7 @@ import Background from 'Client/Components/Background';
 export default class LobbyBackgroundSlider extends Component {
 
     render() {
-        const { skyOffset, homeOffset, showroomOffset, forgeOffset, stageSelectOffset, colosseumOffset, ...rest } = this.props;
+        const { skyOffset, homeOffset, showroomOffset, forgeOffset, stageSelectOffset, stageSelectTheme, colosseumOffset, ...rest } = this.props;
         return (
             <Fragment>
                 <Background
@@ -28,7 +28,7 @@ export default class LobbyBackgroundSlider extends Component {
                     offsetY={forgeOffset}
                     {...rest} />
                 <Background
-                    theme='stageselect1'
+                    theme={`stageselect${stageSelectTheme}`}
                     offsetX={0}
                     offsetY={stageSelectOffset}
                     {...rest} />

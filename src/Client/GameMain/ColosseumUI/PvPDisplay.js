@@ -47,7 +47,7 @@ class PvPDisplay extends Component {
         return (
             <Container alpha={this.props.offset} width={width} height={height}>
                 {this.state.fieldOn && <Background
-                    theme={`stage_field1_1`}
+                    theme={`colosseum_field`}
                     width={width}
                     height={height}
                     offsetX={0}

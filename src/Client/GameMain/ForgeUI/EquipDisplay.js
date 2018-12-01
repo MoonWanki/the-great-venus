@@ -7,8 +7,9 @@ import PropTypes from 'prop-types';
 
 const textStyle = {
     fill: 0xffffff,
-    fontSize: 16,
-    fontFamily: 'Nanum gothic',
+    fontSize: 15,
+    fontFamily: 'Noto Sans KR',
+    leading: 3,
 };
 
 const lookNames = {
@@ -84,7 +85,7 @@ class EquipDisplay extends Component {
                     <Sprite
                         x={6} y={4}
                         texture={level ? this.equipIconTextures[partName][look - 1] : this.context.app.loader.resources.icon_equip_none.texture} />
-                    <Text x={74} y={10} text={level ? `+${level} ${lookNames[partName][look - 1]}\n\n${partName} +${value}` : '장비를 장착하세요!'} style={textStyle}/>
+                    <Text x={74} y={10} text={level ? `+${level} ${lookNames[partName][look - 1]}\n${partName} +${value}` : '장비를 장착하세요!'} style={{ ...textStyle, fill: level ? 0xFFFFFF : 0xA0A0A0 }}/>
                 </Container>
                 {level ? // 강화
                     <FlatButton
@@ -103,15 +104,15 @@ class EquipDisplay extends Component {
                         text={message} />
                     : <Fragment>
                         <FlatButton
-                            x={30} y={110}
+                            x={28} y={110}
                             texture={[this.equipIconTextures[partName][0], this.equipIconTextures[partName][0]]}
                             onClick={() => this.props.onBuyEquip(1)} />
                         <FlatButton
-                            x={120} y={110}
+                            x={90} y={110}
                             texture={[this.equipIconTextures[partName][1], this.equipIconTextures[partName][1]]}
                             onClick={() => this.props.onBuyEquip(2)} />
                         <FlatButton
-                            x={210} y={110}
+                            x={152} y={110}
                             texture={[this.equipIconTextures[partName][2], this.equipIconTextures[partName][2]]}
                             onClick={() => this.props.onBuyEquip(3)} />
                     </Fragment>

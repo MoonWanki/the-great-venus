@@ -44,8 +44,8 @@ class ProfileContainer extends Component {
                     mask={this.getMask()}
                     anchor={[0, 0]} />
                 <Text x={130} y={4} text={`Lv. ${userData.level}  ${userData.name}`} style={{ ...textStyle, fontSize: 16 }} />
-                <PercentageBar color={0xe2b010} x={132} y={25} width={140} height={15} value={expPercentage} maxValue={100} />
-                <Text anchor={[0.5, 0]} x={202} y={25} text={`${userData.exp}/${userData.requiredExp} (${expPercentage}%)`} style={{ ...textStyle, fontSize: 12, fontFamily: 'Nanum Gothic' }} />
+                <PercentageBar color={0x9256af} x={132} y={25} width={140} height={18} value={expPercentage} maxValue={100} />
+                <Text anchor={[0.5, 0]} x={202} y={26} text={`${userData.exp}/${userData.requiredExp} (${expPercentage}%)`} style={{ ...textStyle, fontSize: 12, fontFamily: 'Noto Sans KR' }} />
                 <Text anchor={[1, 0]} x={270} y={50} text={`${userData.sorbiote}`} style={textStyle} />
                 <Text anchor={[1, 0]} x={270} y={83} text={`${this.props.finney.toLocaleString()}`} style={textStyle} />
             </Container>

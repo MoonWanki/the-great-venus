@@ -62,12 +62,16 @@ class Background extends Component {
                 { src: this.context.app.loader.resources.bg_colosseum_lobby, mouseSensitivity: 0, xSpeed: 0 },
             ],
             'colosseum_field': [
-                
+                { src: this.context.app.loader.resources.bg_colosseum_field, mouseSensitivity: 5, xSpeed: 0 },
             ],
             'stageselect1': [
-                { src: this.context.app.loader.resources.bg_stageselect1_1, mouseSensitivity: 0, xSpeed: 0 },
-                { src: this.context.app.loader.resources.bg_stageselect1_2, mouseSensitivity: 0, xSpeed: 1 },
-                { src: this.context.app.loader.resources.bg_stageselect1_3, mouseSensitivity: 0, xSpeed: 0 },
+                { src: this.context.app.loader.resources.bg_stageselect1_1, mouseSensitivity: 1, xSpeed: 0 },
+                { src: this.context.app.loader.resources.bg_stageselect1_2, mouseSensitivity: 1.5, xSpeed: 2 },
+                { src: this.context.app.loader.resources.bg_stageselect1_3, mouseSensitivity: 2, xSpeed: 0 },
+            ],
+            'stageselect2': [
+                { src: this.context.app.loader.resources.bg_stageselect2_1, mouseSensitivity: 1, xSpeed: 0 },
+                { src: this.context.app.loader.resources.bg_stageselect2_2, mouseSensitivity: 2, xSpeed: 0 },
             ],
             'stage_field1_1': [
                 { src: this.context.app.loader.resources.bg_field1_1_1, mouseSensitivity: 0, xSpeed: 0 },

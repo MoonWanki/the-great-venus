@@ -225,7 +225,8 @@ export const getItemShopInfo = async (TGV) => {
 }
 
 export const getGameData = async (TGV) => {
-    const [ maxStatue, maxMob, maxStage ] = await Promise.all([
+    const [ numUsers, maxStatue, maxMob, maxStage ] = await Promise.all([
+        TGV.numUsers.call(),
         TGV.maxStatue.call(),
         TGV.maxMob.call(),
         TGV.maxStage.call(),
@@ -237,6 +238,7 @@ export const getGameData = async (TGV) => {
         getItemShopInfo(TGV),
     ]);
     return {
+        numUsers: numUsers.c[0],
         maxStatue: maxStatue.c[0],
         maxMob: maxMob.c[0],
         maxStage: maxStage.c[0],

@@ -2,9 +2,12 @@ import React, { Component, Fragment } from 'react';
 import Box from 'Client/Components/Box';
 import FlatButton from 'Client/Components/FlatButton';
 import Animated from 'animated';
-import MenuContainer from './MenuContainer';
+// import MenuContainer from './MenuContainer';
 import { connect } from 'react-redux';
+import { Sprite } from 'react-pixi-fiber';
+import * as PIXI from 'pixi.js';
 
+const AnimatedSprite = Animated.createAnimatedComponent(Sprite);
 const AnimatedBlackBox = Animated.createAnimatedComponent(Box);
 const AnimatedFlatButton = Animated.createAnimatedComponent(FlatButton);
 
@@ -12,7 +15,7 @@ class HomeUI extends Component {
     
     render() {
         const { offset, width, height } = this.props;
-        const menuContainerSize = { w: width*3/5, h: height*3/5 };
+        // const menuContainerSize = { w: width*3/5, h: height*3/5 };
         return (
             <Fragment>
                 <AnimatedBlackBox
@@ -22,20 +25,24 @@ class HomeUI extends Component {
                     width={width}
                     height={height}
                     alpha={offset.interpolate({ inputRange: [0, 1], outputRange: [0, 0.3] })} />
-                <MenuContainer
+                <AnimatedSprite
+                    alpha={offset}
+                    texture={PIXI.Texture.fromImage(require('images/banner.png'))}
+                    anchor={[0.5, 0.5]}
+                    x={this.props.width/2}
+                    y={this.props.height/2} />
+                {/* <MenuContainer
                     x={width/2 - menuContainerSize.w/2}
                     y={height/2 - menuContainerSize.h/2}
                     width={menuContainerSize.w}
                     height={menuContainerSize.h}
-                    offset={offset}
-                    onColosseumButtonClick={this.props.onColosseumButtonClick}
-                    onShowroomButtonClick={this.props.onShowroomButtonClick} />
-                <AnimatedFlatButton
-                    x={width + this.props.contentX - 280}
-                    y={offset.interpolate({ inputRange: [0, 1], outputRange: [height + this.props.contentY, height + this.props.contentY - 86] })}
                     alpha={offset}
-                    width={180}
-                    height={36}
+                    onColosseumButtonClick={this.props.onColosseumButtonClick}
+                    onShowroomButtonClick={this.props.onShowroomButtonClick} /> */}
+                <AnimatedFlatButton
+                    x={width/2}
+                    y={offset.interpolate({ inputRange: [0, 1], outputRange: [height + this.props.contentY, height + this.props.contentY - 200] })}
+                    alpha={offset}
                     text={'GO'}
                     onClick={this.props.onShowroomButtonClick} />
             </Fragment>

@@ -19,6 +19,8 @@ const PvPDisplayFadeEasing = Easing.bezier(0, 0.8, 0.3, 1);
 
 const AnimatedPvPDisplay = Animated.createAnimatedComponent(PvPDisplay);
 const AnimatedFlatButton = Animated.createAnimatedComponent(FlatButton);
+const AnimatedLeaderboard = Animated.createAnimatedComponent(Leaderboard);
+const AnimatedRewardDisplay = Animated.createAnimatedComponent(RewardDisplay);
 
 class ColosseumUI extends Component {
 
@@ -65,7 +67,7 @@ class ColosseumUI extends Component {
     setRefundTimer = (now, to) => {
         console.log('now: ' + now + ' nextRefundTime: ' + to);
         if(to < now) {
-            this.setState({ refundTimeLeft: "환급이 진행되고 있습니다!" });
+            this.setState({ refundTimeLeft: "잠시" });
             return;
         }
         const timeLeft = to - now;
@@ -73,7 +75,7 @@ class ColosseumUI extends Component {
         const hours = Math.floor(timeLeft/3600)%24;
         const minutes = Math.floor(timeLeft/60)%60;
         const seconds = timeLeft%60;
-        this.setState({ refundTimeLeft: `환급까지 ${days}일 ${hours}시간 ${minutes}분 ${seconds}초 남았습니다!`});
+        this.setState({ refundTimeLeft: `${days}일 ${hours}시간 ${minutes}분 ${seconds}초`});
         setTimeout(() => this.setRefundTimer(now + 1, to), 1000);
     }
 
@@ -130,18 +132,20 @@ class ColosseumUI extends Component {
         const { offset, width, height } = this.props;
         return (
             <Fragment>
-                <RewardDisplay
-                    x={width/2 - 410}
-                    y={height/2 - 300}
-                    width={400}
+                <AnimatedRewardDisplay
+                    x={width/2 - 510}
+                    y={offset.interpolate({ inputRange: [0, 1], outputRange: [height/2 - 200, height/2 - 300]})}
+                    alpha={offset}
+                    width={500}
                     height={600}
                     isUpdating={this.state.isUpdating}
                     colosseumInfo={this.state.colosseumInfo}
                     refundTimeLeft={this.state.refundTimeLeft} />
-                <Leaderboard
+                <AnimatedLeaderboard
                     x={width/2 + 10}
-                    y={height/2 - 300}
-                    width={400}
+                    y={offset.interpolate({ inputRange: [0, 1], outputRange: [height/2 - 200, height/2 - 300]})}
+                    alpha={offset}
+                    width={500}
                     height={600}
                     isUpdating={this.state.isUpdating}
                     leaderboard={this.state.leaderboard}
@@ -168,7 +172,7 @@ class ColosseumUI extends Component {
                         text={this.state.loadingScreenMessage}
                         x={width/2}
                         y={height/2 + 60}
-                        style={{ fill: 0xffffff, fontSize: 16, align: 'center' }} />
+                        style={{ fill: 0xffffff, fontSize: 15, align: 'center', fontFamily: 'Noto Sans KR' }} />
                 </Container>}
             </Fragment>
         );

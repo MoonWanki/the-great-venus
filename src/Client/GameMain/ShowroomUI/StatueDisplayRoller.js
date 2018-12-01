@@ -33,7 +33,7 @@ class StatueDisplayRoller extends Component {
                     x={this.props.width/2 + i*this.props.gapBetweenStatues}
                     y={this.props.height}
                     no={0}
-                    scale={1.4}
+                    scale={1.2}
                     skin={this.props.userData.defaultStatueLook.skin}
                     eye={this.props.userData.defaultStatueLook.eye}
                     hair={this.props.userData.defaultStatueLook.hair}
@@ -50,7 +50,7 @@ class StatueDisplayRoller extends Component {
                     x={this.props.width/2 + i*this.props.gapBetweenStatues}
                     y={this.props.height}
                     no={i}
-                    scale={1.4}
+                    scale={1.2}
                     hpEquipLook={this.props.userData.statues[i].equip.hp.look}
                     atkEquipLook={this.props.userData.statues[i].equip.atk.look}
                     defEquipLook={this.props.userData.statues[i].equip.def.look}
@@ -64,7 +64,7 @@ class StatueDisplayRoller extends Component {
                     x={this.props.width/2 + i*this.props.gapBetweenStatues}
                     y={this.props.height}
                     no={i}
-                    scale={1.4}
+                    scale={1.2}
                     tint={0x010101}
                     hpEquipLook={0}
                     atkEquipLook={0}

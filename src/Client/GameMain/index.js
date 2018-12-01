@@ -21,7 +21,7 @@ const slideDuration = 1500;
 const skySlideDuration = 15000;
 const skySlideEasing = Easing.bezier(0.3, 1, 0.6, 1);
 const slideEasing = Easing.bezier(0.6, 0, 0.2, 1);
-const UIFadeInDuration = 800;
+const UIFadeInDuration = 600;
 const UIFadeOutDuration = 400;
 const UIFadeEasing = Easing.bezier(0, 0.8, 0.3, 1);
 
@@ -51,14 +51,23 @@ class GameMain extends Component {
         introCreditOffset: new Animated.Value(0),
         introCreditTexture: null,
         introCreditStep: 0,
+        stageSelectTheme: 1,
     }
 
     componentDidMount() {
-        alert('오픈 베타 버전입니다!\n기본적인 컨텐츠 이용 테스트가 가능하며, 이를 위해 임시 GUI 환경으로 제공되는 점 양해바랍니다.');
+        //alert('오픈 베타 버전입니다!\n기본적인 컨텐츠 이용 테스트가 가능하며, 이를 위해 임시 GUI 환경으로 제공되는 점 양해바랍니다.');
         window.onkeydown = this.onKeydownOnIntro;
         setTimeout(this.showNextIntroCredit, 1000);
+        this.setState({ stageSelectTheme: this.getDefaultStageSelectTheme() });
         this.slideSkyBG({ toValue: -1, duration: skySlideDuration, easing: skySlideEasing });
         this.slideHomeBG({ toValue: 0, duration: skySlideDuration, easing: skySlideEasing });
+    }
+
+    getDefaultStageSelectTheme = () => {
+        const { lastStage } = this.props.userData;
+        if(lastStage < 15) return 1;
+        else if(lastStage < 30) return 2;
+        else return 2;
     }
 
     onKeydownOnIntro = (e) => {
@@ -240,6 +249,10 @@ class GameMain extends Component {
 
     onClickStatue = (no) => this.setState({ currentSelectedStatue: no });
 
+    onStageSelectThemeChange = no => {
+        this.setState({ stageSelectTheme: no });
+    }
+
     renderInnerUI = () => {
         switch(this.state.currentUI) {
             case 'home':
@@ -270,7 +283,10 @@ class GameMain extends Component {
             case 'stageselect':
                 return <StageSelectUI
                     offset={this.state.stageSelectUIOffset}
+                    backgroundOffset={this.state.stageSelectBGOffset}
                     onBackButtonClick={this.goToShowroom}
+                    stageSelectTheme={this.state.stageSelectTheme}
+                    onStageSelectThemeChange={this.onStageSelectThemeChange}
                     {...this.props} />
             case 'colosseum':
                 return <ColosseumUI
@@ -297,6 +313,7 @@ class GameMain extends Component {
                     colosseumOffset={this.state.colosseumBGOffset}
                     stageSelectOffset={this.state.stageSelectBGOffset}
                     forgeOffset={this.state.forgeBGOffset}
+                    stageSelectTheme={this.state.stageSelectTheme}
                     {...this.props} />
                 {this.state.introCreditStep > 0 && <AnimatedSprite
                     interactive
