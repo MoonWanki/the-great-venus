@@ -5,7 +5,7 @@ import Animated from 'animated';
 // import MenuContainer from './MenuContainer';
 import { connect } from 'react-redux';
 import { Sprite } from 'react-pixi-fiber';
-import * as PIXI from 'pixi.js';
+import PropTypes from 'prop-types';
 
 const AnimatedSprite = Animated.createAnimatedComponent(Sprite);
 const AnimatedBlackBox = Animated.createAnimatedComponent(Box);
@@ -27,7 +27,7 @@ class HomeUI extends Component {
                     alpha={offset.interpolate({ inputRange: [0, 1], outputRange: [0, 0.3] })} />
                 <AnimatedSprite
                     alpha={offset}
-                    texture={PIXI.Texture.fromImage(require('images/banner.png'))}
+                    texture={this.context.app.loader.resources.banner.texture}
                     anchor={[0.5, 0.5]}
                     x={this.props.width/2}
                     y={this.props.height/2} />
@@ -41,7 +41,7 @@ class HomeUI extends Component {
                     onShowroomButtonClick={this.props.onShowroomButtonClick} /> */}
                 <AnimatedFlatButton
                     x={width/2}
-                    y={offset.interpolate({ inputRange: [0, 1], outputRange: [height + this.props.contentY, height + this.props.contentY - 200] })}
+                    y={offset.interpolate({ inputRange: [0, 1], outputRange: [height + this.props.contentY + 60, height + this.props.contentY - 60] })}
                     alpha={offset}
                     text={'GO'}
                     onClick={this.props.onShowroomButtonClick} />
@@ -56,3 +56,7 @@ export default connect(
         contentY: state.canvasModule.contentY,
     }),
 )(HomeUI);
+
+HomeUI.contextTypes = {
+    app: PropTypes.object,
+}

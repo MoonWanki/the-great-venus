@@ -65,7 +65,6 @@ class ColosseumUI extends Component {
     }
 
     setRefundTimer = (now, to) => {
-        console.log('now: ' + now + ' nextRefundTime: ' + to);
         if(to < now) {
             this.setState({ refundTimeLeft: "잠시" });
             return;

@@ -44,8 +44,8 @@ class Leaderboard extends Component {
             }
             return <Container key={i}>
                 <Box y={i*60} width={width} height={53} alpha={0.7} borderColor={color}/>
-                <Text anchor={[0, 0.5]} x={25} y={27 + i*60} text={`${user.rank}위`} style={textStyle} />
-                <Text anchor={[0, 0.5]} x={70} y={27 + i*60} text={`Lv.${user.level}  ${user.name}`} style={textStyle} />
+                <Text anchor={[0, 0.5]} x={30} y={27 + i*60} text={`${user.rank}위`} style={textStyle} />
+                <Text anchor={[0, 0.5]} x={80} y={27 + i*60} text={`Lv.${user.level}  ${user.name}`} style={textStyle} />
                 <Triangle color={color} x={0} y={i*60} />
                 {user.rank < this.props.userData.rank && <Fragment>
                     <FlatButton

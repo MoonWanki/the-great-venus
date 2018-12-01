@@ -40,7 +40,7 @@ class Modal extends Component {
                     <Text
                         anchor={[0.5, 0.5]}
                         text={this.props.text}
-                        style={{ fill: 0xffffff, fontSize: 16, align: 'center', fontFamily: 'Nanum Gothic' }} />
+                        style={{ fill: 0xffffff, fontSize: 18, align: 'center', fontFamily: 'Noto Sans KR', leading: 3 }} />
                     <FlatButton
                         y={140}
                         text={this.props.buttonText}

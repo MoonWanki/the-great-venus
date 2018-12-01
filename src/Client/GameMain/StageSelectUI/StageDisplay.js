@@ -103,16 +103,17 @@ class StageDisplay extends Component {
     render() {
         const { width, height } = this.props;
         const roundResult = this.props.stageResult.roundResultList[this.state.currentRound - 1];
+        const stageBGThemeName = `stage_field${Math.floor((this.props.stageResult.stageNo-1)/15 + 1)}_${Math.floor((this.props.stageResult.stageNo-1)%15/5 + 1)}`;
         return (
             <Container alpha={this.props.offset} width={width} height={height}>
                 {this.state.fieldBGOn && <Background
-                    theme={`stage_field1_1`}
+                    theme={stageBGThemeName}
                     width={width}
                     height={height}
                     offsetX={this.state.fieldBGOffset[0]}
                     offsetY={0} />}
                 {this.state.fieldBGOn && <Background
-                    theme={`stage_field1_1`}
+                    theme={stageBGThemeName}
                     width={width}
                     height={height}
                     offsetX={this.state.fieldBGOffset[1]}

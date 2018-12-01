@@ -1,6 +1,8 @@
 import React, { Component, Fragment } from 'react';
 import Background from 'Client/Components/Background';
 
+const rand = Math.floor(Math.random()*4 + 1);
+
 export default class LobbyBackgroundSlider extends Component {
 
     render() {
@@ -8,12 +10,12 @@ export default class LobbyBackgroundSlider extends Component {
         return (
             <Fragment>
                 <Background
-                    theme='home1'
+                    theme={`home${rand}`}
                     offsetX={0}
                     offsetY={homeOffset}
                     {...rest} />
                 <Background
-                    theme='sky1'
+                    theme={`sky${rand}`}
                     offsetX={0}
                     offsetY={skyOffset}
                     {...rest} />

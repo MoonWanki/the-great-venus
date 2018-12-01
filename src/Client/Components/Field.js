@@ -118,6 +118,7 @@ class Field extends Component {
         for(let i=0 ; i<this.state.ourUnits.length ; i++) {
             if(i%2) { // upper
                 upperUnits.push(<AnimatedBattleUnit
+                    key={i}
                     data={this.state.ourUnits[i]}
                     x={this.state.ourUnitsPosition[i].x.interpolate({ inputRange: [0, 1], outputRange: [0, this.props.width]})}
                     y={this.state.ourUnitsPosition[i].y.interpolate({ inputRange: [0, 1], outputRange: [0, this.props.height]})}
@@ -130,6 +131,7 @@ class Field extends Component {
                 );
             } else {
                 lowerUnits.push(<AnimatedBattleUnit
+                    key={i}
                     data={this.state.ourUnits[i]}
                     x={this.state.ourUnitsPosition[i].x.interpolate({ inputRange: [0, 1], outputRange: [0, this.props.width]})}
                     y={this.state.ourUnitsPosition[i].y.interpolate({ inputRange: [0, 1], outputRange: [0, this.props.height]})}
