@@ -93,13 +93,13 @@ class SignUpUI extends Component {
             <AnimatedContainer width={width} height={height} alpha={offset}>
                 <AnimatedLookSelector
                     offset={this.state.lookSelectorOffset}
-                    x={this.state.lookSelectorOffset.interpolate({ inputRange: [0, 1], outputRange: [width, width*9/20] })}
-                    y={height/4}
-                    width={width/3}
-                    height={height/2}
+                    x={this.state.lookSelectorOffset.interpolate({ inputRange: [0, 1], outputRange: [width, width/2 - 100] })}
+                    y={height/2 - 270}
+                    width={640}
+                    height={540}
                     onChange={this.onLookChanged} />
                 <AnimatedStatue
-                    x={this.state.lookSelectorOffset.interpolate({ inputRange: [0, 1], outputRange: [width/2, width/3] })}
+                    x={this.state.lookSelectorOffset.interpolate({ inputRange: [0, 1], outputRange: [width/2, width/2 - 300] })}
                     y={this.state.lookSelectorOffset.interpolate({ inputRange: [0, 1], outputRange: [height*4/7, height*2/3] })}
                     no={0}
                     scale={1.4}

@@ -27,8 +27,8 @@ const stageButtonPositions = [
     [1504, 420], [1338, 542], [1534, 538], [1744, 586], [1484, 686],
 
     [218, 746], [370, 700], [502, 600], [516, 478], [678, 404],
-    [750, 306], [1048, 280], [1230, 286], [1396, 276], [1482, 322],
-    [1550, 468], [1618, 554], [1472, 602], [1380, 656], [1522, 778],
+    [750, 306], [1048, 280], [1220, 286], [1376, 276], [1482, 342],
+    [1540, 460], [1610, 554], [1472, 602], [1380, 656], [1522, 778],
 ]
 
 const SideButton = CustomPIXIComponent({
@@ -109,8 +109,8 @@ class StageSelectUI extends Component {
             if(stageNo <= this.props.userData.lastStage + 1)
                 return <FlatButton
                     key={stageNo}
-                    x={stageButtonPositions[stageNo - 1][0] + (this.state.mousePosition.x - this.props.width/2) * 0.002}
-                    y={stageButtonPositions[stageNo - 1][1] + (this.state.mousePosition.y - this.props.height/2) * 0.002}
+                    x={stageButtonPositions[stageNo - 1][0]*this.props.width/1920 + (this.state.mousePosition.x - this.props.width/2) * 0.002}
+                    y={stageButtonPositions[stageNo - 1][1]*this.props.height/1080 + (this.state.mousePosition.y - this.props.height/2) * 0.002}
                     text={stageNo}
                     textPosition={[-2, -3]}
                     textStyle={{ fill: 0xffffff, fontSize: 24, align: 'center', fontStyle: 'bold', fontFamily: 'Noto Sans KR' }}
@@ -123,8 +123,8 @@ class StageSelectUI extends Component {
                 return <FlatButton
                     key={stageNo}
                     disabled
-                    x={stageButtonPositions[stageNo - 1][0] + (this.state.mousePosition.x - this.props.width/2) * 0.002}
-                    y={stageButtonPositions[stageNo - 1][1] + (this.state.mousePosition.y - this.props.height/2) * 0.002}
+                    x={stageButtonPositions[stageNo - 1][0]*this.props.width/1920 + (this.state.mousePosition.x - this.props.width/2) * 0.002}
+                    y={stageButtonPositions[stageNo - 1][1]*this.props.height/1080 + (this.state.mousePosition.y - this.props.height/2) * 0.002}
                     text={stageNo}
                     textPosition={[-2, -3]}
                     textStyle={{ fill: 0xffffff, fontSize: 22, align: 'center', fontStyle: 'bold', fontFamily: 'Noto Sans KR' }}
