@@ -61,7 +61,8 @@ class Home extends Component {
                 'en': 'Please login to Metamask!',
                 'ko': '메타마스크에 로그인 해주세요!',
             },
-        }
+        },
+        videoWidth: window.innerWidth > 1280 ? 1280 : window.innerWidth,
     }
     
 
@@ -70,6 +71,7 @@ class Home extends Component {
             var scrolled = $(window).scrollTop();
             $('.home-banner').css('top', scrolled*0.5 + 'px');
         })
+        window.onresize = this.onResize
     }
 
 
@@ -90,7 +92,12 @@ class Home extends Component {
         }
     }
 
+    onResize = () => this.setState({ videoWidth: window.innerWidth > 1280 ? 1280 : window.innerWidth })
 
+    componentWillUnmount() {
+        window.onresize = null
+    }
+    
     render() {
         const { openNoBrowserModal, openNoMetamaskModal, text } = this.state;
         const { language, selectedAddress } = this.props;
@@ -153,16 +160,17 @@ class Home extends Component {
                 <div className="home-section" style={{ background: '#e5e4e0' }}>
                     <Fade bottom duration={400} distance='60px' fraction={1}>
                         <p className='home-section-title'>
-                            Who is <span style={{fontWeight: '800'}}>The Great Venus?</span>
+                            What is <span style={{fontWeight: '800'}}>The Great Venus?</span>
                         </p>
                     </Fade>
                     <Fade bottom duration={400} distance='60px' fraction={0.8}>
-                        <p className='home-section-text'>
-                            The Guiliano's wish is to see the Venus, who has ULTIMATE Necklace, the greatest equipment in the world.<br />
-                            Do you know? They can get more power by acquiring more special necklace!<br />
-                            Everyone's hope is to be strong, and so is Guiliano.<br />
-                            That's why Guiliano finally decided to go on an adventure.
-                        </p>
+                            <iframe
+                                width={this.state.videoWidth}
+                                height={this.state.videoWidth * 9/16}
+                                src="https://www.youtube.com/embed/ykqhLdlEJrY"
+                                frameBorder="0"
+                                allow="accelerometer; autoplay; encrypted-media; gyroscope; picture-in-picture"
+                                allowFullScreen="true" />
                     </Fade>
                 </div>
 

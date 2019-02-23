@@ -13,6 +13,10 @@ class Mob extends Component {
             this.context.app.loader.resources.mob5,
             this.context.app.loader.resources.mob6,
             this.context.app.loader.resources.mob7,
+            this.context.app.loader.resources.mob8,
+            this.context.app.loader.resources.mob9,
+            this.context.app.loader.resources.mob10,
+            this.context.app.loader.resources.mob11,
         ],
     }
 

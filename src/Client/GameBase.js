@@ -35,7 +35,6 @@ class GameBase extends Component {
             this.loadResources();
         } catch (err) {
             console.error(err);
-        } finally {
             this.props.AppActions.setPreloader(false);
         }
     }
@@ -360,6 +359,7 @@ class GameBase extends Component {
             this.setState({ loadingProgress: Math.ceil(loader.progress) })
         })
         .load(() => {
+            this.props.AppActions.setPreloader(false);
             this.setState({
                 loadingProgress: 100,
                 isReady: true
